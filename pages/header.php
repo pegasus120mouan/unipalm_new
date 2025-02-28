@@ -131,7 +131,7 @@ if (!isset($_SESSION['user_id'])) {
         </li>
 
         <li class="nav-item d-none d-sm-inline-block">
-          <a href="paiements.php" class="nav-link">Paiements1</a>
+          <a href="paiements.php" class="nav-link">Paiements</a>
         </li>
       </ul>
 
