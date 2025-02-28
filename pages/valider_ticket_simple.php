@@ -15,8 +15,10 @@ if (!isset($_POST['id_ticket']) || !is_numeric($_POST['id_ticket'])) {
 $id_ticket = intval($_POST['id_ticket']);
 
 try {
-    $stmt = $conn->prepare("UPDATE tickets SET date_validation_boss = NOW() WHERE id_ticket = ?");
-    $result = $stmt->execute([$id_ticket]);
+    // Utiliser la date formatée au lieu de NOW()
+    $date_validation = date('Y-m-d H:i:s');
+    $stmt = $conn->prepare("UPDATE tickets SET date_validation_boss = ? WHERE id_ticket = ?");
+    $result = $stmt->execute([$date_validation, $id_ticket]);
     
     if ($result && $stmt->rowCount() > 0) {
         echo json_encode([
@@ -33,6 +35,18 @@ try {
     error_log("Erreur dans valider_ticket_simple.php: " . $e->getMessage());
     echo json_encode([
         'success' => false,
-        'message' => 'Erreur lors de la validation du ticket'
+
+        ]);
+    } else {
+        echo json_encode([
+            'success' => false,
+            'message' => 'Erreur lors de la validation du ticket ou ticket déjà validé'
+        ]);
+    }
+} catch (PDOException $e) {
+    error_log("Erreur dans valider_ticket_simple.php: " . $e->getMessage());
+    echo json_encode([
+        'success' => false,
+
     ]);
 }

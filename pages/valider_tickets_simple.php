@@ -15,21 +15,23 @@ if (!isset($_POST['ticket_ids']) || !is_array($_POST['ticket_ids'])) {
 $ticket_ids = array_map('intval', $_POST['ticket_ids']);
 
 try {
+    // Utiliser la date formatée au lieu de NOW()
+    $date_validation = date('Y-m-d H:i:s');
+    
     $placeholders = str_repeat('?,', count($ticket_ids) - 1) . '?';
-    $sql = "UPDATE tickets SET date_validation_boss = NOW() WHERE id_ticket IN ($placeholders)";
+    $sql = "UPDATE tickets SET date_validation_boss = ? WHERE id_ticket IN ($placeholders)";
+    
+    // Ajouter la date comme premier paramètre
+    $params = array_merge([$date_validation], $ticket_ids);
     
     $stmt = $conn->prepare($sql);
-    $result = $stmt->execute($ticket_ids);
+    $result = $stmt->execute($params);
     
     if ($result && $stmt->rowCount() > 0) {
         echo json_encode([
             'success' => true,
             'message' => 'Tickets validés avec succès'
-        ]);
-    } else {
-        echo json_encode([
-            'success' => false,
-            'message' => 'Erreur lors de la validation des tickets ou tickets déjà validés'
+
         ]);
     }
 } catch (PDOException $e) {

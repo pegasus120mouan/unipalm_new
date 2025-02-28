@@ -6,6 +6,13 @@ include('header.php');
 // Récupérer l'ID de l'utilisateur
 $id_user = $_SESSION['user_id'];
 
+// Fonction pour vérifier si un agent a un financement
+function getFinancementAgent($conn, $id_agent) {
+    $stmt = $conn->prepare("SELECT COALESCE(SUM(montant), 0) as montant_total FROM financement WHERE id_agent = ? AND montant > 0");
+    $stmt->execute([$id_agent]);
+    return $stmt->fetch(PDO::FETCH_ASSOC);
+}
+
 // Déterminer le type d'affichage et le statut
 $type = isset($_GET['type']) ? $_GET['type'] : 'all';
 $status = isset($_GET['status']) ? $_GET['status'] : 'all';
@@ -355,6 +362,7 @@ label {
 <!-- Modal for new transaction -->
 <?php foreach ($items as $item) : ?>
     <?php if ($item['type'] === 'bordereau') : ?>
+        <?php $financement = getFinancementAgent($conn, $item['id_agent']); ?>
         <div class="modal fade" id="payer_bordereau<?= $item['id_bordereau'] ?>">
             <div class="modal-dialog">
                 <div class="modal-content">
@@ -365,18 +373,12 @@ label {
                         </button>
                     </div>
                     <div class="modal-body">
-                        <?php if (isset($_SESSION['error_message'])): ?>
-                            <div class="alert alert-danger">
-                                <?= $_SESSION['error_message'] ?>
-                                <?php unset($_SESSION['error_message']); ?>
-                            </div>
-                        <?php endif; ?>
-                        
                         <form class="forms-sample" method="post" action="save_paiement.php">
                             <input type="hidden" name="id_bordereau" value="<?= $item['id_bordereau'] ?>">
                             <input type="hidden" name="numero_bordereau" value="<?= $item['numero_bordereau'] ?>">
                             <input type="hidden" name="type" value="<?= htmlspecialchars($type) ?>">
                             <input type="hidden" name="status" value="<?= htmlspecialchars($status) ?>">
+                            <input type="hidden" name="montant_reste" value="<?= $item['montant_reste'] ?>">
                             
                             <div class="form-group">
                                 <label>Montant total à payer</label>
@@ -391,13 +393,15 @@ label {
                             <div class="form-group">
                                 <label>Reste à payer</label>
                                 <input type="text" class="form-control" value="<?= number_format($item['montant_reste'], 0, ',', ' ') ?> FCFA" readonly>
-                                <input type="hidden" name="montant_reste" value="<?= $item['montant_reste'] ?>">
                             </div>
 
                             <div class="form-group">
-                                <label>Type de Transaction</label>
-                                <select class="form-control" name="type_transaction" required>
-                                    <option value="paiement">Sortie de caisse</option>
+                                <label>Source de paiement</label>
+                                <select class="form-control" name="source_paiement" required>
+                                    <option value="transactions">Sortie de caisse</option>
+                                    <option value="financement" <?= (!$financement || $financement['montant_total'] <= 0) ? 'disabled style="color: #999; background-color: #f4f4f4;"' : '' ?>>
+                                        Financement (Solde: <?= number_format(($financement ? $financement['montant_total'] : 0), 0, ',', ' ') ?> FCFA)
+                                    </option>
                                 </select>
                             </div>
 
@@ -418,6 +422,7 @@ label {
             </div>
         </div>
     <?php else : ?>
+        <?php $financement = getFinancementAgent($conn, $item['id_agent']); ?>
         <div class="modal fade" id="payer_ticket<?= $item['id_ticket'] ?>">
             <div class="modal-dialog">
                 <div class="modal-content">
@@ -428,18 +433,12 @@ label {
                         </button>
                     </div>
                     <div class="modal-body">
-                        <?php if (isset($_SESSION['error_message'])): ?>
-                            <div class="alert alert-danger">
-                                <?= $_SESSION['error_message'] ?>
-                                <?php unset($_SESSION['error_message']); ?>
-                            </div>
-                        <?php endif; ?>
-                        
                         <form class="forms-sample" method="post" action="save_paiement.php">
                             <input type="hidden" name="id_ticket" value="<?= $item['id_ticket'] ?>">
                             <input type="hidden" name="numero_ticket" value="<?= $item['numero_ticket'] ?>">
                             <input type="hidden" name="type" value="<?= htmlspecialchars($type) ?>">
                             <input type="hidden" name="status" value="<?= htmlspecialchars($status) ?>">
+                            <input type="hidden" name="montant_reste" value="<?= $item['montant_paie'] - (!isset($item['montant_payer']) || $item['montant_payer'] === null ? 0 : $item['montant_payer']) ?>">
                             
                             <div class="form-group">
                                 <label>Montant total à payer</label>
@@ -454,13 +453,15 @@ label {
                             <div class="form-group">
                                 <label>Reste à payer</label>
                                 <input type="text" class="form-control" value="<?= number_format($item['montant_paie'] - (!isset($item['montant_payer']) || $item['montant_payer'] === null ? 0 : $item['montant_payer']), 0, ',', ' ') ?> FCFA" readonly>
-                                <input type="hidden" name="montant_reste" value="<?= $item['montant_paie'] - (!isset($item['montant_payer']) || $item['montant_payer'] === null ? 0 : $item['montant_payer']) ?>">
                             </div>
 
                             <div class="form-group">
-                                <label>Type de Transaction</label>
-                                <select class="form-control" name="type_transaction" required>
-                                    <option value="paiement">Sortie de caisse</option>
+                                <label>Source de paiement</label>
+                                <select class="form-control" name="source_paiement" required>
+                                    <option value="transactions">Sortie de caisse</option>
+                                    <option value="financement" <?= (!$financement || $financement['montant_total'] <= 0) ? 'disabled style="color: #999; background-color: #f4f4f4;"' : '' ?>>
+                                        Financement (Solde: <?= number_format(($financement ? $financement['montant_total'] : 0), 0, ',', ' ') ?> FCFA)
+                                    </option>
                                 </select>
                             </div>
 

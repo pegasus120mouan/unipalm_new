@@ -1,0 +1,250 @@
+[2025-02-28 19:00:09] Données reçues : Array
+(
+    [id_ticket] => 39
+    [numero_ticket] => erge gtgtgf
+    [type] => all
+    [status] => en_attente
+    [montant_reste] => 200000
+    [source_paiement] => transactions
+    [montant] => 50000
+    [save_paiement] => 
+)
+
+[2025-02-28 19:00:09] Montant : 50000
+[2025-02-28 19:00:09] Source : transactions
+[2025-02-28 19:00:09] Traitement ticket ID : 39
+[2025-02-28 19:00:09] Tentative de création de la transaction
+[2025-02-28 19:00:09] Erreur lors de la création de la transaction : SQLSTATE[42S22]: Column not found: 1054 Unknown column 'id_ticket' in 'field list'
+[2025-02-28 19:00:09] Erreur finale : SQLSTATE[42S22]: Column not found: 1054 Unknown column 'id_ticket' in 'field list'
+[2025-02-28 19:00:09] Trace : #0 C:\laragon\www\angenor\pages\save_paiement.php(63): PDOStatement->execute(Array)
+#1 {main}
+[2025-02-28 19:18:25] Données reçues : Array
+(
+    [id_ticket] => 39
+    [numero_ticket] => erge gtgtgf
+    [type] => all
+    [status] => all
+    [montant_reste] => 200000
+    [type_transaction] => paiement
+    [montant] => 100000
+    [save_paiement] => 
+)
+
+[2025-02-28 19:18:25] Montant : 100000
+[2025-02-28 19:18:25] Source : 
+[2025-02-28 19:18:25] Traitement ticket ID : 39
+[2025-02-28 19:18:25] Tentative de création de la transaction
+[2025-02-28 19:18:25] Transaction créée avec succès
+[2025-02-28 19:18:25] Tentative de mise à jour du ticket
+[2025-02-28 19:18:25] État avant mise à jour : Array
+(
+    [montant_payer] => 
+    [montant_paie] => 200000.00
+)
+
+[2025-02-28 19:18:25] Requête de mise à jour exécutée
+[2025-02-28 19:18:25] État après mise à jour : Array
+(
+    [montant_payer] => 100000.00
+    [montant_paie] => 200000.00
+)
+
+[2025-02-28 19:18:25] Transaction commit avec succès
+[2025-02-28 19:43:38] Données reçues : Array
+(
+    [id_ticket] => 40
+    [numero_ticket] => erge gtgtgf011
+    [type] => <br />
+<b>Warning</b>:  Undefined variable $type in <b>C:\laragon\www\angenor\pages\paiements.php</b> on line <b>440</b><br />
+<br />
+<b>Deprecated</b>:  htmlspecialchars(): Passing null to parameter #1 ($string) of type string is deprecated in <b>C:\laragon\www\angenor\pages\paiements.php</b> on line <b>440</b><br />
+
+    [status] => <br />
+<b>Warning</b>:  Undefined variable $status in <b>C:\laragon\www\angenor\pages\paiements.php</b> on line <b>441</b><br />
+<br />
+<b>Deprecated</b>:  htmlspecialchars(): Passing null to parameter #1 ($string) of type string is deprecated in <b>C:\laragon\www\angenor\pages\paiements.php</b> on line <b>441</b><br />
+
+    [montant_reste] => 125000
+    [source_paiement] => transactions
+    [montant] => 100000
+    [save_paiement] => 
+)
+
+[2025-02-28 19:43:38] Montant : 100000
+[2025-02-28 19:43:38] Source : transactions
+[2025-02-28 19:43:38] Traitement ticket ID : 40
+[2025-02-28 19:43:38] Tentative de création de la transaction
+[2025-02-28 19:43:38] Transaction créée avec succès
+[2025-02-28 19:43:38] Tentative de mise à jour du ticket
+[2025-02-28 19:43:38] État avant mise à jour : Array
+(
+    [montant_payer] => 100000.00
+    [montant_paie] => 225000.00
+)
+
+[2025-02-28 19:43:38] Requête de mise à jour exécutée
+[2025-02-28 19:43:38] État après mise à jour : Array
+(
+    [montant_payer] => 200000.00
+    [montant_paie] => 225000.00
+)
+
+[2025-02-28 19:43:38] Transaction commit avec succès
+[2025-02-28 19:44:03] Données reçues : Array
+(
+    [id_ticket] => 40
+    [numero_ticket] => erge gtgtgf011
+    [type] => <br />
+<b>Warning</b>:  Undefined variable $type in <b>C:\laragon\www\angenor\pages\paiements.php</b> on line <b>440</b><br />
+<br />
+<b>Deprecated</b>:  htmlspecialchars(): Passing null to parameter #1 ($string) of type string is deprecated in <b>C:\laragon\www\angenor\pages\paiements.php</b> on line <b>440</b><br />
+
+    [status] => <br />
+<b>Warning</b>:  Undefined variable $status in <b>C:\laragon\www\angenor\pages\paiements.php</b> on line <b>441</b><br />
+<br />
+<b>Deprecated</b>:  htmlspecialchars(): Passing null to parameter #1 ($string) of type string is deprecated in <b>C:\laragon\www\angenor\pages\paiements.php</b> on line <b>441</b><br />
+
+    [montant_reste] => 25000
+    [source_paiement] => financement
+    [montant] => 25000
+    [save_paiement] => 
+)
+
+[2025-02-28 19:44:03] Montant : 25000
+[2025-02-28 19:44:03] Source : financement
+[2025-02-28 19:44:03] Traitement ticket ID : 40
+[2025-02-28 19:44:03] Financement mis à jour
+[2025-02-28 19:44:03] Tentative de mise à jour du ticket
+[2025-02-28 19:44:03] État avant mise à jour : Array
+(
+    [montant_payer] => 200000.00
+    [montant_paie] => 225000.00
+)
+
+[2025-02-28 19:44:03] Requête de mise à jour exécutée
+[2025-02-28 19:44:03] État après mise à jour : Array
+(
+    [montant_payer] => 225000.00
+    [montant_paie] => 225000.00
+)
+
+[2025-02-28 19:44:03] Transaction commit avec succès
+[2025-02-28 19:45:41] Données reçues : Array
+(
+    [id_ticket] => 39
+    [numero_ticket] => erge gtgtgf
+    [type] => <br />
+<b>Warning</b>:  Undefined variable $type in <b>C:\laragon\www\angenor\pages\paiements.php</b> on line <b>440</b><br />
+<br />
+<b>Deprecated</b>:  htmlspecialchars(): Passing null to parameter #1 ($string) of type string is deprecated in <b>C:\laragon\www\angenor\pages\paiements.php</b> on line <b>440</b><br />
+
+    [status] => <br />
+<b>Warning</b>:  Undefined variable $status in <b>C:\laragon\www\angenor\pages\paiements.php</b> on line <b>441</b><br />
+<br />
+<b>Deprecated</b>:  htmlspecialchars(): Passing null to parameter #1 ($string) of type string is deprecated in <b>C:\laragon\www\angenor\pages\paiements.php</b> on line <b>441</b><br />
+
+    [montant_reste] => 100000
+    [source_paiement] => transactions
+    [montant] => 100000
+    [save_paiement] => 
+)
+
+[2025-02-28 19:45:41] Montant : 100000
+[2025-02-28 19:45:41] Source : transactions
+[2025-02-28 19:45:41] Traitement ticket ID : 39
+[2025-02-28 19:45:41] Tentative de création de la transaction
+[2025-02-28 19:45:41] Transaction créée avec succès
+[2025-02-28 19:45:41] Tentative de mise à jour du ticket
+[2025-02-28 19:45:41] État avant mise à jour : Array
+(
+    [montant_payer] => 100000.00
+    [montant_paie] => 200000.00
+)
+
+[2025-02-28 19:45:41] Requête de mise à jour exécutée
+[2025-02-28 19:45:41] État après mise à jour : Array
+(
+    [montant_payer] => 200000.00
+    [montant_paie] => 200000.00
+)
+
+[2025-02-28 19:45:41] Transaction commit avec succès
+[2025-02-28 19:46:25] Données reçues : Array
+(
+    [id_bordereau] => 12
+    [numero_bordereau] => BORD-20250214-210750-6050
+    [type] => <br />
+<b>Warning</b>:  Undefined variable $type in <b>C:\laragon\www\angenor\pages\paiements.php</b> on line <b>440</b><br />
+<br />
+<b>Deprecated</b>:  htmlspecialchars(): Passing null to parameter #1 ($string) of type string is deprecated in <b>C:\laragon\www\angenor\pages\paiements.php</b> on line <b>440</b><br />
+
+    [status] => <br />
+<b>Warning</b>:  Undefined variable $status in <b>C:\laragon\www\angenor\pages\paiements.php</b> on line <b>441</b><br />
+<br />
+<b>Deprecated</b>:  htmlspecialchars(): Passing null to parameter #1 ($string) of type string is deprecated in <b>C:\laragon\www\angenor\pages\paiements.php</b> on line <b>441</b><br />
+
+    [montant_reste] => 10000.00
+    [source_paiement] => financement
+    [montant] => 10000
+    [save_paiement] => 
+)
+
+[2025-02-28 19:46:25] Montant : 10000
+[2025-02-28 19:46:25] Source : financement
+[2025-02-28 19:46:25] Traitement bordereau ID : 12
+[2025-02-28 19:46:25] Financement mis à jour
+[2025-02-28 19:46:25] Tentative de mise à jour du bordereau
+[2025-02-28 19:46:25] État avant mise à jour : Array
+(
+    [montant_payer] => 200000.00
+    [montant_total] => 210000.00
+)
+
+[2025-02-28 19:46:25] Requête de mise à jour exécutée
+[2025-02-28 19:46:25] État après mise à jour : Array
+(
+    [montant_payer] => 210000.00
+    [montant_total] => 210000.00
+)
+
+[2025-02-28 19:46:25] Transaction commit avec succès
+[2025-02-28 19:59:17] Données reçues : Array
+(
+    [id_ticket] => 17
+    [numero_ticket] => ggygyygh
+    [type] => <br />
+<b>Warning</b>:  Undefined variable $type in <b>C:\laragon\www\angenor\pages\paiements.php</b> on line <b>440</b><br />
+<br />
+<b>Deprecated</b>:  htmlspecialchars(): Passing null to parameter #1 ($string) of type string is deprecated in <b>C:\laragon\www\angenor\pages\paiements.php</b> on line <b>440</b><br />
+
+    [status] => <br />
+<b>Warning</b>:  Undefined variable $status in <b>C:\laragon\www\angenor\pages\paiements.php</b> on line <b>441</b><br />
+<br />
+<b>Deprecated</b>:  htmlspecialchars(): Passing null to parameter #1 ($string) of type string is deprecated in <b>C:\laragon\www\angenor\pages\paiements.php</b> on line <b>441</b><br />
+
+    [montant_reste] => 4500
+    [source_paiement] => transactions
+    [montant] => 4500
+    [save_paiement] => 
+)
+
+[2025-02-28 19:59:17] Montant : 4500
+[2025-02-28 19:59:17] Source : transactions
+[2025-02-28 19:59:17] Traitement ticket ID : 17
+[2025-02-28 19:59:17] Tentative de création de la transaction
+[2025-02-28 19:59:17] Transaction créée avec succès
+[2025-02-28 19:59:18] Tentative de mise à jour du ticket
+[2025-02-28 19:59:18] État avant mise à jour : Array
+(
+    [montant_payer] => 
+    [montant_paie] => 4500.00
+)
+
+[2025-02-28 19:59:18] Requête de mise à jour exécutée
+[2025-02-28 19:59:18] État après mise à jour : Array
+(
+    [montant_payer] => 4500.00
+    [montant_paie] => 4500.00
+)
+
+[2025-02-28 19:59:18] Transaction commit avec succès
