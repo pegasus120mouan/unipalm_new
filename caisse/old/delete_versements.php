@@ -1,0 +1,24 @@
+<?php
+	//session_start();
+	require_once '../inc/functions/connexion.php';
+
+	if(isset($_GET['id'])){
+		$id=$_GET['id'];
+        $id_dette = $_GET['id_dette'];
+		$requete = $conn->prepare("DELETE FROM versements WHERE id = :id");
+
+		// Liaison de la variable avec le paramètre de la requête
+		$requete->bindParam(':id', $id, PDO::PARAM_INT);
+	
+		// Exécution de la requête DELETE
+		$requete->execute();
+	
+		// Vérification du nombre de lignes affectées (1 signifie que la suppression a réussi)
+if($requete)
+{
+	$_SESSION['popup'] = true;
+           header('Location: versement_detaille.php?id='.$id_dette);
+	       exit(0);
+}	
+}
+?>
