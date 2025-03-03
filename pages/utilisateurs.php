@@ -276,6 +276,8 @@ if (isset($_GET['search']) && !empty($_GET['search'])) {
                                         <option value="admin">Administrateur</option>
                                         <option value="operateur">Opérateur</option>
                                         <option value="validateur">Validateur</option>
+                                        <option value="caissiere">Caissière</option>
+                                        <option value="directeur">Directeur</option>
                                     </select>
                                 </div>
 
