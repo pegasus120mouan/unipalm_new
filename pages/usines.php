@@ -126,7 +126,7 @@ label {
 <div class="row">
 
     <div class="block-container">
-    <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#add-ticket">
+    <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#add-usine">
       <i class="fa fa-edit"></i>Enregistrer une usine
     </button>
 
@@ -140,7 +140,7 @@ label {
 
     <button type="button" class="btn btn-dark" onclick="window.location.href='export_commandes.php'">
               <i class="fa fa-print"></i> Exporter la liste des usines
-             </button>
+    </button>
 </div>
 
 
@@ -192,11 +192,32 @@ label {
             <a class="edit" data-toggle="modal" data-target="#editModalUsine<?= $usine['id_usine'] ?>">
               <i class="fas fa-pen fa-xs" style="font-size:24px;color:blue"></i>
             </a>
-            <a href="delete_usine.php?id=<?= $usine['id_usine'] ?>" class="trash" onclick="return confirm('Êtes-vous sûr de vouloir supprimer cette usine ?')">
+            <a href="#" class="trash" data-toggle="modal" data-target="#deleteModalUsine<?= $usine['id_usine'] ?>">
               <i class="fas fa-trash fa-xs" style="font-size:24px;color:red"></i>
             </a>
           </td>
         </tr>
+
+        <!-- Modal de confirmation de suppression -->
+        <div class="modal fade" id="deleteModalUsine<?= $usine['id_usine'] ?>" tabindex="-1" role="dialog">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Êtes-vous sûr ?</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <p>Voulez-vous vraiment supprimer cette usine ?</p>
+                    </div>
+                    <div class="modal-footer">
+                        <a href="traitement_usines.php?action=delete&id=<?= $usine['id_usine'] ?>" class="btn btn-primary">Oui, supprimer</a>
+                        <button type="button" class="btn btn-danger" data-dismiss="modal">Annuler</button>
+                    </div>
+                </div>
+            </div>
+        </div>
       <?php endforeach; ?>
     </tbody>
   </table>
@@ -225,6 +246,63 @@ label {
     </form>
 </div>
 
+
+
+  <!-- Modal pour ajouter une usine -->
+<div class="modal fade" id="add-usine">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title">Enregistrer une usine</h4>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form class="forms-sample" method="post" action="traitement_usines.php">
+                    <div class="card-body">
+                        <div class="form-group">
+                            <label for="nom_usine">Nom de l'usine</label>
+                            <input type="text" class="form-control" id="nom_usine" placeholder="Nom de l'usine" name="nom_usine" required>
+                        </div>
+                        <button type="submit" class="btn btn-primary mr-2" name="add_usine">Enregistrer</button>
+                        <button type="button" class="btn btn-light" data-dismiss="modal">Annuler</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal pour modifier une usine -->
+<?php foreach ($usines_list as $usine): ?>
+<div class="modal fade" id="editModalUsine<?= $usine['id_usine'] ?>" tabindex="-1" role="dialog" aria-labelledby="editModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="editModalLabel">Modifier l'usine <?= htmlspecialchars($usine['nom_usine']) ?></h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form class="forms-sample" method="post" action="traitement_usines.php">
+                    <input type="hidden" name="id_usine" value="<?= $usine['id_usine'] ?>">
+                    <div class="form-group">
+                        <label for="nom_usine<?= $usine['id_usine'] ?>">Nom de l'usine</label>
+                        <input type="text" class="form-control" id="nom_usine<?= $usine['id_usine'] ?>" name="nom_usine" 
+                               value="<?= htmlspecialchars($usine['nom_usine']) ?>" required>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="submit" class="btn btn-primary" name="update_usine">Enregistrer</button>
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Annuler</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+<?php endforeach; ?>
 
 
   <div class="modal fade" id="add-ticket">
