@@ -299,7 +299,7 @@ if (!isset($_SESSION['user_id'])) {
               </ul>
             </li>
 
-            <li class="nav-item">
+         <!--   <li class="nav-item">
               <a href="#" class="nav-link">
                 <i class="nav-icon fas fa-table"></i>
                 <p>
@@ -426,7 +426,7 @@ if (!isset($_SESSION['user_id'])) {
                   Paiements
                 </p>
               </a>
-            </li>
+            </li>-->
 
           </ul>
         </nav>

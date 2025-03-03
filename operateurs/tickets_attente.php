@@ -436,7 +436,7 @@ label {
         <th>Date validation</th>
         <th>Montant</th>
         <th>Date Paie</th>
-        <th>Validation de tickets</th>
+       <!-- <th>Validation de tickets</th>-->
       </tr>
     </thead>
     <tbody>
@@ -506,11 +506,11 @@ label {
           </td>
           
   
-          <td class="actions">
+         <!-- <td class="actions">
             <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#valider_ticket<?= $ticket['id_ticket'] ?>">
               <i class="fa fa-edit"></i>Valider un ticket
             </button>
-          </td>
+          </td>-->
            <!-- Lien pour déclencher la modale -->
 <!--a href="#" class="trash" data-toggle="modal" data-target="#confirmDeleteModal" data-id="<?= $ticket['id_ticket'] ?>">
     <i class="fas fa-trash fa-xs" style="font-size:24px;color:red"></i>

@@ -279,7 +279,7 @@ label {
         <th>Date validation</th>
         <th>Montant</th>
         <th>Date Paie</th>
-        <th>Actions</th>
+       <!-- <th>Actions</th>-->
       </tr>
     </thead>
     <tbody>
@@ -348,7 +348,7 @@ label {
           </td>
           
   
-          <td class="actions">
+        <!--  <td class="actions">
          <?php if (!isset($ticket['date_paie']) || $ticket['date_paie'] === null): ?>
             <a class="edit" data-toggle="modal" data-target="#editModalTicket<?= $ticket['id_ticket'] ?>">
             <i class="fas fa-pen fa-xs" style="font-size:24px;color:blue"></i>
@@ -360,7 +360,7 @@ label {
             <i class="fas fa-pen fa-xs" style="font-size:24px;color:gray" title="Ticket déjà payé"></i>
             <i class="fas fa-trash fa-xs" style="font-size:24px;color:gray" title="Ticket déjà payé"></i>
             <?php endif; ?>
-          </td>
+          </td>-->
            <!-- Lien pour déclencher la modale -->
 <!--a href="#" class="trash" data-toggle="modal" data-target="#confirmDeleteModal" data-id="<?= $ticket['id_ticket'] ?>">
     <i class="fas fa-trash fa-xs" style="font-size:24px;color:red"></i>
