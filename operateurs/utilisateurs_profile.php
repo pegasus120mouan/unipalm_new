@@ -1,7 +1,7 @@
 <?php
 //require_once '../inc/functions/connexion.php';
 require_once '../inc/functions/connexion.php';
-include('header_operateurs.php');
+include('header.php');
 
 // Récupération de l'ID de la commande depuis l'URL (par exemple, edit_commande.php?id=1)
 $id_utilisateur = $_GET['id'];

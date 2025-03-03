@@ -1,7 +1,7 @@
 <?php
 require_once '../inc/functions/connexion.php';
 require_once '../inc/functions/requete/requete_chef_equipes.php';
-include('header_operateurs.php');
+include('header.php');
 $chefs = getChefEquipesFull($conn); 
 ?>
 
@@ -23,8 +23,8 @@ $chefs = getChefEquipesFull($conn);
               <i class="fa fa-edit"></i>Enregistrer un chef d'equipe
             </button>
 
-            <button type="button" class="btn btn-danger" onclick="window.location.href='export_livreurs.php'">
-              <i class="fa fa-print"></i> Exporter la liste des utilisateurs
+            <button type="button" class="btn btn-danger" onclick="window.location.href='impression_chefs.php'">
+              <i class="fa fa-print"></i> Imprimer la liste des chefs équipes
              </button>
         </div>
 
@@ -46,11 +46,52 @@ $chefs = getChefEquipesFull($conn);
 
                 <td><?=$chef['prenoms']?></td>
                     <td class="actions">
-                        <a href="livreurs_update.php?id=<?=$utilisateur['id']?>" class="edit"><i class="fas fa-pen fa-xs" style="font-size:24px;color:blue"></i></a>
-                        <a href="livreurs_delete.php?id=<?=$utilisateur['id']?>" class="trash"><i class="fas fa-trash fa-xs" style="font-size:24px;color:red"></i></a>
-                </td>
+                        <a href="#" class="edit" data-toggle="modal" data-target="#modifier<?= $chef['id_chef'] ?>">
+                        <i class="fas fa-pen fa-xs" style="font-size:24px;color:blue"></i>
+                    </a>                        
+                        <a href="#" onclick="confirmDelete(<?= $chef['id_chef'] ?>)" class="trash">
+                          <i class="fas fa-trash fa-xs" style="font-size:24px;color:red"></i>
+                        </a>
+                      </td>
+ <div class="modal fade" id="modifier<?= $chef['id_chef'] ?>" tabindex="-1" role="dialog" aria-labelledby="editModalLabel" aria-hidden="true">
+   <div class="modal-dialog">
+      <div class="modal-content">
+         <div class="modal-header">
+            <h5 class="modal-title" id="editModalLabel">Modifier un chef d'équipe <?= $chef['nom'] ?> <?= $chef['prenoms'] ?></h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+            </button>
+         </div>
+
+         <div class="modal-body">
+            <form id="edit-chef-form" method="post" action="traitement_chefs_equipe.php">
+               <input type="hidden" name="id_chef" value="<?= $chef['id_chef'] ?>">
+
+               <div class="mb-3">
+                  <label for="edit-nom" class="form-label">Nom</label>
+                  <input type="text" class="form-control" id="edit-nom" name="nom" value="<?= htmlspecialchars($chef['nom']) ?>" required>
+               </div>
+
+               <div class="mb-3">
+                  <label for="edit-prenoms" class="form-label">Prénoms</label>
+                  <input type="text" class="form-control" id="edit-prenoms" name="prenoms" value="<?= htmlspecialchars($chef['prenoms']) ?>" required>
+               </div>
+
+               <div class="modal-footer">
+                  <button type="submit" class="btn btn-success btn-lg">Mise à jour</button>
+                  <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
+               </div>
+            </form>
+         </div>
+      </div>
+   </div>
+</div>
+
+
+</div>
+
      
- </tr>
+                     </tr>
                   <?php endforeach; ?>
                   </tbody>
 </table>
@@ -65,7 +106,7 @@ $chefs = getChefEquipesFull($conn);
               <h4 class="modal-title">Enregistrer un chef d'equipe</h4>
             </div>
             <div class="modal-body">
-            <form class="forms-sample" method="post" action="traitement_utilisateurs.php">
+            <form class="forms-sample" method="post" action="traitement_chefs_equipe.php">
                 <div class="card-body">
                   <div class="form-group">
                     <label for="exampleInputEmail1">Nom</label>
@@ -170,5 +211,23 @@ if(isset($_SESSION['delete_pop']) && $_SESSION['delete_pop'] ==  true) {
   ?>
 <!-- AdminLTE dashboard demo (This is only for demo purposes) -->
 <!--<script src="dist/js/pages/dashboard.js"></script>-->
+  <script>
+    function confirmDelete(id) {
+    Swal.fire({
+        title: 'Êtes-vous sûr ?',
+        text: "Voulez-vous vraiment supprimer cet utilisateur ?",
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#d33',
+        confirmButtonText: 'Oui, supprimer',
+        cancelButtonText: 'Annuler'
+    }).then((result) => {
+        if (result.isConfirmed) {
+            window.location.href = 'traitement_chefs_equipe.php?action=delete&id=' + id;
+        }
+    });
+}
+</script>
 </body>
 </html>

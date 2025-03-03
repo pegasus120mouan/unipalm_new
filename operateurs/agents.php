@@ -6,7 +6,7 @@ require_once '../inc/functions/requete/requete_chef_equipes.php';
 require_once '../inc/functions/requete/requete_vehicules.php';
 require_once '../inc/functions/requete/requete_agents.php';
 //require_once '../inc/functions/requete/requetes_selection_boutique.php';
-include('header_operateurs.php');
+include('header.php');
 
 //$_SESSION['user_id'] = $user['id'];
  $id_user=$_SESSION['user_id'];
@@ -27,6 +27,14 @@ $chefs_equipes=getChefEquipes($conn);
 $vehicules=getVehicules($conn);
 $agents=getAgents($conn);
 
+// Récupérer la liste des chefs d'équipe
+$stmt = $conn->prepare(
+    "SELECT id_chef, CONCAT(nom, ' ', prenoms) as nom_complet 
+     FROM chef_equipe 
+     ORDER BY nom"
+);
+$stmt->execute();
+$chefs = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
 // Vérifiez si des tickets existent avant de procéder
 if (!empty($agents)) {
@@ -36,11 +44,11 @@ if (!empty($agents)) {
     $agents_list = []; // Aucun ticket à afficher
 }
 
+
+
+
+
 ?>
-
-
-
-
 <!-- Main row -->
 <style>
   .pagination-container {
@@ -126,7 +134,7 @@ label {
 <div class="row">
 
     <div class="block-container">
-    <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#add-ticket">
+    <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#add-agent">
       <i class="fa fa-edit"></i>Enregistrer un agent
     </button>
 
@@ -142,6 +150,7 @@ label {
               <i class="fa fa-print"></i> Exporter la liste des agents
              </button>
 </div>
+
 
 
 
@@ -165,8 +174,6 @@ label {
 </form>
 
 -->
-
-
 
 <h2>Liste des agents</h2>
 <div class="table-responsive">
@@ -198,37 +205,45 @@ label {
           
   
           <td class="actions">
-            <a class="edit" data-toggle="modal" data-target="#editModalTicket<?= $ticket['id_ticket'] ?>">
-            <i class="fas fa-pen fa-xs" style="font-size:24px;color:blue"></i>
-            </a>
-            <a href="delete_commandes.php?id=<?= $ticket['id_ticket'] ?>" class="trash"><i class="fas fa-trash fa-xs" style="font-size:24px;color:red"></i></a>
-          </td>
+                    <a href="#" class="edit" data-toggle="modal" data-target="#modifier<?= $agent['id_agent'] ?>">
+                        <i class="fas fa-pen fa-xs" style="font-size:24px;color:blue"></i>
+                    </a>
+                    <a href="#" onclick="confirmDelete(<?= $agent['id_agent'] ?>)" class="trash">
+                        <i class="fas fa-trash fa-xs" style="font-size:24px;color:red"></i>
+                    </a>
+                </td>
 
-          <div class="modal fade" id="editModalTicket<?= $ticket['id_ticket'] ?>" tabindex="-1" role="dialog" aria-labelledby="editModalLabel" aria-hidden="true">
+          <div class="modal fade" id="modifier<?= $agent['id_agent'] ?>" tabindex="-1" role="dialog" aria-labelledby="editModalLabel" aria-hidden="true">
     <div class="modal-dialog" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="editModalLabel">Modification Ticket <?= $ticket['id_ticket'] ?></h5>
+                <h5 class="modal-title" id="editModalLabel">Modification Agent <?= $agent['nom_agent'] ?> <?= $agent['prenom_agent'] ?></h5>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
             </div>
             <div class="modal-body">
-                <!-- Formulaire de modification du ticket -->
-                <form action="commandes_update.php?id=<?= $ticket['id_ticket'] ?>" method="post">
-                <div class="form-group">
-                        <label for="prix_unitaire">Numéro du ticket</label>
-                        <input type="text" class="form-control" id="numero_ticket" name="numero_ticket" value="<?= $ticket['numero_ticket'] ?>" required>
+                <form class="forms-sample" method="post" action="traitement_agents.php">
+                    <input type="hidden" name="id_agent" value="<?= $agent['id_agent'] ?>">
+                    <div class="form-group">
+                        <label for="nom">Nom</label>
+                        <input type="text" class="form-control" id="nom" name="nom" 
+                               value="<?= htmlspecialchars($agent['nom_agent']) ?>" required>
                     </div>
                     <div class="form-group">
-                        <label for="prix_unitaire">Prix Unitaire</label>
-                        <input type="number" class="form-control" id="prix_unitaire" name="prix_unitaire" value="<?= $ticket['prix_unitaire'] ?>" required>
+                        <label for="prenoms">Prénoms</label>
+                        <input type="text" class="form-control" id="prenoms" name="prenoms" 
+                               value="<?= htmlspecialchars($agent['prenom_agent']) ?>" required>
                     </div>
                     <div class="form-group">
-                        <label for="date_validation_boss">Date de Validation</label>
-                        <input type="date" class="form-control" id="date_validation_boss" name="date_validation_boss" value="<?= $ticket['date_validation_boss'] ?>" required>
+                        <label for="contact">Contact</label>
+                        <input type="text" class="form-control" id="contact" name="contact" 
+                               value="<?= htmlspecialchars($agent['contact']) ?>" required>
                     </div>
-                    <button type="submit" class="btn btn-primary">Sauvegarder les modifications</button>
+                    <div class="modal-footer">
+                        <button type="submit" class="btn btn-primary" name="update_agent">Enregistrer</button>
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Annuler</button>
+                    </div>
                 </form>
             </div>
         </div>
@@ -266,13 +281,11 @@ label {
     <?php if($page > 1 ): ?>
         <a href="?page=<?= $page - 1 ?>" class="btn btn-primary"><</a>
     <?php endif; ?>
-
     <span><?= $page . '/' . count($agent_pages) ?></span>
 
     <?php if($page < count($agent_pages)): ?>
         <a href="?page=<?= $page + 1 ?>" class="btn btn-primary">></a>
     <?php endif; ?>
-
     <form action="" method="get" class="items-per-page-form">
         <label for="limit">Afficher :</label>
         <select name="limit" id="limit" class="items-per-page-select">
@@ -286,7 +299,7 @@ label {
 
 
 
-  <div class="modal fade" id="add-ticket">
+  <div class="modal fade" id="add-agent">
     <div class="modal-dialog">
       <div class="modal-content">
         <div class="modal-header">
@@ -298,22 +311,22 @@ label {
             <div class="card-body">
               <div class="form-group">
                 <label for="exampleInputEmail1">Nom</label>
-                <input type="text" class="form-control" id="exampleInputEmail1" placeholder="Nom" name="nom">
+                <input type="text" class="form-control" id="exampleInputEmail1" placeholder="Nom" name="nom" required>
               </div>
 
               <div class="form-group">
                 <label for="exampleInputEmail1">Prenoms</label>
-                <input type="text" class="form-control" id="exampleInputEmail1" placeholder="Prenoms" name="prenoms">
+                <input type="text" class="form-control" id="exampleInputEmail1" placeholder="Prenoms" name="prenom" required>
               </div>
 
               <div class="form-group">
                 <label for="exampleInputEmail1">Contact</label>
-                <input type="text" class="form-control" id="exampleInputEmail1" placeholder="Contact" name="contact">
+                <input type="text" class="form-control" id="exampleInputEmail1" placeholder="Contact" name="contact" required>
               </div>
 
               <div class="form-group">
                   <label>Selection chef Equipe</label>
-                  <select id="select" name="chef_equipe" class="form-control">
+                  <select id="select" name="id_chef" class="form-control" required>
                       <?php
                       // Vérifier si des usines existent
                       if (!empty($chefs_equipes)) {
@@ -327,26 +340,22 @@ label {
                   </select>
               </div>
 
-              <button type="submit" class="btn btn-primary mr-2" name="saveCommande">Enregister</button>
-              <button class="btn btn-light">Annuler</button>
+              <button type="submit" class="btn btn-primary mr-2" name="add_agent">Enregister</button>
+              <button type="button" class="btn btn-light" data-dismiss="modal">Annuler</button>
             </div>
           </form>
         </div>
       </div>
       <!-- /.modal-content -->
     </div>
-
-
-    <!-- /.modal-dialog -->
+<!-- /.modal-dialog -->
   </div>
 
 <!-- Recherche par Communes -->
 
 
 
-  
-
-
+   
 <!-- /.row (main row) -->
 </div><!-- /.container-fluid -->
 <!-- /.content -->
@@ -359,7 +368,6 @@ label {
       <b>Version</b> 3.2.0
     </div>
   </footer>-->
-
 <!-- Control Sidebar -->
 <aside class="control-sidebar control-sidebar-dark">
   <!-- Control sidebar content goes here -->
@@ -430,7 +438,6 @@ if (isset($_SESSION['popup']) && $_SESSION['popup'] ==  true) {
   ?>
 
 
-
 <!------- Delete Pop--->
 <?php
 
@@ -465,6 +472,25 @@ function showSearchModal(modalId) {
 
   // Show the selected modal
   $('#' + modalId).modal('show');
+}
+</script>
+
+<script>
+function confirmDelete(id) {
+    Swal.fire({
+        title: 'Êtes-vous sûr ?',
+        text: "Voulez-vous vraiment supprimer cet agent ?",
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#d33',
+        confirmButtonText: 'Oui, supprimer',
+        cancelButtonText: 'Annuler'
+    }).then((result) => {
+        if (result.isConfirmed) {
+            window.location.href = 'traitement_agents.php?action=delete&id=' + id;
+        }
+    });
 }
 </script>
 

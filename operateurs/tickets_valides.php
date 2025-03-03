@@ -5,7 +5,7 @@ require_once '../inc/functions/requete/requete_usines.php';
 require_once '../inc/functions/requete/requete_chef_equipes.php';
 require_once '../inc/functions/requete/requete_vehicules.php';
 //require_once '../inc/functions/requete/requetes_selection_boutique.php';
-include('header_operateurs.php');
+include('header.php');
 
 //$_SESSION['user_id'] = $user['id'];
  $id_user=$_SESSION['user_id'];
@@ -25,6 +25,15 @@ $usines = getUsines($conn);
 $chefs_equipes=getChefEquipes($conn);
 $vehicules=getVehicules($conn);
 
+// Initialiser les variables de pagination
+$total_tickets = is_array($tickets) ? count($tickets) : 0;
+$total_pages = $total_tickets > 0 ? ceil($total_tickets / $limit) : 1;
+$page = max(1, min($page, $total_pages));
+
+// Paginer les résultats
+$offset = ($page - 1) * $limit;
+$tickets_list = is_array($tickets) ? array_slice($tickets, $offset, $limit) : [];
+
 
 // Vérifiez si des tickets existent avant de procéder
 if (!empty($tickets)) {
@@ -35,8 +44,6 @@ if (!empty($tickets)) {
 }
 
 ?>
-
-
 
 
 <!-- Main row -->
@@ -142,7 +149,6 @@ label {
 </div>
 
 
-
  <!-- <button type="button" class="btn btn-primary spacing" data-toggle="modal" data-target="#add-commande">
     Enregistrer une commande
   </button>
@@ -177,7 +183,7 @@ label {
         <th>Date ticket</th>
         <th>Numero Ticket</th>
         <th>usine</th>
-        <th>chef equipe</th>
+        <th>Chargé de Mission</th>
         <th>Vehicule</th>
         <th>Poids</th>
         <th>Ticket crée par</th>
@@ -190,48 +196,49 @@ label {
       </tr>
     </thead>
     <tbody>
-      <?php foreach ($tickets_list as $ticket) : ?>
-        <tr>
-          
-          <td><?= $ticket['date_ticket'] ?></td>
-          <td><?= $ticket['numero_ticket'] ?></td>
-          <td><?= $ticket['nom_usine'] ?></td>
-          <td><?= $ticket['chef_nom_complet'] ?></td>
-          <td><?= $ticket['matricule_vehicule'] ?></td>
-          <td><?= $ticket['poids'] ?></td>
+      <?php if (!empty($tickets_list)) : ?>
+        <?php foreach ($tickets_list as $ticket) : ?>
+          <tr>
+            
+            <td><?= $ticket['date_ticket'] ?></td>
+            <td><?= $ticket['numero_ticket'] ?></td>
+            <td><?= $ticket['nom_usine'] ?></td>
+            <td><?= $ticket['agent_nom_complet'] ?></td>
+            <td><?= $ticket['matricule_vehicule'] ?></td>
+            <td><?= $ticket['poids'] ?></td>
 
-          <td><?= $ticket['utilisateur_nom_complet'] ?></td></td>
+            <td><?= $ticket['utilisateur_nom_complet'] ?></td></td>
+
+           <td>
+              <?php if ($ticket['prix_unitaire'] === null || $ticket['prix_unitaire'] == 0.00): ?>
+                  <!-- Affichage d'un bouton rouge désactivé avec message -->
+                  <button class="btn btn-danger btn-block" disabled>
+                      En Attente de validation
+                  </button>
+              <?php else: ?>
+                  <!-- Affichage du prix unitaire dans un bouton noir -->
+                  <button class="btn btn-dark btn-block" disabled>
+                      <?= $ticket['prix_unitaire'] ?>
+                  </button>
+              <?php endif; ?>
+          </td>
+
+
+
 
          <td>
-            <?php if ($ticket['prix_unitaire'] === null || $ticket['prix_unitaire'] == 0.00): ?>
-                <!-- Affichage d'un bouton rouge désactivé avec message -->
-                <button class="btn btn-danger btn-block" disabled>
-                    En Attente de validation
-                </button>
-            <?php else: ?>
-                <!-- Affichage du prix unitaire dans un bouton noir -->
-                <button class="btn btn-dark btn-block" disabled>
-                    <?= $ticket['prix_unitaire'] ?>
-                </button>
-            <?php endif; ?>
-        </td>
+              <?php if ($ticket['date_validation_boss'] === null): ?>
+          <button class="btn btn-warning btn-block" disabled>
+              En cours
+          </button>
+      <?php else: ?>
+          <?= $ticket['date_validation_boss'] ?>
+          <?php endif; ?>
+         </td>
 
 
-
-
-       <td>
-            <?php if ($ticket['date_validation_boss'] === null): ?>
-        <button class="btn btn-warning btn-block" disabled>
-            En cours
-        </button>
-    <?php else: ?>
-        <?= $ticket['date_validation_boss'] ?>
-        <?php endif; ?>
-       </td>
-
-
-    <td>
-                <?php if ($ticket['montant_paie'] === null): ?>
+        <td>
+                    <?php if ($ticket['montant_paie'] === null): ?>
             <button class="btn btn-primary btn-block" disabled>
                 En attente de PU
             </button>
@@ -328,22 +335,26 @@ label {
 
 
       <?php endforeach; ?>
+    <?php else: ?>
+        <tr>
+          <td colspan="12" class="text-center">Pas de tickets validés pour le moment</td>
+        </tr>
+    <?php endif; ?>
     </tbody>
   </table>
 
 </div>
 
-  <div class="pagination-container bg-secondary d-flex justify-content-center w-100 text-white p-3">
-    <?php if($page > 1 ): ?>
+<div class="pagination-container bg-secondary d-flex justify-content-center w-100 text-white p-3">
+    <?php if($page > 1): ?>
         <a href="?page=<?= $page - 1 ?>" class="btn btn-primary"><</a>
     <?php endif; ?>
 
-    <span><?= $page . '/' . count($ticket_pages) ?></span>
+    <span class="mx-2"><?= $page ?>/<?= $total_pages ?></span>
 
-    <?php if($page < count($ticket_pages)): ?>
+    <?php if($page < $total_pages): ?>
         <a href="?page=<?= $page + 1 ?>" class="btn btn-primary">></a>
     <?php endif; ?>
-
     <form action="" method="get" class="items-per-page-form">
         <label for="limit">Afficher :</label>
         <select name="limit" id="limit" class="items-per-page-select">
@@ -467,108 +478,4 @@ label {
 </aside>
 <!-- /.control-sidebar -->
 </div>
-<!-- ./wrapper -->
-
-<!-- jQuery -->
-<script src="../../plugins/jquery/jquery.min.js"></script>
-<!-- jQuery UI 1.11.4 -->
-<script src="../../plugins/jquery-ui/jquery-ui.min.js"></script>
-<!-- Resolve conflict in jQuery UI tooltip with Bootstrap tooltip -->
-<!-- <script>
-  $.widget.bridge('uibutton', $.ui.button)
-</script>-->
-<!-- Bootstrap 4 -->
-<script src="../../plugins/sweetalert2/sweetalert2.min.js"></script>
-
-<script src="../../plugins/bootstrap/js/bootstrap.bundle.min.js"></script>
-<!-- ChartJS -->
-<script src="../../plugins/chart.js/Chart.min.js"></script>
-<!-- Sparkline -->
-<script src="../../plugins/sparklines/sparkline.js"></script>
-<!-- JQVMap -->
-<script src="../../plugins/jqvmap/jquery.vmap.min.js"></script>
-<script src="../../plugins/jqvmap/maps/jquery.vmap.usa.js"></script>
-<!-- jQuery Knob Chart -->
-<script src="../../plugins/jquery-knob/jquery.knob.min.js"></script>
-<!-- daterangepicker -->
-<script src="../../plugins/moment/moment.min.js"></script>
-<script src="../../plugins/daterangepicker/daterangepicker.js"></script>
-<!-- Tempusdominus Bootstrap 4 -->
-<script src="../../plugins/tempusdominus-bootstrap-4/js/tempusdominus-bootstrap-4.min.js"></script>
-<!-- Summernote -->
-<script src="../../plugins/summernote/summernote-bs4.min.js"></script>
-<!-- overlayScrollbars -->
-<script src="../../plugins/overlayScrollbars/js/jquery.overlayScrollbars.min.js"></script>
-<!-- AdminLTE App -->
-<script src="../../dist/js/adminlte.js"></script>
-<?php
-
-if (isset($_SESSION['popup']) && $_SESSION['popup'] ==  true) {
-  ?>
-    <script>
-      var audio = new Audio("../inc/sons/notification.mp3");
-      audio.volume = 1.0; // Assurez-vous que le volume n'est pas à zéro
-      audio.play().then(() => {
-        // Lecture réussie
-        var Toast = Swal.mixin({
-          toast: true,
-          position: 'top-end',
-          showConfirmButton: false,
-          timer: 3000
-        });
-  
-        Toast.fire({
-          icon: 'success',
-          title: 'Action effectuée avec succès.'
-        });
-      }).catch((error) => {
-        console.error('Erreur de lecture audio :', error);
-      });
-    </script>
-  <?php
-    $_SESSION['popup'] = false;
-  }
-  ?>
-
-
-
-<!------- Delete Pop--->
-<?php
-
-if (isset($_SESSION['delete_pop']) && $_SESSION['delete_pop'] ==  true) {
-?>
-  <script>
-    var Toast = Swal.mixin({
-      toast: true,
-      position: 'top-end',
-      showConfirmButton: false,
-      timer: 3000
-    });
-
-    Toast.fire({
-      icon: 'error',
-      title: 'Action échouée.'
-    })
-  </script>
-
-<?php
-  $_SESSION['delete_pop'] = false;
-}
-?>
-<!-- AdminLTE dashboard demo (This is only for demo purposes) -->
-<!--<script src="dist/js/pages/dashboard.js"></script>-->
-<script>
-function showSearchModal(modalId) {
-  // Hide all modals
-  document.querySelectorAll('.modal').forEach(modal => {
-    $(modal).modal('hide');
-  });
-
-  // Show the selected modal
-  $('#' + modalId).modal('show');
-}
-</script>
-
-</body>
-
-</html>
+<!-- ./wrapper
