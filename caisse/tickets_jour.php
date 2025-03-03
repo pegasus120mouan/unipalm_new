@@ -25,19 +25,16 @@ $usines = getUsines($conn);
 $chefs_equipes=getChefEquipes($conn);
 $vehicules=getVehicules($conn);
 
+// Initialisation des variables
+$tickets_list = [];
+$ticket_pages = [];
 
 // Vérifiez si des tickets existent avant de procéder
 if (!empty($tickets)) {
     $ticket_pages = array_chunk($tickets, $limit); // Divise les tickets en pages
     $tickets_list = $ticket_pages[$page - 1] ?? []; // Tickets pour la page actuelle
-} else {
-    $tickets_list = []; // Aucun ticket à afficher
 }
-
 ?>
-
-
-
 
 <!-- Main row -->
 <style>
@@ -124,19 +121,19 @@ label {
 <div class="row">
 
     <div class="block-container">
-    <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#add-ticket">
+    <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#add-ticket" disabled>
       <i class="fa fa-edit"></i>Enregistrer un ticket
     </button>
 
-    <button type="button" class="btn btn-danger" data-toggle="modal" data-target="#add-point">
+    <button type="button" class="btn btn-danger" data-toggle="modal" data-target="#add-point" disabled>
       <i class="fa fa-print"></i> Imprimer un ticket
     </button>
 
-    <button type="button" class="btn btn-success" data-toggle="modal" data-target="#search-commande">
+    <button type="button" class="btn btn-success" data-toggle="modal" data-target="#search-commande" disabled>
       <i class="fa fa-search"></i> Recherche un ticket
     </button>
 
-    <button type="button" class="btn btn-dark" onclick="window.location.href='export_commandes.php'">
+    <button type="button" class="btn btn-dark" onclick="window.location.href='export_commandes.php'" disabled>
               <i class="fa fa-print"></i> Exporter la liste les tickets
              </button>
 </div>
@@ -177,7 +174,7 @@ label {
         <th>Date ticket</th>
         <th>Numero Ticket</th>
         <th>usine</th>
-        <th>chef equipe</th>
+        <th>Chargé de Mission</th>
         <th>Vehicule</th>
         <th>Poids</th>
         <th>Ticket crée par</th>
@@ -185,53 +182,54 @@ label {
         <th>Date validation</th>
         <th>Montant</th>
         <th>Date Paie</th>
-        <th>Actions</th>
+       <!-- <th>Actions</th>-->
         <th>Validation Prix</th>
       </tr>
     </thead>
     <tbody>
-      <?php foreach ($tickets_list as $ticket) : ?>
-        <tr>
-          
-          <td><?= $ticket['date_ticket'] ?></td>
-          <td><?= $ticket['numero_ticket'] ?></td>
-          <td><?= $ticket['nom_usine'] ?></td>
-          <td><?= $ticket['chef_nom_complet'] ?></td>
-          <td><?= $ticket['matricule_vehicule'] ?></td>
-          <td><?= $ticket['poids'] ?></td>
+      <?php if (!empty($tickets_list)) : ?>
+        <?php foreach ($tickets_list as $ticket) : ?>
+          <tr>
+            
+            <td><?= date('d/m/Y', strtotime($ticket['date_ticket'])) ?></td>
+            <td><?= $ticket['numero_ticket'] ?></td>
+            <td><?= $ticket['nom_usine'] ?></td>
+            <td><?= $ticket['agent_nom_complet'] ?></td>
+            <td><?= $ticket['matricule_vehicule'] ?></td>
+            <td><?= $ticket['poids'] ?></td>
 
-          <td><?= $ticket['utilisateur_nom_complet'] ?></td></td>
+            <td><?= $ticket['utilisateur_nom_complet'] ?></td></td>
+
+           <td>
+              <?php if ($ticket['prix_unitaire'] === null || $ticket['prix_unitaire'] == 0.00): ?>
+                  <!-- Affichage d'un bouton rouge désactivé avec message -->
+                  <button class="btn btn-danger btn-block" disabled>
+                      En Attente de validation
+                  </button>
+              <?php else: ?>
+                  <!-- Affichage du prix unitaire dans un bouton noir -->
+                  <button class="btn btn-dark btn-block" disabled>
+                      <?= $ticket['prix_unitaire'] ?>
+                  </button>
+              <?php endif; ?>
+          </td>
+
+
+
 
          <td>
-            <?php if ($ticket['prix_unitaire'] === null || $ticket['prix_unitaire'] == 0.00): ?>
-                <!-- Affichage d'un bouton rouge désactivé avec message -->
-                <button class="btn btn-danger btn-block" disabled>
-                    En Attente de validation
-                </button>
-            <?php else: ?>
-                <!-- Affichage du prix unitaire dans un bouton noir -->
-                <button class="btn btn-dark btn-block" disabled>
-                    <?= $ticket['prix_unitaire'] ?>
-                </button>
-            <?php endif; ?>
-        </td>
+              <?php if ($ticket['date_validation_boss'] === null): ?>
+          <button class="btn btn-warning btn-block" disabled>
+              En cours
+          </button>
+      <?php else: ?>
+          <?= date('d/m/Y', strtotime($ticket['date_validation_boss'])) ?>
+          <?php endif; ?>
+         </td>
 
 
-
-
-       <td>
-            <?php if ($ticket['date_validation_boss'] === null): ?>
-        <button class="btn btn-warning btn-block" disabled>
-            En cours
-        </button>
-    <?php else: ?>
-        <?= $ticket['date_validation_boss'] ?>
-        <?php endif; ?>
-       </td>
-
-
-    <td>
-                <?php if ($ticket['montant_paie'] === null): ?>
+        <td>
+                    <?php if ($ticket['montant_paie'] === null): ?>
             <button class="btn btn-primary btn-block" disabled>
                 En attente de PU
             </button>
@@ -249,17 +247,17 @@ label {
                 Paie non encore effectuée
             </button>
         <?php else: ?>
-            <?= $ticket['date_paie'] ?>
+            <?= date('d/m/Y', strtotime($ticket['date_paie'])) ?>
             <?php endif; ?>
           </td>
           
   
-          <td class="actions">
+      <!--    <td class="actions">
             <a class="edit" data-toggle="modal" data-target="#editModalTicket<?= $ticket['id_ticket'] ?>">
             <i class="fas fa-pen fa-xs" style="font-size:24px;color:blue"></i>
             </a>
             <a href="delete_commandes.php?id=<?= $ticket['id_ticket'] ?>" class="trash"><i class="fas fa-trash fa-xs" style="font-size:24px;color:red"></i></a>
-          </td>
+          </td>-->
 
           <div class="modal fade" id="editModalTicket<?= $ticket['id_ticket'] ?>" tabindex="-1" role="dialog" aria-labelledby="editModalLabel" aria-hidden="true">
     <div class="modal-dialog" role="document">
@@ -328,6 +326,11 @@ label {
 
 
       <?php endforeach; ?>
+      <?php else: ?>
+        <tr>
+          <td colspan="12" class="text-center">Pas de tickets ajoutés pour le moment</td>
+        </tr>
+      <?php endif; ?>
     </tbody>
   </table>
 
@@ -337,13 +340,11 @@ label {
     <?php if($page > 1 ): ?>
         <a href="?page=<?= $page - 1 ?>" class="btn btn-primary"><</a>
     <?php endif; ?>
-
     <span><?= $page . '/' . count($ticket_pages) ?></span>
 
     <?php if($page < count($ticket_pages)): ?>
         <a href="?page=<?= $page + 1 ?>" class="btn btn-primary">></a>
     <?php endif; ?>
-
     <form action="" method="get" class="items-per-page-form">
         <label for="limit">Afficher :</label>
         <select name="limit" id="limit" class="items-per-page-select">
@@ -468,107 +469,4 @@ label {
 <!-- /.control-sidebar -->
 </div>
 <!-- ./wrapper -->
-
-<!-- jQuery -->
-<script src="../../plugins/jquery/jquery.min.js"></script>
-<!-- jQuery UI 1.11.4 -->
-<script src="../../plugins/jquery-ui/jquery-ui.min.js"></script>
-<!-- Resolve conflict in jQuery UI tooltip with Bootstrap tooltip -->
-<!-- <script>
-  $.widget.bridge('uibutton', $.ui.button)
-</script>-->
-<!-- Bootstrap 4 -->
-<script src="../../plugins/sweetalert2/sweetalert2.min.js"></script>
-
-<script src="../../plugins/bootstrap/js/bootstrap.bundle.min.js"></script>
-<!-- ChartJS -->
-<script src="../../plugins/chart.js/Chart.min.js"></script>
-<!-- Sparkline -->
-<script src="../../plugins/sparklines/sparkline.js"></script>
-<!-- JQVMap -->
-<script src="../../plugins/jqvmap/jquery.vmap.min.js"></script>
-<script src="../../plugins/jqvmap/maps/jquery.vmap.usa.js"></script>
-<!-- jQuery Knob Chart -->
-<script src="../../plugins/jquery-knob/jquery.knob.min.js"></script>
-<!-- daterangepicker -->
-<script src="../../plugins/moment/moment.min.js"></script>
-<script src="../../plugins/daterangepicker/daterangepicker.js"></script>
-<!-- Tempusdominus Bootstrap 4 -->
-<script src="../../plugins/tempusdominus-bootstrap-4/js/tempusdominus-bootstrap-4.min.js"></script>
-<!-- Summernote -->
-<script src="../../plugins/summernote/summernote-bs4.min.js"></script>
-<!-- overlayScrollbars -->
-<script src="../../plugins/overlayScrollbars/js/jquery.overlayScrollbars.min.js"></script>
-<!-- AdminLTE App -->
-<script src="../../dist/js/adminlte.js"></script>
 <?php
-
-if (isset($_SESSION['popup']) && $_SESSION['popup'] ==  true) {
-  ?>
-    <script>
-      var audio = new Audio("../inc/sons/notification.mp3");
-      audio.volume = 1.0; // Assurez-vous que le volume n'est pas à zéro
-      audio.play().then(() => {
-        // Lecture réussie
-        var Toast = Swal.mixin({
-          toast: true,
-          position: 'top-end',
-          showConfirmButton: false,
-          timer: 3000
-        });
-  
-        Toast.fire({
-          icon: 'success',
-          title: 'Action effectuée avec succès.'
-        });
-      }).catch((error) => {
-        console.error('Erreur de lecture audio :', error);
-      });
-    </script>
-  <?php
-    $_SESSION['popup'] = false;
-  }
-  ?>
-
-
-
-<!------- Delete Pop--->
-<?php
-
-if (isset($_SESSION['delete_pop']) && $_SESSION['delete_pop'] ==  true) {
-?>
-  <script>
-    var Toast = Swal.mixin({
-      toast: true,
-      position: 'top-end',
-      showConfirmButton: false,
-      timer: 3000
-    });
-
-    Toast.fire({
-      icon: 'error',
-      title: 'Action échouée.'
-    })
-  </script>
-
-<?php
-  $_SESSION['delete_pop'] = false;
-}
-?>
-<!-- AdminLTE dashboard demo (This is only for demo purposes) -->
-<!--<script src="dist/js/pages/dashboard.js"></script>-->
-<script>
-function showSearchModal(modalId) {
-  // Hide all modals
-  document.querySelectorAll('.modal').forEach(modal => {
-    $(modal).modal('hide');
-  });
-
-  // Show the selected modal
-  $('#' + modalId).modal('show');
-}
-</script>
-
-</body>
-
-</html>

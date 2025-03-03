@@ -311,22 +311,22 @@ label {
             <div class="card-body">
               <div class="form-group">
                 <label for="exampleInputEmail1">Nom</label>
-                <input type="text" class="form-control" id="exampleInputEmail1" placeholder="Nom" name="nom">
+                <input type="text" class="form-control" id="exampleInputEmail1" placeholder="Nom" name="nom" required>
               </div>
 
               <div class="form-group">
                 <label for="exampleInputEmail1">Prenoms</label>
-                <input type="text" class="form-control" id="exampleInputEmail1" placeholder="Prenoms" name="prenoms">
+                <input type="text" class="form-control" id="exampleInputEmail1" placeholder="Prenoms" name="prenom" required>
               </div>
 
               <div class="form-group">
                 <label for="exampleInputEmail1">Contact</label>
-                <input type="text" class="form-control" id="exampleInputEmail1" placeholder="Contact" name="contact">
+                <input type="text" class="form-control" id="exampleInputEmail1" placeholder="Contact" name="contact" required>
               </div>
 
               <div class="form-group">
                   <label>Selection chef Equipe</label>
-                  <select id="select" name="chef_equipe" class="form-control">
+                  <select id="select" name="id_chef" class="form-control" required>
                       <?php
                       // Vérifier si des usines existent
                       if (!empty($chefs_equipes)) {
@@ -340,8 +340,8 @@ label {
                   </select>
               </div>
 
-              <button type="submit" class="btn btn-primary mr-2" name="saveCommande">Enregister</button>
-              <button class="btn btn-light">Annuler</button>
+              <button type="submit" class="btn btn-primary mr-2" name="add_agent">Enregister</button>
+              <button type="button" class="btn btn-light" data-dismiss="modal">Annuler</button>
             </div>
           </form>
         </div>

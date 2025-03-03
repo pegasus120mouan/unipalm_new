@@ -6,29 +6,29 @@ setlocale(LC_TIME, 'fr_FR.utf8', 'fra');  // Force la configuration en français
 require_once '../inc/functions/connexion.php';
 
 // Nombre de ticket Total
-$sql_ticket_total = "SELECT COUNT(id_ticket) AS nb_ticket_tt FROM ticket";
+$sql_ticket_total = "SELECT COUNT(id_ticket) AS nb_ticket_tt FROM tickets";
 $requete_tt = $conn->prepare($sql_ticket_total);
 $requete_tt->execute();
 $ticket_total = $requete_tt->fetch(PDO::FETCH_ASSOC);
 
 
 // Nombre de ticket en attente
-$sql_ticket_nv = "SELECT COUNT(id_ticket) AS nb_ticket_nv FROM ticket WHERE prix_unitaire =0.0";
+$sql_ticket_nv = "SELECT COUNT(id_ticket) AS nb_ticket_nv FROM tickets WHERE  date_validation_boss IS NULL";
 $requete_tnv = $conn->prepare($sql_ticket_nv);
 $requete_tnv->execute();
 $ticket_non_valide = $requete_tnv->fetch(PDO::FETCH_ASSOC);
 
 
 // Nombre de tickets validés
-$sql_ticket_v = "SELECT COUNT(id_ticket) AS nb_ticket_nv FROM ticket
-WHERE prix_unitaire IS NOT NULL AND prix_unitaire != 0.00";
+$sql_ticket_v = "SELECT COUNT(id_ticket) AS nb_ticket_nv FROM tickets
+WHERE date_validation_boss IS NOT NULL";
 $requete_tv = $conn->prepare($sql_ticket_v);
 $requete_tv->execute();
 $ticket_valide = $requete_tv->fetch(PDO::FETCH_ASSOC);
 
 
 // Nombre de colis tickés payes
-$sql_ticket_paye = "SELECT COUNT(id_ticket) AS nb_ticket_paye FROM ticket WHERE date_paie IS NULL AND prix_unitaire !=0.0";
+$sql_ticket_paye = "SELECT COUNT(id_ticket) AS nb_ticket_paye FROM tickets WHERE date_paie IS NULL AND date_validation_boss IS NOT NULL";
 $requete_tpaye = $conn->prepare($sql_ticket_paye);
 $requete_tpaye->execute();
 $ticket_paye = $requete_tpaye->fetch(PDO::FETCH_ASSOC);
@@ -124,10 +124,14 @@ if (!isset($_SESSION['user_id'])) {
           <a class="nav-link" data-widget="pushmenu" href="#" role="button"><i class="fas fa-bars"></i></a>
         </li>
         <li class="nav-item d-none d-sm-inline-block">
-          <a href="dashboard.php" class="nav-link">Acceuil</a>
+          <a href="tickets.php" class="nav-link">Acceuil</a>
         </li>
         <li class="nav-item d-none d-sm-inline-block">
           <a href="tickets.php" class="nav-link">Les Tickets</a>
+        </li>
+
+        <li class="nav-item d-none d-sm-inline-block">
+          <a href="paiements.php" class="nav-link">Paiements</a>
         </li>
       </ul>
 
@@ -188,8 +192,8 @@ if (!isset($_SESSION['user_id'])) {
           </a>
         </li>
         <li class="nav-item">
-          <a class="nav-link" data-widget="control-sidebar" data-controlsidebar-slide="true" href="#" role="button">
-            <i class="fas fa-th-large"></i>
+          <a class="nav-link text-danger" href="../logout.php" role="button">
+            <i class="fas fa-power-off fa-lg"></i> <!-- Ajout de fa-lg pour une taille plus grande -->
           </a>
         </li>
       </ul>
@@ -235,7 +239,7 @@ if (!isset($_SESSION['user_id'])) {
           <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
             <!-- Add icons to the links using the .nav-icon class
                with font-awesome or any other icon font library -->
-            <li class="nav-item menu-open">
+         <!--   <li class="nav-item menu-open">
               <a href="#" class="nav-link active">
                 <i class="nav-icon fas fa-tachometer-alt"></i>
                 <p>
@@ -246,37 +250,50 @@ if (!isset($_SESSION['user_id'])) {
               <ul class="nav nav-treeview">
                 <li class="nav-item">
                   <a href="tickets.php" class="nav-link active">
-                    <i class="fas fa-motorcycle"></i>
+                    <i class="fas fa-ticket-alt"></i>
                     <p>Liste des tickets</p>
                   </a>
                 </li>
 
-
                 <li class="nav-item">
                   <a href="tickets_jour.php" class="nav-link">
-                    <i class="fas fa-bicycle"></i>
+                    <i class="fas fa-calendar-day"></i>
                     <p>Tickets du jour</p>
                   </a>
                 </li>
 
                 <li class="nav-item">
                   <a href="tickets_attente.php" class="nav-link">
-                    <i class="fas fa-bicycle"></i>
+                    <i class="fas fa-clock"></i>
                     <p>Tickets en Attente</p>
                   </a>
                 </li>
 
-
-                 <li class="nav-item">
+                <li class="nav-item">
                   <a href="tickets_valides.php" class="nav-link">
-                    <i class="fas fa-bicycle"></i>
+                    <i class="fas fa-check-circle"></i>
                     <p>Tickets en Validés</p>
                   </a>
                 </li>
+
                 <li class="nav-item">
                   <a href="tickets_payes.php" class="nav-link">
-                    <i class="fas fa-bicycle"></i>
+                    <i class="fas fa-money-bill-wave"></i>
                     <p>Tickets Payés</p>
+                  </a>
+                </li>
+
+                <li class="nav-item">
+                  <a href="tickets_modifications.php" class="nav-link">
+                    <i class="fas fa-edit"></i>
+                    <p>Modifications de tickets</p>
+                  </a>
+                </li>
+
+                <li class="nav-item">
+                  <a href="recherche_trie.php" class="nav-link">
+                    <i class="fas fa-search"></i>
+                    <p>Recherche avancée</p>
                   </a>
                 </li>
               </ul>
@@ -293,99 +310,123 @@ if (!isset($_SESSION['user_id'])) {
               <ul class="nav nav-treeview">
                 <li class="nav-item">
                   <a href="utilisateurs.php" class="nav-link">
-                    <i class="fas fa-male	"></i>
+                    <i class="fas fa-male"></i>
                     <p>Listes des utilisateurs</p>
                   </a>
                 </li>
                 <li class="nav-item">
                   <a href="liste_admins.php" class="nav-link">
-                  <i class="fas fa-user-tie"></i>
+                    <i class="fas fa-user-tie"></i>
                     <p>Listes des admins</p>
                   </a>
                 </li>
 
-                 <li class="nav-item">
+                <li class="nav-item">
                   <a href="gestion_access.php" class="nav-link">
-                  <i class="fas fa-lock"></i>
+                    <i class="fas fa-lock"></i>
                     <p>Gestion des acccès</p>
                   </a>
                 </li>
+              </ul>
+            </li>
 
+            <li class="nav-item">
+              <a href="#" class="nav-link">
+                <i class="nav-icon fas fa-cogs"></i>
+                <p>
+                  Gestion
+                  <i class="fas fa-angle-left right"></i>
+                </p>
+              </a>
+              <ul class="nav nav-treeview">
                 <li class="nav-item">
-                  <a href="gestion_access.php" class="nav-link">
-                  <i class="fas fa-lock"></i>
-                    <p>Gestion des véhicules</p>
+                  <a href="chef_equipe.php" class="nav-link">
+                    <i class="fas fa-users"></i>
+                    <p>Gestion chef equipe</p>
                   </a>
                 </li>
 
                 <li class="nav-item">
-                  <a href="gestion_access.php" class="nav-link">
-                  <i class="fas fa-lock"></i>
+                  <a href="agents.php" class="nav-link">
+                    <i class="fas fa-user-plus"></i>
+                    <p>Gestion des agents</p>
+                  </a>
+                </li>
+
+                <li class="nav-item">
+                  <a href="usines.php" class="nav-link">
+                    <i class="fas fa-industry"></i>
                     <p>Gestion des usines</p>
                   </a>
                 </li>
 
+                <li class="nav-item">
+                  <a href="vehicules.php" class="nav-link">
+                    <i class="fas fa-car"></i>
+                    <p>Gestion des véhicules</p>
+                  </a>
+                </li>
+              </ul>
+            </li>-->
 
+            <li class="nav-item">
+              <a href="#" class="nav-link">
+                <i class="nav-icon fas fa-money-bill-alt"></i>
+                <p>
+                  Gestion financière
+                  <i class="fas fa-angle-left right"></i>
+                </p>
+              </a>
+              <ul class="nav nav-treeview">
+                <li class="nav-item">
+                  <a href="prix_unitaires.php" class="nav-link">
+                    <i class="fas fa-tags"></i>
+                    <p>Prix unitaires</p>
+                  </a>
+                </li>
+
+                <li class="nav-item">
+                  <a href="bordereaux.php" class="nav-link">
+                    <i class="fas fa-file-invoice"></i>
+                    <p>Bordereaux</p>
+                  </a>
+                </li>
+
+                <li class="nav-item">
+                  <a href="financements.php" class="nav-link">
+                    <i class="fas fa-money-bill-wave"></i>
+                    <p>Financements</p>
+                  </a>
+                </li>
+
+                <li class="nav-item">
+                  <a href="gestion_usines.php" class="nav-link">
+                    <i class="fas fa-industry"></i>
+                    <p>Montant Usines</p>
+                  </a>
+                </li>
               </ul>
             </li>
-             <li class="nav-item">
-              <a href="chef_equipe.php" class="nav-link">
-                <i class="nav-icon far fa-calendar-alt"></i>
+
+            <li class="nav-header"><strong>TRANSACTIONS</strong></li>
+            <li class="nav-item">
+              <a href="approvisionnement.php" class="nav-link">
+                <i class="fas fa-truck-loading"></i>
                 <p>
-                  Gestions chef equipe
-                </p>
-              </a>
-             </li>
-              <li class="nav-item">
-              <a href="agents.php" class="nav-link">
-                <i class="nav-icon far fa-calendar-alt"></i>
-                <p>
-                  Gestions des agents
-                </p>
-              </a>
-             </li>
-
-             <li class="nav-item">
-              <a href="usines.php" class="nav-link">
-                <i class="nav-icon far fa-calendar-alt"></i>
-                <p>
-                  Gestions des usines
-                </p>
-              </a>
-             </li>
-
-
-
-
-
-          <li class="nav-header"><strong>APPROVISIONNEMENT</strong></li>
-             <li class="nav-item">
-              <a href="soldes.php" class="nav-link">
-                <i class="nav-icon far fa-calendar-alt"></i>
-                <p>
-                  Soldes
+                  Approvisionnement
                   <span class="badge badge-info right">2</span>
                 </p>
               </a>
-             </li>
+            </li>
+
             <li class="nav-item">
-              <a href="caisses.php" class="nav-link">
-                <i class="nav-icon far fa-image"></i>
+              <a href="paiements.php" class="nav-link">
+                <i class="fas fa-cash-register"></i>
                 <p>
-                  Caisse
+                  Paiements
                 </p>
               </a>
             </li>
-            
-            <li class="nav-item">
-              <a href="../logout.php" class="nav-link">
-              <i class="fa fa-arrow-right"></i>
-
-                <p>
-                  Déconnexion
-                </p>
-              </a>
-           </li>
 
           </ul>
         </nav>

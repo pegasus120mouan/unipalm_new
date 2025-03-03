@@ -408,7 +408,7 @@ if (!isset($_SESSION['user_id'])) {
               </ul>
             </li>
 
-            <li class="nav-header"><strong>APPROVISIONNEMENT</strong></li>
+            <li class="nav-header"><strong>TRANSACTIONS</strong></li>
             <li class="nav-item">
               <a href="approvisionnement.php" class="nav-link">
                 <i class="fas fa-truck-loading"></i>

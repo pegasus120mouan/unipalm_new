@@ -44,7 +44,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                     header("location: ../validateur/tickets.php");
                       break;
                   default:
-                      header('Location: ../caisse/tickets.php');
+                      header('Location: ../caisse/approvisionnement.php');
                       break;
               }
               exit(0);

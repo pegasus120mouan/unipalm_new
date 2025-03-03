@@ -183,70 +183,20 @@ label {
     <tbody>
       <?php foreach ($usines_list as $usine) : ?>
         <tr>
-          
-          <td><?= $usine['nom_usine'] ?></td>
-    
-          
-  
-          <td class="actions">
-            <a class="edit" data-toggle="modal" data-target="#editModalTicket<?= $ticket['id_ticket'] ?>">
-            <i class="fas fa-pen fa-xs" style="font-size:24px;color:blue"></i>
+          <td>
+            <a href="details_usine.php?id=<?= $usine['id_usine'] ?>" class="text-dark">
+              <?= $usine['nom_usine'] ?>
             </a>
-            <a href="delete_commandes.php?id=<?= $ticket['id_ticket'] ?>" class="trash"><i class="fas fa-trash fa-xs" style="font-size:24px;color:red"></i></a>
           </td>
-
-          <div class="modal fade" id="editModalTicket<?= $ticket['id_ticket'] ?>" tabindex="-1" role="dialog" aria-labelledby="editModalLabel" aria-hidden="true">
-    <div class="modal-dialog" role="document">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="editModalLabel">Modification Ticket <?= $ticket['id_ticket'] ?></h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
-            </div>
-            <div class="modal-body">
-                <!-- Formulaire de modification du ticket -->
-                <form action="commandes_update.php?id=<?= $ticket['id_ticket'] ?>" method="post">
-                <div class="form-group">
-                        <label for="prix_unitaire">Numéro du ticket</label>
-                        <input type="text" class="form-control" id="numero_ticket" name="numero_ticket" value="<?= $ticket['numero_ticket'] ?>" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="prix_unitaire">Prix Unitaire</label>
-                        <input type="number" class="form-control" id="prix_unitaire" name="prix_unitaire" value="<?= $ticket['prix_unitaire'] ?>" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="date_validation_boss">Date de Validation</label>
-                        <input type="date" class="form-control" id="date_validation_boss" name="date_validation_boss" value="<?= $ticket['date_validation_boss'] ?>" required>
-                    </div>
-                    <button type="submit" class="btn btn-primary">Sauvegarder les modifications</button>
-                </form>
-            </div>
-        </div>
-    </div>
-</div>
-          
-         <div class="modal" id="valider_ticket<?= $ticket['id_ticket'] ?>">
-          <div class="modal-dialog">
-            <div class="modal-content">
-              <div class="modal-body">
-                <form action="traitement_tickets.php" method="post">
-                  <input type="hidden" name="id_ticket" value="<?= $ticket['id_ticket'] ?>">
-                  <div class="form-group">
-                    <label>Ajouter le prix unitaire</label>
-                  </div>
-                  <div class="form-group">
-                <input type="text" class="form-control" id="exampleInputEmail1" placeholder="Prix unitaire" name="prix_unitaire">
-              </div>
-                  <button type="submit" class="btn btn-primary mr-2" name="saveCommande">Ajouter</button>
-                  <button class="btn btn-light">Annuler</button>
-                </form>
-              </div>
-            </div>
-          </div>
-        </div>
-
-
+          <td class="actions">
+            <a class="edit" data-toggle="modal" data-target="#editModalUsine<?= $usine['id_usine'] ?>">
+              <i class="fas fa-pen fa-xs" style="font-size:24px;color:blue"></i>
+            </a>
+            <a href="delete_usine.php?id=<?= $usine['id_usine'] ?>" class="trash" onclick="return confirm('Êtes-vous sûr de vouloir supprimer cette usine ?')">
+              <i class="fas fa-trash fa-xs" style="font-size:24px;color:red"></i>
+            </a>
+          </td>
+        </tr>
       <?php endforeach; ?>
     </tbody>
   </table>
