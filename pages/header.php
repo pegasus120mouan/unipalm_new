@@ -400,9 +400,52 @@ if (!isset($_SESSION['user_id'])) {
                 </li>
 
                 <li class="nav-item">
-                  <a href="gestion_usines.php" class="nav-link">
-                    <i class="fas fa-industry"></i>
-                    <p>Montant Usines</p>
+                  <a href="recus.php" class="nav-link">
+                    <i class="fas fa-receipt"></i>
+                    <p>Reçus</p>
+                  </a>
+                </li>
+
+                <li class="nav-item">
+                  <a href="divers.php" class="nav-link">
+                    <i class="fas fa-money-bill-wave-alt"></i>
+                    <p>Sorties diverses</p>
+                  </a>
+                </li>
+              </ul>
+            </li>
+
+            <li class="nav-item">
+              <a href="#" class="nav-link">
+                <i class="nav-icon fas fa-door-open"></i>
+                <p>
+                  Gestion des sorties
+                  <i class="fas fa-angle-left right"></i>
+                </p>
+              </a>
+              <ul class="nav nav-treeview">
+                <li class="nav-item">
+                  <a href="demandes.php" class="nav-link">
+                    <i class="fas fa-list nav-icon"></i>
+                    <p>Liste des demandes</p>
+                  </a>
+                </li>
+                <li class="nav-item">
+                  <a href="demande_attente.php" class="nav-link">
+                    <i class="fas fa-check-circle nav-icon"></i>
+                    <p>Demandes en attente</p>
+                  </a>
+                </li>
+                <li class="nav-item">
+                  <a href="demande_valide.php" class="nav-link">
+                    <i class="fas fa-check-circle nav-icon"></i>
+                    <p>Demandes validées</p>
+                  </a>
+                </li>
+                <li class="nav-item">
+                  <a href="divers.php" class="nav-link">
+                    <i class="far fa-circle nav-icon"></i>
+                    <p>Divers</p>
                   </a>
                 </li>
               </ul>
@@ -420,14 +463,17 @@ if (!isset($_SESSION['user_id'])) {
             </li>
 
             <li class="nav-item">
-              <a href="paiements.php" class="nav-link">
-                <i class="fas fa-cash-register"></i>
-                <p>
-                  Paiements
-                </p>
+              <a href="paiements.php" class="nav-link <?= basename($_SERVER['PHP_SELF']) == 'paiements.php' ? 'active' : '' ?>">
+                <i class="nav-icon fas fa-money-bill"></i>
+                <p>Paiements</p>
               </a>
             </li>
-
+            <li class="nav-item">
+              <a href="recus.php" class="nav-link <?= basename($_SERVER['PHP_SELF']) == 'recus.php' ? 'active' : '' ?>">
+                <i class="nav-icon fas fa-receipt"></i>
+                <p>Historique des Reçus</p>
+              </a>
+            </li>
           </ul>
         </nav>
         <!-- /.sidebar-menu -->

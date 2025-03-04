@@ -1157,6 +1157,44 @@ if (isset($_SESSION['delete_pop']) && $_SESSION['delete_pop'] ==  true) {
 <!-- AdminLTE dashboard demo (This is only for demo purposes) -->
 <!--<script src="dist/js/pages/dashboard.js"></script>-->
 <script>
+    $(document).on('click', '.btn-valider', function(e) {
+    e.preventDefault();
+    
+    var id_demande = $(this).data('id');
+
+    if (confirm('Voulez-vous vraiment valider cette demande ?')) {
+        // Ajout d'un loader (optionnel)
+        var $btn = $(this);
+        $btn.prop('disabled', true).text('Validation...');
+
+        $.ajax({
+            url: 'valider_demande.php',
+            type: 'POST',
+            data: { id_demande: id_demande },
+            dataType: 'json',
+            success: function(response) {
+                if (response.success) {
+                    // Affiche la modale de succès
+                    $('#successModal').modal('show');
+                    setTimeout(function() {
+                        location.reload();  // Recharge la page après 2 secondes
+                    }, 2000);
+                } else {
+                    alert('Erreur: ' + response.message);
+                    $btn.prop('disabled', false).text('Valider');
+                }
+            },
+            error: function(xhr, status, error) {
+                console.error('Erreur AJAX:', error);
+                alert('Erreur lors de la validation');
+                $btn.prop('disabled', false).text('Valider');
+            }
+        });
+    }
+});
+
+</script>
+<script>
 function showSearchModal(modalId) {
   // Hide all modals
   document.querySelectorAll('.modal').forEach(modal => {

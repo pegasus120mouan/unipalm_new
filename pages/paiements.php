@@ -189,7 +189,7 @@ label {
                 </div>
                 <span class="progress-description">
                     <h1 style="text-align: center; font-size: 70px;">
-                        <strong><?php echo number_format($somme_caisse['solde_caisse'], 0, ',', ' '); ?> FCFA</strong>
+                        <strong><?php echo number_format($somme_caisse['solde_caisse'] ?? 0, 0, ',', ' '); ?> FCFA</strong>
                     </h1>
                 </span>
             </div>
@@ -406,10 +406,17 @@ label {
                             </div>
 
                             <div class="form-group">
-                                <label>Montant à payer</label>
-                                <input type="number" step="0.01" class="form-control" name="montant" required 
-                                       max="<?= $item['montant_reste'] ?>"
-                                       placeholder="Entrez le montant à payer">
+                                <label>Montant à payer (Max: <?= number_format($item['montant_reste'], 0, ',', ' ') ?> FCFA)</label>
+                                <input 
+                                    type="text" 
+                                    class="form-control montant-input" 
+                                    name="montant_affiche" 
+                                    required 
+                                    data-max="<?= $item['montant_reste'] ?>" 
+                                    placeholder="Entrez le montant à payer">
+
+                                <!-- Champ caché contenant la valeur brute (sans espaces) -->
+                                <input type="hidden" name="montant" value="">
                             </div>
 
                             <div class="modal-footer">
@@ -466,11 +473,19 @@ label {
                             </div>
 
                             <div class="form-group">
-                                <label>Montant à payer</label>
-                                <input type="number" step="0.01" class="form-control" name="montant" required 
-                                       max="<?= $item['montant_paie'] - (!isset($item['montant_payer']) || $item['montant_payer'] === null ? 0 : $item['montant_payer']) ?>"
-                                       placeholder="Entrez le montant à payer">
-                            </div>
+    <label>Montant à payer (Max: <?= number_format($item['montant_reste'], 0, ',', ' ') ?> FCFA)</label>
+    <input 
+        type="text" 
+        class="form-control montant-input" 
+        name="montant_affiche" 
+        required 
+        data-max="<?= $item['montant_reste'] ?>" 
+        placeholder="Entrez le montant à payer">
+
+    <!-- Champ caché contenant la valeur brute (sans espaces) pour l'envoi -->
+    <input type="hidden" name="montant" value="">
+</div>
+
 
                             <div class="modal-footer">
                                 <button type="button" class="btn btn-secondary" data-dismiss="modal">Fermer</button>
@@ -487,20 +502,76 @@ label {
 <!-- Required scripts -->
 <script src="../../plugins/jquery/jquery.min.js"></script>
 <script src="../../plugins/bootstrap/js/bootstrap.bundle.min.js"></script>
-<script src="../../plugins/datatables/jquery.dataTables.min.js"></script>
-<script src="../../plugins/datatables-bs4/js/dataTables.bootstrap4.min.js"></script>
-<script src="../../dist/js/adminlte.min.js"></script>
+<script src="../../plugins/jquery/jquery.min.js"></script>
+<!-- jQuery UI 1.11.4 -->
+<script src="../../plugins/jquery-ui/jquery-ui.min.js"></script>
+<!-- Resolve conflict in jQuery UI tooltip with Bootstrap tooltip -->
+<!-- <script>
+  $.widget.bridge('uibutton', $.ui.button)
+</script>-->
+<!-- Bootstrap 4 -->
+<script src="../../plugins/bootstrap/js/bootstrap.bundle.min.js"></script>
+<!-- ChartJS -->
+<script src="../../plugins/chart.js/Chart.min.js"></script>
+<!-- Sparkline -->
+<script src="../../plugins/sparklines/sparkline.js"></script>
+<!-- JQVMap -->
+<script src="../../plugins/jqvmap/jquery.vmap.min.js"></script>
+<script src="../../plugins/jqvmap/maps/jquery.vmap.usa.js"></script>
+<!-- jQuery Knob Chart -->
+<script src="../../plugins/jquery-knob/jquery.knob.min.js"></script>
+<!-- daterangepicker -->
+<script src="../../plugins/moment/moment.min.js"></script>
+<script src="../../plugins/daterangepicker/daterangepicker.js"></script>
+<!-- Tempusdominus Bootstrap 4 -->
+<script src="../../plugins/tempusdominus-bootstrap-4/js/tempusdominus-bootstrap-4.min.js"></script>
+<!-- Summernote -->
+<script src="../../plugins/summernote/summernote-bs4.min.js"></script>
+<!-- overlayScrollbars -->
+<script src="../../plugins/overlayScrollbars/js/jquery.overlayScrollbars.min.js"></script>
+<!-- AdminLTE App -->
+<script src="../../dist/js/adminlte.js"></script>
+<script>
+    $(function () {
+        $("#example1").DataTable({
+            "responsive": true,
+        });
+    });
+</script>
 
 <script>
-$(function () {
-    $('#example1').DataTable({
-        "paging": false,
-        "lengthChange": false,
-        "searching": true,
-        "ordering": true,
-        "info": true,
-        "autoWidth": false,
-        "responsive": true,
+ // Fonction pour ajouter des espaces tous les 3 chiffres
+function formatNumberWithSpaces(number) {
+    return number.replace(/\B(?=(\d{3})+(?!\d))/g, ' ');
+}
+
+// Appliquer le formatage + contrôle max à toutes les inputs montant-input
+document.querySelectorAll('.montant-input').forEach(function(input) {
+    input.addEventListener('input', function() {
+        let rawValue = input.value.replace(/\s+/g, '').replace(/[^0-9]/g, '');  // Nettoyer
+        const max = parseInt(input.getAttribute('data-max'), 10);
+
+        // Mettre à jour le champ caché
+        input.nextElementSibling.value = rawValue;
+
+        // Appliquer format
+        input.value = formatNumberWithSpaces(rawValue);
+
+        // Contrôle max
+        if (parseInt(rawValue) > max) {
+            alert('Le montant ne peut pas dépasser ' + formatNumberWithSpaces(max.toString()) + ' FCFA');
+            input.value = formatNumberWithSpaces(max.toString());
+            input.nextElementSibling.value = max;
+        }
     });
+
+    // Format initial si champ pré-rempli
+    let initialRawValue = input.value.replace(/\s+/g, '').replace(/[^0-9]/g, '');
+    input.value = formatNumberWithSpaces(initialRawValue);
+    input.nextElementSibling.value = initialRawValue;
 });
+
 </script>
+
+</body>
+</html>

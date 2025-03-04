@@ -248,3 +248,1386 @@
 )
 
 [2025-02-28 19:59:18] Transaction commit avec succès
+[2025-03-04 10:34:42] Données reçues : Array
+(
+    [id_ticket] => 90
+    [numero_ticket] => 202503APO00007
+    [type] => all
+    [status] => all
+    [montant_reste] => 3094200
+    [source_paiement] => transactions
+    [montant] => 100000
+    [save_paiement] => 
+)
+
+[2025-03-04 10:34:42] Montant : 100000
+[2025-03-04 10:34:42] Source : transactions
+[2025-03-04 10:34:42] Traitement ticket ID : 90
+[2025-03-04 10:34:42] Tentative de création de la transaction
+[2025-03-04 10:34:42] Transaction créée avec succès
+[2025-03-04 10:34:42] Tentative de mise à jour du ticket
+[2025-03-04 10:34:42] État avant mise à jour : Array
+(
+    [montant_payer] => 
+    [montant_paie] => 3094200.00
+)
+
+[2025-03-04 10:34:42] Requête de mise à jour exécutée
+[2025-03-04 10:34:42] État après mise à jour : Array
+(
+    [montant_payer] => 100000.00
+    [montant_paie] => 3094200.00
+)
+
+[2025-03-04 10:34:42] Transaction commit avec succès
+[2025-03-04 10:46:10] Données reçues : Array
+(
+    [id_ticket] => 90
+    [numero_ticket] => 202503APO00007
+    [type] => all
+    [status] => all
+    [montant_reste] => 2994200
+    [source_paiement] => transactions
+    [montant] => 50000
+    [save_paiement] => 
+)
+
+[2025-03-04 10:46:10] Montant : 50000
+[2025-03-04 10:46:10] Source : transactions
+[2025-03-04 10:46:10] Traitement ticket ID : 90
+[2025-03-04 10:46:10] Tentative de création de la transaction
+[2025-03-04 10:46:10] Transaction créée avec succès
+[2025-03-04 10:46:10] Tentative de mise à jour du ticket
+[2025-03-04 10:46:10] État avant mise à jour : Array
+(
+    [montant_payer] => 100000.00
+    [montant_paie] => 3094200.00
+)
+
+[2025-03-04 10:46:10] Requête de mise à jour exécutée
+[2025-03-04 10:46:10] État après mise à jour : Array
+(
+    [montant_payer] => 150000.00
+    [montant_paie] => 3094200.00
+)
+
+[2025-03-04 10:46:10] Transaction commit avec succès
+[2025-03-04 10:48:55] Données reçues : Array
+(
+    [id_ticket] => 90
+    [numero_ticket] => 202503APO00007
+    [type] => all
+    [status] => all
+    [montant_reste] => 2944200
+    [source_paiement] => transactions
+    [montant] => 20000
+    [save_paiement] => 
+)
+
+[2025-03-04 10:48:55] Montant : 20000
+[2025-03-04 10:48:55] Source : transactions
+[2025-03-04 10:48:55] Traitement ticket ID : 90
+[2025-03-04 10:48:55] Tentative de création de la transaction
+[2025-03-04 10:48:55] Transaction créée avec succès
+[2025-03-04 10:48:55] Tentative de mise à jour du ticket
+[2025-03-04 10:48:55] État avant mise à jour : Array
+(
+    [montant_payer] => 150000.00
+    [montant_paie] => 3094200.00
+)
+
+[2025-03-04 10:48:55] Requête de mise à jour exécutée
+[2025-03-04 10:48:55] État après mise à jour : Array
+(
+    [montant_payer] => 170000.00
+    [montant_paie] => 3094200.00
+)
+
+[2025-03-04 10:48:55] Transaction commit avec succès
+[2025-03-04 10:52:16] Données reçues : Array
+(
+    [id_ticket] => 90
+    [numero_ticket] => 202503APO00007
+    [type] => all
+    [status] => all
+    [montant_reste] => 2924200
+    [source_paiement] => transactions
+    [montant] => 200000
+    [save_paiement] => 
+)
+
+[2025-03-04 10:52:16] Montant : 200000
+[2025-03-04 10:52:16] Source : transactions
+[2025-03-04 10:52:16] Traitement ticket ID : 90
+[2025-03-04 10:52:16] Tentative de création de la transaction
+[2025-03-04 10:52:16] Transaction créée avec succès
+[2025-03-04 10:52:16] Tentative de mise à jour du ticket
+[2025-03-04 10:52:16] État avant mise à jour : Array
+(
+    [montant_payer] => 170000.00
+    [montant_paie] => 3094200.00
+)
+
+[2025-03-04 10:52:16] Requête de mise à jour exécutée
+[2025-03-04 10:52:16] État après mise à jour : Array
+(
+    [montant_payer] => 370000.00
+    [montant_paie] => 3094200.00
+)
+
+[2025-03-04 10:52:16] Transaction commit avec succès
+[2025-03-04 10:54:53] Données reçues : Array
+(
+    [id_ticket] => 90
+    [numero_ticket] => 202503APO00007
+    [type] => all
+    [status] => all
+    [montant_reste] => 2724200
+    [source_paiement] => transactions
+    [montant_affiche] => 200 000
+    [montant] => 200000
+    [save_paiement] => 
+)
+
+[2025-03-04 10:54:53] Montant : 200000
+[2025-03-04 10:54:53] Source : transactions
+[2025-03-04 10:54:53] Traitement ticket ID : 90
+[2025-03-04 10:54:53] Tentative de création de la transaction
+[2025-03-04 10:54:53] Transaction créée avec succès
+[2025-03-04 10:54:53] Tentative de mise à jour du ticket
+[2025-03-04 10:54:53] État avant mise à jour : Array
+(
+    [montant_payer] => 370000.00
+    [montant_paie] => 3094200.00
+)
+
+[2025-03-04 10:54:53] Requête de mise à jour exécutée
+[2025-03-04 10:54:53] État après mise à jour : Array
+(
+    [montant_payer] => 570000.00
+    [montant_paie] => 3094200.00
+)
+
+[2025-03-04 10:54:53] Transaction commit avec succès
+[2025-03-04 10:55:12] Données reçues : Array
+(
+    [id_ticket] => 90
+    [numero_ticket] => 202503APO00007
+    [type] => all
+    [status] => all
+    [montant_reste] => 2524200
+    [source_paiement] => transactions
+    [montant_affiche] => 100 000
+    [montant] => 100000
+    [save_paiement] => 
+)
+
+[2025-03-04 10:55:12] Montant : 100000
+[2025-03-04 10:55:12] Source : transactions
+[2025-03-04 10:55:12] Traitement ticket ID : 90
+[2025-03-04 10:55:12] Tentative de création de la transaction
+[2025-03-04 10:55:12] Transaction créée avec succès
+[2025-03-04 10:55:12] Tentative de mise à jour du ticket
+[2025-03-04 10:55:12] État avant mise à jour : Array
+(
+    [montant_payer] => 570000.00
+    [montant_paie] => 3094200.00
+)
+
+[2025-03-04 10:55:12] Requête de mise à jour exécutée
+[2025-03-04 10:55:12] État après mise à jour : Array
+(
+    [montant_payer] => 670000.00
+    [montant_paie] => 3094200.00
+)
+
+[2025-03-04 10:55:12] Transaction commit avec succès
+[2025-03-04 10:55:38] Données reçues : Array
+(
+    [id_ticket] => 91
+    [numero_ticket] => 202503APO00026
+    [type] => all
+    [status] => all
+    [montant_reste] => 3542400
+    [source_paiement] => transactions
+    [montant_affiche] => 1 000 000
+    [montant] => 1000000
+    [save_paiement] => 
+)
+
+[2025-03-04 10:55:38] Montant : 1000000
+[2025-03-04 10:55:38] Source : transactions
+[2025-03-04 10:55:38] Traitement ticket ID : 91
+[2025-03-04 10:55:38] Tentative de création de la transaction
+[2025-03-04 10:55:38] Transaction créée avec succès
+[2025-03-04 10:55:38] Tentative de mise à jour du ticket
+[2025-03-04 10:55:38] État avant mise à jour : Array
+(
+    [montant_payer] => 
+    [montant_paie] => 3542400.00
+)
+
+[2025-03-04 10:55:38] Requête de mise à jour exécutée
+[2025-03-04 10:55:39] État après mise à jour : Array
+(
+    [montant_payer] => 1000000.00
+    [montant_paie] => 3542400.00
+)
+
+[2025-03-04 10:55:39] Transaction commit avec succès
+[2025-03-04 11:12:20] Données reçues : Array
+(
+    [id_ticket] => 91
+    [numero_ticket] => 202503APO00026
+    [type] => all
+    [status] => all
+    [montant_reste] => 2542400
+    [source_paiement] => transactions
+    [montant_affiche] => 200 000
+    [montant] => 200000
+    [save_paiement] => 
+)
+
+[2025-03-04 11:12:20] Montant : 200000
+[2025-03-04 11:12:20] Source : transactions
+[2025-03-04 11:12:20] Traitement ticket ID : 91
+[2025-03-04 11:12:20] Tentative de création de la transaction
+[2025-03-04 11:12:20] Transaction créée avec succès
+[2025-03-04 11:12:20] Tentative de mise à jour du ticket
+[2025-03-04 11:12:20] État avant mise à jour : Array
+(
+    [montant_payer] => 1000000.00
+    [montant_paie] => 3542400.00
+)
+
+[2025-03-04 11:12:20] Requête de mise à jour exécutée
+[2025-03-04 11:12:20] État après mise à jour : Array
+(
+    [montant_payer] => 1200000.00
+    [montant_paie] => 3542400.00
+)
+
+[2025-03-04 11:12:20] Transaction commit avec succès
+[2025-03-04 11:12:32] Données reçues : Array
+(
+    [id_ticket] => 91
+    [numero_ticket] => 202503APO00026
+    [type] => all
+    [status] => all
+    [montant_reste] => 2342400
+    [source_paiement] => transactions
+    [montant_affiche] => 200 000
+    [montant] => 200000
+    [save_paiement] => 
+)
+
+[2025-03-04 11:12:32] Montant : 200000
+[2025-03-04 11:12:32] Source : transactions
+[2025-03-04 11:12:32] Traitement ticket ID : 91
+[2025-03-04 11:12:32] Tentative de création de la transaction
+[2025-03-04 11:12:32] Transaction créée avec succès
+[2025-03-04 11:12:32] Tentative de mise à jour du ticket
+[2025-03-04 11:12:32] État avant mise à jour : Array
+(
+    [montant_payer] => 1200000.00
+    [montant_paie] => 3542400.00
+)
+
+[2025-03-04 11:12:32] Requête de mise à jour exécutée
+[2025-03-04 11:12:32] État après mise à jour : Array
+(
+    [montant_payer] => 1400000.00
+    [montant_paie] => 3542400.00
+)
+
+[2025-03-04 11:12:32] Transaction commit avec succès
+[2025-03-04 11:15:24] Données reçues : Array
+(
+    [id_ticket] => 90
+    [numero_ticket] => 202503APO00007
+    [type] => all
+    [status] => all
+    [montant_reste] => 2424200
+    [source_paiement] => transactions
+    [montant_affiche] => 200 000
+    [montant] => 200000
+    [save_paiement] => 
+)
+
+[2025-03-04 11:15:24] Montant : 200000
+[2025-03-04 11:15:24] Source : transactions
+[2025-03-04 11:15:24] Traitement ticket ID : 90
+[2025-03-04 11:15:24] Tentative de création de la transaction
+[2025-03-04 11:15:24] Transaction créée avec succès
+[2025-03-04 11:15:24] Tentative de mise à jour du ticket
+[2025-03-04 11:15:24] État avant mise à jour : Array
+(
+    [montant_payer] => 670000.00
+    [montant_paie] => 3094200.00
+)
+
+[2025-03-04 11:15:24] Requête de mise à jour exécutée
+[2025-03-04 11:15:24] État après mise à jour : Array
+(
+    [montant_payer] => 870000.00
+    [montant_paie] => 3094200.00
+)
+
+[2025-03-04 11:15:24] Transaction validée avec succès
+[2025-03-04 11:26:09] Données reçues : Array
+(
+    [id_ticket] => 90
+    [numero_ticket] => 202503APO00007
+    [type] => all
+    [status] => all
+    [montant_reste] => 2224200
+    [source_paiement] => transactions
+    [montant_affiche] => 100 000
+    [montant] => 100000
+    [save_paiement] => 
+)
+
+[2025-03-04 11:26:09] Montant : 100000
+[2025-03-04 11:26:09] Source : transactions
+[2025-03-04 11:26:09] Traitement ticket ID : 90
+[2025-03-04 11:26:09] Tentative de création de la transaction
+[2025-03-04 11:26:09] Transaction créée avec succès
+[2025-03-04 11:26:09] Tentative de mise à jour du ticket
+[2025-03-04 11:26:09] État avant mise à jour : Array
+(
+    [montant_payer] => 870000.00
+    [montant_paie] => 3094200.00
+)
+
+[2025-03-04 11:26:09] Requête de mise à jour exécutée
+[2025-03-04 11:26:09] État après mise à jour : Array
+(
+    [montant_payer] => 970000.00
+    [montant_paie] => 3094200.00
+)
+
+[2025-03-04 11:26:09] Transaction validée avec succès
+[2025-03-04 11:31:40] Données reçues : Array
+(
+    [id_ticket] => 90
+    [numero_ticket] => 202503APO00007
+    [type] => all
+    [status] => all
+    [montant_reste] => 2124200
+    [source_paiement] => transactions
+    [montant_affiche] => 100 000
+    [montant] => 100000
+    [save_paiement] => 
+)
+
+[2025-03-04 11:31:40] Montant : 100000
+[2025-03-04 11:31:40] Source : transactions
+[2025-03-04 11:31:40] Traitement ticket ID : 90
+[2025-03-04 11:31:40] Tentative de création de la transaction
+[2025-03-04 11:31:40] Transaction créée avec succès
+[2025-03-04 11:31:40] Tentative de mise à jour du ticket
+[2025-03-04 11:31:40] État avant mise à jour : Array
+(
+    [montant_payer] => 970000.00
+    [montant_paie] => 3094200.00
+)
+
+[2025-03-04 11:31:40] Requête de mise à jour exécutée
+[2025-03-04 11:31:40] État après mise à jour : Array
+(
+    [montant_payer] => 1070000.00
+    [montant_paie] => 3094200.00
+)
+
+[2025-03-04 11:31:40] Transaction validée avec succès
+[2025-03-04 11:32:59] Données reçues : Array
+(
+    [id_ticket] => 90
+    [numero_ticket] => 202503APO00007
+    [type] => all
+    [status] => all
+    [montant_reste] => 2024200
+    [source_paiement] => transactions
+    [montant_affiche] => 100 000
+    [montant] => 100000
+    [save_paiement] => 
+)
+
+[2025-03-04 11:32:59] Montant : 100000
+[2025-03-04 11:32:59] Source : transactions
+[2025-03-04 11:32:59] Traitement ticket ID : 90
+[2025-03-04 11:32:59] Tentative de création de la transaction
+[2025-03-04 11:32:59] Transaction créée avec succès
+[2025-03-04 11:32:59] Tentative de mise à jour du ticket
+[2025-03-04 11:32:59] État avant mise à jour : Array
+(
+    [montant_payer] => 1070000.00
+    [montant_paie] => 3094200.00
+)
+
+[2025-03-04 11:32:59] Requête de mise à jour exécutée
+[2025-03-04 11:32:59] État après mise à jour : Array
+(
+    [montant_payer] => 1170000.00
+    [montant_paie] => 3094200.00
+)
+
+[2025-03-04 11:32:59] Transaction validée avec succès
+[2025-03-04 11:39:38] Données reçues : Array
+(
+    [id_ticket] => 90
+    [numero_ticket] => 202503APO00007
+    [type] => all
+    [status] => all
+    [montant_reste] => 1924200
+    [source_paiement] => transactions
+    [montant_affiche] => 100 000
+    [montant] => 100000
+    [save_paiement] => 
+)
+
+[2025-03-04 11:39:38] Montant : 100000
+[2025-03-04 11:39:38] Source : transactions
+[2025-03-04 11:39:38] Traitement ticket ID : 90
+[2025-03-04 11:39:38] Tentative de création de la transaction
+[2025-03-04 11:39:38] Transaction créée avec succès
+[2025-03-04 11:39:38] Tentative de mise à jour du ticket
+[2025-03-04 11:39:38] État avant mise à jour : Array
+(
+    [montant_payer] => 1170000.00
+    [montant_paie] => 3094200.00
+)
+
+[2025-03-04 11:39:38] Requête de mise à jour exécutée
+[2025-03-04 11:39:38] État après mise à jour : Array
+(
+    [montant_payer] => 1270000.00
+    [montant_paie] => 3094200.00
+)
+
+[2025-03-04 11:39:38] Transaction validée avec succès
+[2025-03-04 11:40:40] Données reçues : Array
+(
+    [id_ticket] => 90
+    [numero_ticket] => 202503APO00007
+    [type] => all
+    [status] => all
+    [montant_reste] => 1824200
+    [source_paiement] => transactions
+    [montant_affiche] => 100 000
+    [montant] => 100000
+    [save_paiement] => 
+)
+
+[2025-03-04 11:40:40] Montant : 100000
+[2025-03-04 11:40:40] Source : transactions
+[2025-03-04 11:40:40] Traitement ticket ID : 90
+[2025-03-04 11:40:40] Tentative de création de la transaction
+[2025-03-04 11:40:40] Transaction créée avec succès
+[2025-03-04 11:40:40] Tentative de mise à jour du ticket
+[2025-03-04 11:40:40] État avant mise à jour : Array
+(
+    [montant_payer] => 1270000.00
+    [montant_paie] => 3094200.00
+)
+
+[2025-03-04 11:40:40] Requête de mise à jour exécutée
+[2025-03-04 11:40:40] État après mise à jour : Array
+(
+    [montant_payer] => 1370000.00
+    [montant_paie] => 3094200.00
+)
+
+[2025-03-04 11:40:40] Transaction validée avec succès
+[2025-03-04 11:43:03] Données reçues : Array
+(
+    [id_ticket] => 91
+    [numero_ticket] => 202503APO00026
+    [type] => all
+    [status] => all
+    [montant_reste] => 2142400
+    [source_paiement] => transactions
+    [montant_affiche] => 100 000
+    [montant] => 100000
+    [save_paiement] => 
+)
+
+[2025-03-04 11:43:03] Montant : 100000
+[2025-03-04 11:43:03] Source : transactions
+[2025-03-04 11:43:03] Traitement ticket ID : 91
+[2025-03-04 11:43:03] Tentative de création de la transaction
+[2025-03-04 11:43:03] Transaction créée avec succès
+[2025-03-04 11:43:03] Tentative de mise à jour du ticket
+[2025-03-04 11:43:03] État avant mise à jour : Array
+(
+    [montant_payer] => 1400000.00
+    [montant_paie] => 3542400.00
+)
+
+[2025-03-04 11:43:03] Requête de mise à jour exécutée
+[2025-03-04 11:43:03] État après mise à jour : Array
+(
+    [montant_payer] => 1500000.00
+    [montant_paie] => 3542400.00
+)
+
+[2025-03-04 11:43:03] Transaction validée avec succès
+[2025-03-04 11:44:59] Données reçues : Array
+(
+    [id_ticket] => 90
+    [numero_ticket] => 202503APO00007
+    [type] => all
+    [status] => all
+    [montant_reste] => 1724200
+    [source_paiement] => transactions
+    [montant_affiche] => 100 000
+    [montant] => 100000
+    [save_paiement] => 
+)
+
+[2025-03-04 11:44:59] Montant : 100000
+[2025-03-04 11:44:59] Source : transactions
+[2025-03-04 11:44:59] Traitement ticket ID : 90
+[2025-03-04 11:44:59] Tentative de création de la transaction
+[2025-03-04 11:44:59] Transaction créée avec succès
+[2025-03-04 11:44:59] Tentative de mise à jour du ticket
+[2025-03-04 11:44:59] État avant mise à jour : Array
+(
+    [montant_payer] => 1370000.00
+    [montant_paie] => 3094200.00
+)
+
+[2025-03-04 11:44:59] Requête de mise à jour exécutée
+[2025-03-04 11:44:59] État après mise à jour : Array
+(
+    [montant_payer] => 1470000.00
+    [montant_paie] => 3094200.00
+)
+
+[2025-03-04 11:44:59] Transaction validée avec succès
+[2025-03-04 11:47:27] Données reçues : Array
+(
+    [id_ticket] => 90
+    [numero_ticket] => 202503APO00007
+    [type] => all
+    [status] => all
+    [montant_reste] => 1624200
+    [source_paiement] => transactions
+    [montant_affiche] => 100 000
+    [montant] => 100000
+    [save_paiement] => 
+)
+
+[2025-03-04 11:47:27] Montant : 100000
+[2025-03-04 11:47:27] Source : transactions
+[2025-03-04 11:47:27] Traitement ticket ID : 90
+[2025-03-04 11:47:27] Tentative de création de la transaction
+[2025-03-04 11:47:27] Transaction créée avec succès
+[2025-03-04 11:47:27] Tentative de mise à jour du ticket
+[2025-03-04 11:47:27] État avant mise à jour : Array
+(
+    [montant_payer] => 1470000.00
+    [montant_paie] => 3094200.00
+)
+
+[2025-03-04 11:47:27] Requête de mise à jour exécutée
+[2025-03-04 11:47:27] État après mise à jour : Array
+(
+    [montant_payer] => 1570000.00
+    [montant_paie] => 3094200.00
+)
+
+[2025-03-04 11:47:27] Transaction validée avec succès
+[2025-03-04 11:49:49] Données reçues : Array
+(
+    [id_ticket] => 90
+    [numero_ticket] => 202503APO00007
+    [type] => all
+    [status] => all
+    [montant_reste] => 1524200
+    [source_paiement] => transactions
+    [montant_affiche] => 10 000
+    [montant] => 10000
+    [save_paiement] => 
+)
+
+[2025-03-04 11:49:49] Montant : 10000
+[2025-03-04 11:49:49] Source : transactions
+[2025-03-04 11:49:49] Traitement ticket ID : 90
+[2025-03-04 11:49:49] Tentative de création de la transaction
+[2025-03-04 11:49:49] Transaction créée avec succès
+[2025-03-04 11:49:49] Tentative de mise à jour du ticket
+[2025-03-04 11:49:49] État avant mise à jour : Array
+(
+    [montant_payer] => 1570000.00
+    [montant_paie] => 3094200.00
+)
+
+[2025-03-04 11:49:49] Requête de mise à jour exécutée
+[2025-03-04 11:49:49] État après mise à jour : Array
+(
+    [montant_payer] => 1580000.00
+    [montant_paie] => 3094200.00
+)
+
+[2025-03-04 11:49:49] Transaction validée avec succès
+[2025-03-04 11:51:51] Données reçues : Array
+(
+    [id_ticket] => 90
+    [numero_ticket] => 202503APO00007
+    [type] => all
+    [status] => all
+    [montant_reste] => 1514200
+    [source_paiement] => transactions
+    [montant_affiche] => 10 000
+    [montant] => 10000
+    [save_paiement] => 
+)
+
+[2025-03-04 11:51:51] Montant : 10000
+[2025-03-04 11:51:51] Source : transactions
+[2025-03-04 11:51:51] Traitement ticket ID : 90
+[2025-03-04 11:51:51] Tentative de création de la transaction
+[2025-03-04 11:51:51] Transaction créée avec succès
+[2025-03-04 11:51:51] Tentative de mise à jour du ticket
+[2025-03-04 11:51:51] État avant mise à jour : Array
+(
+    [montant_payer] => 1580000.00
+    [montant_paie] => 3094200.00
+)
+
+[2025-03-04 11:51:51] Requête de mise à jour exécutée
+[2025-03-04 11:51:51] État après mise à jour : Array
+(
+    [montant_payer] => 1590000.00
+    [montant_paie] => 3094200.00
+)
+
+[2025-03-04 11:51:51] Transaction validée avec succès
+[2025-03-04 11:54:13] Données reçues : Array
+(
+    [id_ticket] => 90
+    [numero_ticket] => 202503APO00007
+    [type] => all
+    [status] => all
+    [montant_reste] => 1504200
+    [source_paiement] => transactions
+    [montant_affiche] => 10 000
+    [montant] => 10000
+    [save_paiement] => 
+)
+
+[2025-03-04 11:54:13] Montant : 10000
+[2025-03-04 11:54:13] Source : transactions
+[2025-03-04 11:54:13] Traitement ticket ID : 90
+[2025-03-04 11:54:13] Tentative de création de la transaction
+[2025-03-04 11:54:13] Transaction créée avec succès
+[2025-03-04 11:54:13] Tentative de mise à jour du ticket
+[2025-03-04 11:54:13] État avant mise à jour : Array
+(
+    [montant_payer] => 1590000.00
+    [montant_paie] => 3094200.00
+)
+
+[2025-03-04 11:54:13] Requête de mise à jour exécutée
+[2025-03-04 11:54:13] État après mise à jour : Array
+(
+    [montant_payer] => 1600000.00
+    [montant_paie] => 3094200.00
+)
+
+[2025-03-04 11:54:13] Transaction validée avec succès
+[2025-03-04 11:55:32] Données reçues : Array
+(
+    [id_ticket] => 90
+    [numero_ticket] => 202503APO00007
+    [type] => all
+    [status] => all
+    [montant_reste] => 1494200
+    [source_paiement] => transactions
+    [montant_affiche] => 10 000
+    [montant] => 10000
+    [save_paiement] => 
+)
+
+[2025-03-04 11:55:32] Montant : 10000
+[2025-03-04 11:55:32] Source : transactions
+[2025-03-04 11:55:32] Traitement ticket ID : 90
+[2025-03-04 11:55:32] Tentative de création de la transaction
+[2025-03-04 11:55:32] Transaction créée avec succès
+[2025-03-04 11:55:32] Tentative de mise à jour du ticket
+[2025-03-04 11:55:32] État avant mise à jour : Array
+(
+    [montant_payer] => 1600000.00
+    [montant_paie] => 3094200.00
+)
+
+[2025-03-04 11:55:32] Requête de mise à jour exécutée
+[2025-03-04 11:55:32] État après mise à jour : Array
+(
+    [montant_payer] => 1610000.00
+    [montant_paie] => 3094200.00
+)
+
+[2025-03-04 11:55:32] Transaction validée avec succès
+[2025-03-04 11:57:38] Données reçues : Array
+(
+    [id_ticket] => 90
+    [numero_ticket] => 202503APO00007
+    [type] => all
+    [status] => all
+    [montant_reste] => 1484200
+    [source_paiement] => transactions
+    [montant_affiche] => 10 000
+    [montant] => 10000
+    [save_paiement] => 
+)
+
+[2025-03-04 11:57:38] Montant : 10000
+[2025-03-04 11:57:38] Source : transactions
+[2025-03-04 11:57:38] Traitement ticket ID : 90
+[2025-03-04 11:57:38] Tentative de création de la transaction
+[2025-03-04 11:57:38] Transaction créée avec succès
+[2025-03-04 11:57:38] Tentative de mise à jour du ticket
+[2025-03-04 11:57:38] État avant mise à jour : Array
+(
+    [montant_payer] => 1610000.00
+    [montant_paie] => 3094200.00
+)
+
+[2025-03-04 11:57:38] Requête de mise à jour exécutée
+[2025-03-04 11:57:38] État après mise à jour : Array
+(
+    [montant_payer] => 1620000.00
+    [montant_paie] => 3094200.00
+)
+
+[2025-03-04 11:57:38] Transaction validée avec succès
+[2025-03-04 12:00:48] Données reçues : Array
+(
+    [id_ticket] => 90
+    [numero_ticket] => 202503APO00007
+    [type] => all
+    [status] => all
+    [montant_reste] => 1474200
+    [source_paiement] => transactions
+    [montant_affiche] => 10 000
+    [montant] => 10000
+    [save_paiement] => 
+)
+
+[2025-03-04 12:00:48] Montant : 10000
+[2025-03-04 12:00:48] Source : transactions
+[2025-03-04 12:00:48] Traitement ticket ID : 90
+[2025-03-04 12:00:48] Tentative de création de la transaction
+[2025-03-04 12:00:48] Transaction créée avec succès
+[2025-03-04 12:00:48] Tentative de mise à jour du ticket
+[2025-03-04 12:00:48] État avant mise à jour : Array
+(
+    [montant_payer] => 1620000.00
+    [montant_paie] => 3094200.00
+)
+
+[2025-03-04 12:00:48] Requête de mise à jour exécutée
+[2025-03-04 12:00:48] État après mise à jour : Array
+(
+    [montant_payer] => 1630000.00
+    [montant_paie] => 3094200.00
+)
+
+[2025-03-04 12:00:48] Transaction validée avec succès
+[2025-03-04 12:04:42] Données reçues : Array
+(
+    [id_ticket] => 90
+    [numero_ticket] => 202503APO00007
+    [type] => all
+    [status] => all
+    [montant_reste] => 1464200
+    [source_paiement] => transactions
+    [montant_affiche] => 10 000
+    [montant] => 10000
+    [save_paiement] => 
+)
+
+[2025-03-04 12:04:42] Montant : 10000
+[2025-03-04 12:04:42] Source : transactions
+[2025-03-04 12:04:42] Traitement ticket ID : 90
+[2025-03-04 12:04:42] Tentative de création de la transaction
+[2025-03-04 12:04:42] Transaction créée avec succès
+[2025-03-04 12:04:42] Tentative de mise à jour du ticket
+[2025-03-04 12:04:42] État avant mise à jour : Array
+(
+    [montant_payer] => 1630000.00
+    [montant_paie] => 3094200.00
+)
+
+[2025-03-04 12:04:42] Requête de mise à jour exécutée
+[2025-03-04 12:04:42] État après mise à jour : Array
+(
+    [montant_payer] => 1640000.00
+    [montant_paie] => 3094200.00
+)
+
+[2025-03-04 12:04:42] Transaction validée avec succès
+[2025-03-04 12:05:17] Données reçues : Array
+(
+    [id_ticket] => 90
+    [numero_ticket] => 202503APO00007
+    [type] => all
+    [status] => all
+    [montant_reste] => 1454200
+    [source_paiement] => transactions
+    [montant_affiche] => 10 000
+    [montant] => 10000
+    [save_paiement] => 
+)
+
+[2025-03-04 12:05:17] Montant : 10000
+[2025-03-04 12:05:17] Source : transactions
+[2025-03-04 12:05:17] Traitement ticket ID : 90
+[2025-03-04 12:05:17] Tentative de création de la transaction
+[2025-03-04 12:05:17] Transaction créée avec succès
+[2025-03-04 12:05:17] Tentative de mise à jour du ticket
+[2025-03-04 12:05:17] État avant mise à jour : Array
+(
+    [montant_payer] => 1640000.00
+    [montant_paie] => 3094200.00
+)
+
+[2025-03-04 12:05:17] Requête de mise à jour exécutée
+[2025-03-04 12:05:17] État après mise à jour : Array
+(
+    [montant_payer] => 1650000.00
+    [montant_paie] => 3094200.00
+)
+
+[2025-03-04 12:05:17] Transaction validée avec succès
+[2025-03-04 12:09:26] Données reçues : Array
+(
+    [id_ticket] => 90
+    [numero_ticket] => 202503APO00007
+    [type] => all
+    [status] => all
+    [montant_reste] => 1444200
+    [source_paiement] => transactions
+    [montant_affiche] => 10 000
+    [montant] => 10000
+    [save_paiement] => 
+)
+
+[2025-03-04 12:09:26] Montant : 10000
+[2025-03-04 12:09:26] Source : transactions
+[2025-03-04 12:09:26] Traitement ticket ID : 90
+[2025-03-04 12:09:26] Tentative de création de la transaction
+[2025-03-04 12:09:26] Transaction créée avec succès
+[2025-03-04 12:09:26] Tentative de mise à jour du ticket
+[2025-03-04 12:09:26] État avant mise à jour : Array
+(
+    [montant_payer] => 1650000.00
+    [montant_paie] => 3094200.00
+)
+
+[2025-03-04 12:09:26] Requête de mise à jour exécutée
+[2025-03-04 12:09:26] État après mise à jour : Array
+(
+    [montant_payer] => 1660000.00
+    [montant_paie] => 3094200.00
+)
+
+[2025-03-04 12:09:26] Transaction validée avec succès
+[2025-03-04 12:11:51] Données reçues : Array
+(
+    [id_ticket] => 90
+    [numero_ticket] => 202503APO00007
+    [type] => all
+    [status] => all
+    [montant_reste] => 1434200
+    [source_paiement] => transactions
+    [montant_affiche] => 10 000
+    [montant] => 10000
+    [save_paiement] => 
+)
+
+[2025-03-04 12:11:51] Montant : 10000
+[2025-03-04 12:11:51] Source : transactions
+[2025-03-04 12:11:51] Traitement ticket ID : 90
+[2025-03-04 12:11:51] Tentative de création de la transaction
+[2025-03-04 12:11:51] Transaction créée avec succès
+[2025-03-04 12:11:51] Tentative de mise à jour du ticket
+[2025-03-04 12:11:51] État avant mise à jour : Array
+(
+    [montant_payer] => 1660000.00
+    [montant_paie] => 3094200.00
+)
+
+[2025-03-04 12:11:51] Requête de mise à jour exécutée
+[2025-03-04 12:11:51] État après mise à jour : Array
+(
+    [montant_payer] => 1670000.00
+    [montant_paie] => 3094200.00
+)
+
+[2025-03-04 12:11:51] Transaction validée avec succès
+[2025-03-04 12:13:36] Données reçues : Array
+(
+    [id_ticket] => 90
+    [numero_ticket] => 202503APO00007
+    [type] => all
+    [status] => all
+    [montant_reste] => 1424200
+    [source_paiement] => transactions
+    [montant_affiche] => 10 000
+    [montant] => 10000
+    [save_paiement] => 
+)
+
+[2025-03-04 12:13:36] Montant : 10000
+[2025-03-04 12:13:36] Source : transactions
+[2025-03-04 12:13:36] Traitement ticket ID : 90
+[2025-03-04 12:13:36] Tentative de création de la transaction
+[2025-03-04 12:13:36] Transaction créée avec succès
+[2025-03-04 12:13:36] Tentative de mise à jour du ticket
+[2025-03-04 12:13:36] État avant mise à jour : Array
+(
+    [montant_payer] => 1670000.00
+    [montant_paie] => 3094200.00
+)
+
+[2025-03-04 12:13:36] Requête de mise à jour exécutée
+[2025-03-04 12:13:36] État après mise à jour : Array
+(
+    [montant_payer] => 1680000.00
+    [montant_paie] => 3094200.00
+)
+
+[2025-03-04 12:13:36] Transaction validée avec succès
+[2025-03-04 12:15:03] Données reçues : Array
+(
+    [id_ticket] => 90
+    [numero_ticket] => 202503APO00007
+    [type] => all
+    [status] => all
+    [montant_reste] => 1414200
+    [source_paiement] => transactions
+    [montant_affiche] => 10 000
+    [montant] => 10000
+    [save_paiement] => 
+)
+
+[2025-03-04 12:15:03] Montant : 10000
+[2025-03-04 12:15:03] Source : transactions
+[2025-03-04 12:15:03] Traitement ticket ID : 90
+[2025-03-04 12:15:03] Tentative de création de la transaction
+[2025-03-04 12:15:03] Transaction créée avec succès
+[2025-03-04 12:15:03] Tentative de mise à jour du ticket
+[2025-03-04 12:15:03] État avant mise à jour : Array
+(
+    [montant_payer] => 1680000.00
+    [montant_paie] => 3094200.00
+)
+
+[2025-03-04 12:15:03] Requête de mise à jour exécutée
+[2025-03-04 12:15:03] État après mise à jour : Array
+(
+    [montant_payer] => 1690000.00
+    [montant_paie] => 3094200.00
+)
+
+[2025-03-04 12:15:03] Transaction validée avec succès
+[2025-03-04 12:16:01] Données reçues : Array
+(
+    [id_ticket] => 90
+    [numero_ticket] => 202503APO00007
+    [type] => all
+    [status] => all
+    [montant_reste] => 1404200
+    [source_paiement] => transactions
+    [montant_affiche] => 10 000
+    [montant] => 10000
+    [save_paiement] => 
+)
+
+[2025-03-04 12:16:01] Montant : 10000
+[2025-03-04 12:16:01] Source : transactions
+[2025-03-04 12:16:01] Traitement ticket ID : 90
+[2025-03-04 12:16:01] Tentative de création de la transaction
+[2025-03-04 12:16:01] Transaction créée avec succès
+[2025-03-04 12:16:01] Tentative de mise à jour du ticket
+[2025-03-04 12:16:01] État avant mise à jour : Array
+(
+    [montant_payer] => 1690000.00
+    [montant_paie] => 3094200.00
+)
+
+[2025-03-04 12:16:01] Requête de mise à jour exécutée
+[2025-03-04 12:16:01] État après mise à jour : Array
+(
+    [montant_payer] => 1700000.00
+    [montant_paie] => 3094200.00
+)
+
+[2025-03-04 12:16:01] Transaction validée avec succès
+[2025-03-04 12:17:28] Données reçues : Array
+(
+    [id_ticket] => 90
+    [numero_ticket] => 202503APO00007
+    [type] => all
+    [status] => all
+    [montant_reste] => 1394200
+    [source_paiement] => transactions
+    [montant_affiche] => 10 000
+    [montant] => 10000
+    [save_paiement] => 
+)
+
+[2025-03-04 12:17:28] Montant : 10000
+[2025-03-04 12:17:28] Source : transactions
+[2025-03-04 12:17:28] Traitement ticket ID : 90
+[2025-03-04 12:17:29] Tentative de création de la transaction
+[2025-03-04 12:17:29] Transaction créée avec succès
+[2025-03-04 12:17:29] Tentative de mise à jour du ticket
+[2025-03-04 12:17:29] État avant mise à jour : Array
+(
+    [montant_payer] => 1700000.00
+    [montant_paie] => 3094200.00
+)
+
+[2025-03-04 12:17:29] Requête de mise à jour exécutée
+[2025-03-04 12:17:29] État après mise à jour : Array
+(
+    [montant_payer] => 1710000.00
+    [montant_paie] => 3094200.00
+)
+
+[2025-03-04 12:17:29] Transaction validée avec succès
+[2025-03-04 12:18:31] Données reçues : Array
+(
+    [id_ticket] => 90
+    [numero_ticket] => 202503APO00007
+    [type] => all
+    [status] => all
+    [montant_reste] => 1384200
+    [source_paiement] => transactions
+    [montant_affiche] => 10 000
+    [montant] => 10000
+    [save_paiement] => 
+)
+
+[2025-03-04 12:18:31] Montant : 10000
+[2025-03-04 12:18:31] Source : transactions
+[2025-03-04 12:18:31] Traitement ticket ID : 90
+[2025-03-04 12:18:31] Tentative de création de la transaction
+[2025-03-04 12:18:31] Transaction créée avec succès
+[2025-03-04 12:18:31] Tentative de mise à jour du ticket
+[2025-03-04 12:18:31] État avant mise à jour : Array
+(
+    [montant_payer] => 1710000.00
+    [montant_paie] => 3094200.00
+)
+
+[2025-03-04 12:18:31] Requête de mise à jour exécutée
+[2025-03-04 12:18:31] État après mise à jour : Array
+(
+    [montant_payer] => 1720000.00
+    [montant_paie] => 3094200.00
+)
+
+[2025-03-04 12:18:31] Transaction validée avec succès
+[2025-03-04 12:19:03] Données reçues : Array
+(
+    [id_ticket] => 90
+    [numero_ticket] => 202503APO00007
+    [type] => all
+    [status] => all
+    [montant_reste] => 1374200
+    [source_paiement] => transactions
+    [montant_affiche] => 10 000
+    [montant] => 10000
+    [save_paiement] => 
+)
+
+[2025-03-04 12:19:03] Montant : 10000
+[2025-03-04 12:19:03] Source : transactions
+[2025-03-04 12:19:03] Traitement ticket ID : 90
+[2025-03-04 12:19:03] Tentative de création de la transaction
+[2025-03-04 12:19:03] Transaction créée avec succès
+[2025-03-04 12:19:03] Tentative de mise à jour du ticket
+[2025-03-04 12:19:03] État avant mise à jour : Array
+(
+    [montant_payer] => 1720000.00
+    [montant_paie] => 3094200.00
+)
+
+[2025-03-04 12:19:03] Requête de mise à jour exécutée
+[2025-03-04 12:19:03] État après mise à jour : Array
+(
+    [montant_payer] => 1730000.00
+    [montant_paie] => 3094200.00
+)
+
+[2025-03-04 12:19:03] Transaction validée avec succès
+[2025-03-04 12:20:58] Données reçues : Array
+(
+    [id_ticket] => 90
+    [numero_ticket] => 202503APO00007
+    [type] => all
+    [status] => all
+    [montant_reste] => 1364200
+    [source_paiement] => transactions
+    [montant_affiche] => 10 000
+    [montant] => 10000
+    [save_paiement] => 
+)
+
+[2025-03-04 12:20:58] Montant : 10000
+[2025-03-04 12:20:58] Source : transactions
+[2025-03-04 12:20:58] Traitement ticket ID : 90
+[2025-03-04 12:20:58] Tentative de création de la transaction
+[2025-03-04 12:20:58] Transaction créée avec succès
+[2025-03-04 12:20:58] Tentative de mise à jour du ticket
+[2025-03-04 12:20:58] État avant mise à jour : Array
+(
+    [montant_payer] => 1730000.00
+    [montant_paie] => 3094200.00
+)
+
+[2025-03-04 12:20:58] Requête de mise à jour exécutée
+[2025-03-04 12:20:58] État après mise à jour : Array
+(
+    [montant_payer] => 1740000.00
+    [montant_paie] => 3094200.00
+)
+
+[2025-03-04 12:20:58] Transaction validée avec succès
+[2025-03-04 12:21:19] Données reçues : Array
+(
+    [id_ticket] => 90
+    [numero_ticket] => 202503APO00007
+    [type] => all
+    [status] => all
+    [montant_reste] => 1354200
+    [source_paiement] => transactions
+    [montant_affiche] => 10 000
+    [montant] => 10000
+    [save_paiement] => 
+)
+
+[2025-03-04 12:21:19] Montant : 10000
+[2025-03-04 12:21:19] Source : transactions
+[2025-03-04 12:21:19] Traitement ticket ID : 90
+[2025-03-04 12:21:19] Tentative de création de la transaction
+[2025-03-04 12:21:19] Transaction créée avec succès
+[2025-03-04 12:21:19] Tentative de mise à jour du ticket
+[2025-03-04 12:21:19] État avant mise à jour : Array
+(
+    [montant_payer] => 1740000.00
+    [montant_paie] => 3094200.00
+)
+
+[2025-03-04 12:21:19] Requête de mise à jour exécutée
+[2025-03-04 12:21:19] État après mise à jour : Array
+(
+    [montant_payer] => 1750000.00
+    [montant_paie] => 3094200.00
+)
+
+[2025-03-04 12:21:19] Transaction validée avec succès
+[2025-03-04 12:35:58] Données reçues : Array
+(
+    [id_ticket] => 90
+    [numero_ticket] => 202503APO00007
+    [type] => all
+    [status] => all
+    [montant_reste] => 1344200
+    [source_paiement] => transactions
+    [montant_affiche] => 10 000
+    [montant] => 10000
+    [save_paiement] => 
+)
+
+[2025-03-04 12:35:58] Montant : 10000
+[2025-03-04 12:35:58] Source : transactions
+[2025-03-04 12:35:58] Traitement ticket ID : 90
+[2025-03-04 12:35:58] Tentative de création de la transaction
+[2025-03-04 12:35:58] Transaction créée avec succès
+[2025-03-04 12:35:58] Tentative de mise à jour du ticket
+[2025-03-04 12:35:58] État avant mise à jour : Array
+(
+    [montant_payer] => 1750000.00
+    [montant_paie] => 3094200.00
+)
+
+[2025-03-04 12:35:58] Requête de mise à jour exécutée
+[2025-03-04 12:35:58] État après mise à jour : Array
+(
+    [montant_payer] => 1760000.00
+    [montant_paie] => 3094200.00
+)
+
+[2025-03-04 12:35:58] Transaction validée avec succès
+[2025-03-04 12:36:26] Données reçues : Array
+(
+    [id_ticket] => 90
+    [numero_ticket] => 202503APO00007
+    [type] => all
+    [status] => all
+    [montant_reste] => 1334200
+    [source_paiement] => transactions
+    [montant_affiche] => 10 000
+    [montant] => 10000
+    [save_paiement] => 
+)
+
+[2025-03-04 12:36:26] Montant : 10000
+[2025-03-04 12:36:26] Source : transactions
+[2025-03-04 12:36:26] Traitement ticket ID : 90
+[2025-03-04 12:36:26] Tentative de création de la transaction
+[2025-03-04 12:36:26] Transaction créée avec succès
+[2025-03-04 12:36:26] Tentative de mise à jour du ticket
+[2025-03-04 12:36:26] État avant mise à jour : Array
+(
+    [montant_payer] => 1760000.00
+    [montant_paie] => 3094200.00
+)
+
+[2025-03-04 12:36:26] Requête de mise à jour exécutée
+[2025-03-04 12:36:26] État après mise à jour : Array
+(
+    [montant_payer] => 1770000.00
+    [montant_paie] => 3094200.00
+)
+
+[2025-03-04 12:36:26] Transaction validée avec succès
+[2025-03-04 12:40:39] Données reçues : Array
+(
+    [id_ticket] => 90
+    [numero_ticket] => 202503APO00007
+    [type] => all
+    [status] => all
+    [montant_reste] => 1324200
+    [source_paiement] => transactions
+    [montant_affiche] => 10 000
+    [montant] => 10000
+    [save_paiement] => 
+)
+
+[2025-03-04 12:40:39] Montant : 10000
+[2025-03-04 12:40:39] Source : transactions
+[2025-03-04 12:40:39] Traitement ticket ID : 90
+[2025-03-04 12:40:39] Tentative de création de la transaction
+[2025-03-04 12:40:39] Transaction créée avec succès
+[2025-03-04 12:40:39] Tentative de mise à jour du ticket
+[2025-03-04 12:40:39] État avant mise à jour : Array
+(
+    [montant_payer] => 1770000.00
+    [montant_paie] => 3094200.00
+)
+
+[2025-03-04 12:40:39] Requête de mise à jour exécutée
+[2025-03-04 12:40:39] État après mise à jour : Array
+(
+    [montant_payer] => 1780000.00
+    [montant_paie] => 3094200.00
+)
+
+[2025-03-04 12:40:39] Transaction validée avec succès
+[2025-03-04 12:41:16] Données reçues : Array
+(
+    [id_ticket] => 90
+    [numero_ticket] => 202503APO00007
+    [type] => all
+    [status] => all
+    [montant_reste] => 1314200
+    [source_paiement] => transactions
+    [montant_affiche] => 100 000
+    [montant] => 100000
+    [save_paiement] => 
+)
+
+[2025-03-04 12:41:16] Montant : 100000
+[2025-03-04 12:41:16] Source : transactions
+[2025-03-04 12:41:16] Traitement ticket ID : 90
+[2025-03-04 12:41:16] Tentative de création de la transaction
+[2025-03-04 12:41:16] Transaction créée avec succès
+[2025-03-04 12:41:16] Tentative de mise à jour du ticket
+[2025-03-04 12:41:16] État avant mise à jour : Array
+(
+    [montant_payer] => 1780000.00
+    [montant_paie] => 3094200.00
+)
+
+[2025-03-04 12:41:16] Requête de mise à jour exécutée
+[2025-03-04 12:41:16] État après mise à jour : Array
+(
+    [montant_payer] => 1880000.00
+    [montant_paie] => 3094200.00
+)
+
+[2025-03-04 12:41:16] Transaction validée avec succès
+[2025-03-04 13:05:08] Erreur finale : SQLSTATE[42S22]: Column not found: 1054 Unknown column 'id_ticket' in 'field list'
+[2025-03-04 13:05:15] Erreur finale : SQLSTATE[42S22]: Column not found: 1054 Unknown column 'id_ticket' in 'field list'
+[2025-03-04 13:06:47] Données reçues : Array
+(
+    [id_ticket] => 90
+    [numero_ticket] => 202503APO00007
+    [type] => all
+    [status] => all
+    [montant_reste] => 1214200
+    [source_paiement] => transactions
+    [montant_affiche] => 10 000
+    [montant] => 10000
+    [save_paiement] => 
+)
+
+[2025-03-04 13:06:47] Montant : 10000
+[2025-03-04 13:06:47] Source : transactions
+[2025-03-04 13:06:47] Traitement ticket ID : 90
+[2025-03-04 13:06:47] Tentative de création de la transaction
+[2025-03-04 13:06:47] Transaction créée avec succès
+[2025-03-04 13:06:47] Tentative de mise à jour du ticket
+[2025-03-04 13:06:47] État avant mise à jour : Array
+(
+    [montant_payer] => 1880000.00
+    [montant_paie] => 3094200.00
+)
+
+[2025-03-04 13:06:47] Requête de mise à jour exécutée
+[2025-03-04 13:06:47] État après mise à jour : Array
+(
+    [montant_payer] => 1890000.00
+    [montant_paie] => 3094200.00
+)
+
+[2025-03-04 13:06:47] Transaction validée avec succès
+[2025-03-04 13:22:12] Données reçues : Array
+(
+    [id_ticket] => 90
+    [numero_ticket] => 202503APO00007
+    [type] => all
+    [status] => all
+    [montant_reste] => 1204200
+    [source_paiement] => transactions
+    [montant_affiche] => 10 000
+    [montant] => 10000
+    [save_paiement] => 
+)
+
+[2025-03-04 13:22:12] Montant : 10000
+[2025-03-04 13:22:12] Source : transactions
+[2025-03-04 13:22:13] Transaction validée avec succès
+[2025-03-04 13:24:07] Données reçues : Array
+(
+    [id_ticket] => 91
+    [numero_ticket] => 202503APO00026
+    [type] => all
+    [status] => all
+    [montant_reste] => 2042400
+    [source_paiement] => transactions
+    [montant_affiche] => 100 000
+    [montant] => 100000
+    [save_paiement] => 
+)
+
+[2025-03-04 13:24:07] Montant : 100000
+[2025-03-04 13:24:07] Source : transactions
+[2025-03-04 13:24:07] Transaction validée avec succès

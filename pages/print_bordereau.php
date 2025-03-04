@@ -14,6 +14,34 @@ if (isset($_POST['id_agent']) && isset($_POST['date_debut']) && isset($_POST['da
     $date_debut = $_POST['date_debut'] . ' 00:00:00';
     $date_fin = $_POST['date_fin'] . ' 23:59:59';
 
+    $sql = "SELECT 
+        t.*,
+        u.nom_usine,
+        v.matricule_vehicule,
+        v.type_vehicule,
+        CONCAT(COALESCE(a.nom, ''), ' ', COALESCE(a.prenom, '')) AS nom_complet_agent,
+        DATE(t.date_ticket) as date_ticket_only,
+        DATE(t.created_at) as date_reception
+    FROM tickets t
+    INNER JOIN usines u ON t.id_usine = u.id_usine
+    INNER JOIN vehicules v ON t.vehicule_id = v.vehicules_id
+    INNER JOIN agents a ON t.id_agent = a.id_agent
+    WHERE 1=1
+        AND t.id_agent = :id_agent 
+        AND t.date_ticket BETWEEN :date_debut AND :date_fin
+        AND t.status = 'validé'
+    ORDER BY 
+        u.nom_usine ASC,
+        t.date_ticket ASC,
+        t.created_at ASC";
+
+    $requete = $conn->prepare($sql);
+    $requete->bindParam(':id_agent', $id_agent);
+    $requete->bindParam(':date_debut', $date_debut);
+    $requete->bindParam(':date_fin', $date_fin);
+    $requete->execute();
+    $resultat = $requete->fetchAll(PDO::FETCH_ASSOC);
+
     $sql = "SELECT t.*, u.nom_usine, v.matricule_vehicule, 
             CONCAT(COALESCE(a.nom, ''), ' ', COALESCE(a.prenom, '')) AS nom_complet_agent
             FROM tickets t
@@ -30,15 +58,6 @@ if (isset($_POST['id_agent']) && isset($_POST['date_debut']) && isset($_POST['da
     $requete->bindParam(':date_fin', $date_fin);
     $requete->execute();
     $resultat = $requete->fetchAll(PDO::FETCH_ASSOC);
-    $sql = "SELECT t.*, u.nom_usine, v.matricule_vehicule, 
-            CONCAT(COALESCE(a.nom, ''), ' ', COALESCE(a.prenom, '')) AS nom_complet_agent
-            FROM tickets t
-            INNER JOIN usines u ON t.id_usine = u.id_usine
-            INNER JOIN vehicules v ON t.vehicule_id = v.vehicules_id
-            INNER JOIN agents a ON t.id_agent = a.id_agent
-            WHERE t.id_agent = :id_agent
-            AND t.created_at BETWEEN :date_debut AND :date_fin
-            ORDER BY u.nom_usine, t.created_at;";
     class PDF extends FPDF {
         function Header() {
             $logo_path = dirname(dirname(__FILE__)) . '/dist/img/logo.png';

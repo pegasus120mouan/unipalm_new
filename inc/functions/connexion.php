@@ -5,7 +5,7 @@ session_start();
 define('DB_HOST','localhost');
 define('DB_USER','root');
 define('DB_PASS','');
-define('DB_NAME','unipalm_db');
+define('DB_NAME','unipalmci_gestion_new');
 
 // Fonction pour établir la connexion à la base de données
 function getConnexion() {
