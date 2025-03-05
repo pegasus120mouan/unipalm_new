@@ -1,4 +1,7 @@
 <?php
+// Empêcher toute sortie avant le PDF
+ob_clean();
+
 // Ajout de la gestion d'erreurs au début du fichier
 error_reporting(E_ALL);
 ini_set('display_errors', 1);
@@ -19,17 +22,15 @@ if (isset($_POST['id_usine']) && isset($_POST['date_debut']) && isset($_POST['da
         u.nom_usine,
         v.matricule_vehicule,
         v.type_vehicule,
-        CONCAT(COALESCE(a.nom, ''), ' ', COALESCE(a.prenom, '')) AS nom_complet_agent,
         DATE(t.date_ticket) as date_ticket_only,
         DATE(t.created_at) as date_reception
     FROM tickets t
     INNER JOIN usines u ON t.id_usine = u.id_usine
     INNER JOIN vehicules v ON t.vehicule_id = v.vehicules_id
-    INNER JOIN agents a ON t.id_agent = a.id_agent
     WHERE t.id_usine = :id_usine 
-        AND t.date_ticket BETWEEN :date_debut AND :date_fin
+        AND t.created_at BETWEEN :date_debut AND :date_fin
         AND t.date_validation_boss IS NOT NULL
-    ORDER BY t.date_ticket ASC, t.created_at ASC";
+    ORDER BY t.created_at ASC";
 
     $requete = $conn->prepare($sql);
     $requete->bindParam(':id_usine', $id_usine);
@@ -41,46 +42,118 @@ if (isset($_POST['id_usine']) && isset($_POST['date_debut']) && isset($_POST['da
     if (!empty($tickets)) {
         class PDF extends FPDF {
             function Header() {
-                $this->SetFont('Arial', 'B', 15);
-                $this->Cell(0, 10, 'Liste des Tickets par Usine', 0, 1, 'C');
-                $this->Ln(10);
+                $logo_path = dirname(dirname(__FILE__)) . '/dist/img/logo.png';
+                if (file_exists($logo_path)) {
+                    $this->Image($logo_path, 10, 10, 30);
+                }
+                
+                // Titre de l'entreprise en noir
+                $this->SetTextColor(0);
+                $this->SetFont('Arial', 'B', 16);
+                $this->Cell(0, 10, 'UNIPALM COOP - CA', 0, 1, 'C');
+                
+                // Sous-titre en vert clair
+                $this->SetTextColor(0);
+                $this->SetFont('Arial', '', 11);
+                $this->Cell(0, 5, utf8_decode('Société Coopérative Agricole Unie pour le Palmier'), 0, 1, 'C');
+                
+                $this->Ln(15);
             }
 
             function Footer() {
-                $this->SetY(-15);
-                $this->SetFont('Arial', 'I', 8);
-                $this->Cell(0, 10, 'Page ' . $this->PageNo() . '/{nb}', 0, 0, 'C');
+                $this->SetY(-20);
+                
+                // Ligne verte
+                $this->SetDrawColor(144, 238, 144);
+                $this->Line(10, $this->GetY(), 200, $this->GetY());
+                
+                // Texte en vert clair
+                $this->SetTextColor(0);
+                $this->SetFont('Arial', '', 8);
+                $this->Cell(0, 5, 'Siege Social : Divo Quartier millionnaire non loin de l\'hotel Boya', 0, 1, 'C');
+                $this->Cell(0, 5, 'NCC : 2050R910 / TEL : (00225) 27 34 75 92 36 / 07 49 17 16 32', 0, 1, 'C');
+            }
+
+            // Fonction pour gérer les caractères spéciaux
+            function CleanString($str) {
+                return iconv('UTF-8', 'ISO-8859-1//TRANSLIT', $str);
             }
         }
 
         $pdf = new PDF();
-        $pdf->AliasNbPages();
-        $pdf->AddPage('L'); // Landscape orientation
+        $pdf->AddPage();
+        $pdf->SetAutoPageBreak(true, 35);
+
+        // Titre du document
+        $pdf->SetFont('Arial', 'BU', 16);
+        $pdf->SetTextColor(0);
+        $pdf->Cell(0, 12, 'LISTE DES TICKETS', 0, 1, 'C', false);
+        $pdf->Ln(5);
+
+        // Informations de l'usine
+        $pdf->SetTextColor(0);
+        $pdf->SetFont('Arial', 'B', 11);
+        $pdf->Cell(50, 8, 'USINE:', 0, 0);
+        $pdf->SetFont('Arial', 'B', 11);
+        $pdf->Cell(0, 8, $pdf->CleanString(strtoupper($tickets[0]['nom_usine'])), 0, 1);
+
+        // Période
+        $pdf->SetFont('Arial', 'B', 11);
+        $pdf->Cell(50, 8, utf8_decode('Période du:'), 0, 0);
+        $pdf->SetFont('Arial', '', 11);
+        $pdf->Cell(0, 8, date('d/m/y', strtotime($date_debut)) . ' au ' . date('d/m/y', strtotime($date_fin)), 0, 1);
+        $pdf->Ln(5);
+
+        // En-têtes du tableau
         $pdf->SetFont('Arial', 'B', 10);
+        $pdf->SetFillColor(230, 230, 230);
+        $pdf->SetDrawColor(0);
 
-        // En-têtes
-        $pdf->Cell(30, 7, 'Date', 1);
-        $pdf->Cell(40, 7, 'Numero Ticket', 1);
-        $pdf->Cell(50, 7, 'Usine', 1);
-        $pdf->Cell(40, 7, 'Vehicule', 1);
-        $pdf->Cell(30, 7, 'Poids', 1);
-        $pdf->Cell(50, 7, 'Agent', 1);
-        $pdf->Cell(30, 7, 'Status', 1);
-        $pdf->Ln();
+        $w = array(35, 35, 40, 40, 40);
+        
+        $pdf->Cell($w[0], 8, utf8_decode('Date Création'), 1, 0, 'C', true);
+        $pdf->Cell($w[1], 8, 'Date Ticket', 1, 0, 'C', true);
+        $pdf->Cell($w[2], 8, utf8_decode('Véhicule'), 1, 0, 'C', true);
+        $pdf->Cell($w[3], 8, utf8_decode('N° Ticket'), 1, 0, 'C', true);
+        $pdf->Cell($w[4], 8, 'Poids (kg)', 1, 1, 'C', true);
 
+        // Données
         $pdf->SetFont('Arial', '', 10);
+        $total_poids = 0;
+        $nombre_tickets = 0;
+        $fill = true;
+
         foreach ($tickets as $ticket) {
-            $pdf->Cell(30, 6, date('d/m/Y', strtotime($ticket['date_ticket'])), 1);
-            $pdf->Cell(40, 6, $ticket['numero_ticket'], 1);
-            $pdf->Cell(50, 6, utf8_decode($ticket['nom_usine']), 1);
-            $pdf->Cell(40, 6, $ticket['matricule_vehicule'], 1);
-            $pdf->Cell(30, 6, $ticket['poids'] . ' kg', 1);
-            $pdf->Cell(50, 6, utf8_decode($ticket['nom_complet_agent']), 1);
-            $pdf->Cell(30, 6, $ticket['date_validation_boss'] ? 'Validé' : 'En attente', 1);
-            $pdf->Ln();
+            $pdf->Cell($w[0], 7, date('d/m/y', strtotime($ticket['created_at'])), 1, 0, 'C', $fill);
+            $pdf->Cell($w[1], 7, date('d/m/y', strtotime($ticket['date_ticket'])), 1, 0, 'C', $fill);
+            $pdf->Cell($w[2], 7, $pdf->CleanString($ticket['matricule_vehicule']), 1, 0, 'C', $fill);
+            $pdf->Cell($w[3], 7, $ticket['numero_ticket'], 1, 0, 'C', $fill);
+            $pdf->Cell($w[4], 7, number_format($ticket['poids'], 0, ',', ' '), 1, 1, 'R', $fill);
+            $total_poids += $ticket['poids'];
+            $nombre_tickets++;
+            $fill = !$fill;
         }
 
-        $pdf->Output();
+        // Total
+        $pdf->SetFont('Arial', 'B', 10);
+        $pdf->Cell(array_sum($w)-40, 8, 'TOTAL (' . $nombre_tickets . ' tickets)', 1, 0, 'R', true);
+        $pdf->Cell(40, 8, number_format($total_poids, 0, ',', ' '), 1, 1, 'R', true);
+
+        // Signature
+        $pdf->Ln(15);
+        $pdf->SetTextColor(0);
+        $pdf->SetFont('Arial', 'I', 10);
+        $pdf->Cell(0, 10, utf8_decode('Fait à Divo, le ') . date('d/m/y'), 0, 1, 'R');
+        $pdf->SetFont('Arial', 'B', 10);
+        $pdf->Cell(0, 10, 'UNIPALM COOP-CA', 0, 1, 'R');
+
+        // Génération du PDF
+        $file_name = 'Tickets_' . $pdf->CleanString($tickets[0]['nom_usine']) . '_' . date('d-m-Y', strtotime($date_debut)) . '.pdf';
+        
+        // S'assurer qu'il n'y a pas de sortie avant le PDF
+        ob_end_clean();
+        $pdf->Output('I', $file_name);
+        exit;
     } else {
         echo "Aucun ticket trouvé pour cette période.";
     }

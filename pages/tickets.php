@@ -244,18 +244,20 @@ label {
     <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#add-ticket">
       <i class="fa fa-edit"></i>Enregistrer un ticket
     </button>
-
-    <button type="button" class="btn btn-success" data-toggle="modal" data-target="#print-bordereau">
+    <button type="button" class="btn btn-danger" data-toggle="modal" data-target="#print-bordereau-agent">
+      <i class="fa fa-print"></i> Imprimer Bordereau
+    </button>
+    <button type="button" class="btn btn-info" data-toggle="modal" data-target="#print-bordereau">
       <i class="fas fa-file-pdf"></i> Imprimer ticket par usine
+    </button>
+    <button type="button" class="btn btn-success" data-toggle="modal" data-target="#search_ticket">
+      <i class="fa fa-search"></i> Rechercher un ticket
     </button>
 
     <button type="button" class="btn btn-dark" onclick="window.location.href='export_tickets.php'">
               <i class="fa fa-print"></i> Exporter la liste les tickets
     </button>
-
-    <button type="button" class="btn btn-success" data-toggle="modal" data-target="#search_ticket">
-      <i class="fa fa-search"></i> Rechercher un ticket
-    </button>
+ 
 </div>
 
   <div class="table-responsive">
@@ -606,6 +608,48 @@ label {
       </div>
     </div>
   </div>
+
+  <!-- Modal pour impression bordereau par agent -->
+<div class="modal fade" id="print-bordereau-agent">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title">Impression bordereau</h4>
+            </div>
+            <div class="modal-body">
+                <form class="forms-sample" method="post" action="print_bordereau.php" target="_blank">
+                    <div class="card-body">
+                        <div class="form-group">
+                            <label>Chargé de Mission</label>
+                            <select id="select" name="id_agent" class="form-control">
+                                <?php
+                                if (!empty($agents)) {
+                                    foreach ($agents as $agent) {
+                                        echo '<option value="' . htmlspecialchars($agent['id_agent']) . '">' . htmlspecialchars($agent['nom_complet_agent']) . '</option>';
+                                    }
+                                } else {
+                                    echo '<option value="">Aucune chef équipe disponible</option>';
+                                }
+                                ?>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="date_debut">Date de debut</label>
+                            <input type="date" class="form-control" id="date_debut" name="date_debut" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="date_fin">Date Fin</label>
+                            <input type="date" class="form-control" id="date_fin" name="date_fin" required>
+                        </div>
+
+                        <button type="submit" class="btn btn-primary mr-2" name="saveCommande">Imprimer</button>
+                        <button type="button" class="btn btn-light" data-dismiss="modal">Annuler</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
 
 <!-- Recherche par tickets-->
 <div class="modal fade" id="search_ticket">
