@@ -245,20 +245,18 @@ label {
       <i class="fa fa-edit"></i>Enregistrer un ticket
     </button>
 
-    <button type="button" class="btn btn-danger" data-toggle="modal" data-target="#print-bordereau">
-      <i class="fa fa-print"></i> Imprimer un bordereau
+    <button type="button" class="btn btn-success" data-toggle="modal" data-target="#print-bordereau">
+      <i class="fas fa-file-pdf"></i> Imprimer ticket par usine
+    </button>
+
+    <button type="button" class="btn btn-dark" onclick="window.location.href='export_tickets.php'">
+              <i class="fa fa-print"></i> Exporter la liste les tickets
     </button>
 
     <button type="button" class="btn btn-success" data-toggle="modal" data-target="#search_ticket">
       <i class="fa fa-search"></i> Rechercher un ticket
     </button>
-
-    <button type="button" class="btn btn-dark" onclick="window.location.href='export_tickets.php'">
-              <i class="fa fa-print"></i> Exporter la liste les tickets
-             </button>
 </div>
-
-
 
   <div class="table-responsive">
     <table id="example1" class="table table-bordered table-striped">
@@ -480,8 +478,6 @@ label {
     </form>
 </div>
 
-
-
   <div class="modal fade" id="add-ticket" tabindex="-1" role="dialog" aria-labelledby="addTicketModalLabel" aria-hidden="true">
     <div class="modal-dialog" role="document">
       <div class="modal-content">
@@ -572,47 +568,43 @@ label {
   <div class="modal fade" id="print-bordereau">
     <div class="modal-dialog">
       <div class="modal-content">
-        <div class="modal-header">
-          <h4 class="modal-title">Impression bordereau</h4>
+        <div class="modal-header bg-success text-white">
+          <h5 class="modal-title">
+            <i class="fas fa-file-pdf"></i> Impression des tickets par usine
+          </h5>
+          <button type="button" class="close text-white" data-dismiss="modal">
+            <span aria-hidden="true">&times;</span>
+          </button>
         </div>
-        <div class="modal-body">
-          <form class="forms-sample" method="post" action="print_bordereau.php" target="_blank">
-            <div class="card-body">
-              <div class="form-group">
-                  <label>Chargé de Mission</label>
-                  <select id="select" name="id_agent" class="form-control">
-                      <?php
-                      // Vérifier si des usines existent
-                      if (!empty($agents)) {
-                          foreach ($agents as $agent) {
-                              echo '<option value="' . htmlspecialchars($agent['id_agent']) . '">' . htmlspecialchars($agent['nom_complet_agent']) . '</option>';
-                          }
-                      } else {
-                          echo '<option value="">Aucune chef eéuipe disponible</option>';
-                      }
-                      ?>
-                  </select>
-              </div>
-              <div class="form-group">
-                <label for="exampleInputPassword1">Date de debut</label>
-                <input type="date" class="form-control" id="exampleInputPassword1" placeholder="Poids" name="date_debut">
-              </div>
-              <div class="form-group">
-                <label for="exampleInputPassword1">Date Fin</label>
-                <input type="date" class="form-control" id="exampleInputPassword1" placeholder="Poids" name="date_fin">
-              </div>
-
-              <button type="submit" class="btn btn-primary mr-2" name="saveCommande">Imprimer</button>
-              <button type="button" class="btn btn-light" data-dismiss="modal">Annuler</button>
+        <form action="print_tickets_usine.php" method="POST" target="_blank">
+          <div class="modal-body">
+            <div class="form-group">
+              <label for="id_usine">Sélectionner une usine</label>
+              <select class="form-control" name="id_usine" id="id_usine" required>
+                <option value="">Choisir une usine</option>
+                <?php foreach($usines as $usine): ?>
+                  <option value="<?= $usine['id_usine'] ?>"><?= htmlspecialchars($usine['nom_usine']) ?></option>
+                <?php endforeach; ?>
+              </select>
             </div>
-          </form>
-        </div>
+            <div class="form-group">
+              <label for="date_debut">Date début</label>
+              <input type="date" class="form-control" name="date_debut" id="date_debut" required>
+            </div>
+            <div class="form-group">
+              <label for="date_fin">Date fin</label>
+              <input type="date" class="form-control" name="date_fin" id="date_fin" required>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-dismiss="modal">Fermer</button>
+            <button type="submit" class="btn btn-success">
+              <i class="fas fa-file-pdf"></i> Générer PDF
+            </button>
+          </div>
+        </form>
       </div>
-      <!-- /.modal-content -->
     </div>
-
-
-    <!-- /.modal-dialog -->
   </div>
 
 <!-- Recherche par tickets-->
