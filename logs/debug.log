@@ -1631,3 +1631,35 @@
 [2025-03-04 13:24:07] Montant : 100000
 [2025-03-04 13:24:07] Source : transactions
 [2025-03-04 13:24:07] Transaction validée avec succès
+[2025-03-04 18:41:31] Données reçues : Array
+(
+    [id_ticket] => 90
+    [numero_ticket] => 202503APO00007
+    [type] => all
+    [status] => all
+    [montant_reste] => 1194200
+    [source_paiement] => transactions
+    [montant_affiche] => 100 000
+    [montant] => 100000
+    [save_paiement] => 
+)
+
+[2025-03-04 18:41:32] Montant : 100000
+[2025-03-04 18:41:32] Source : transactions
+[2025-03-04 18:41:32] Transaction validée avec succès
+[2025-03-04 19:40:32] Données reçues : Array
+(
+    [id_ticket] => 90
+    [numero_ticket] => 202503APO00007
+    [type] => all
+    [status] => all
+    [montant_reste] => 1094200
+    [source_paiement] => transactions
+    [montant_affiche] => 100 000
+    [montant] => 100000
+    [save_paiement] => 
+)
+
+[2025-03-04 19:40:32] Montant : 100000
+[2025-03-04 19:40:32] Source : transactions
+[2025-03-04 19:40:32] Transaction validée avec succès

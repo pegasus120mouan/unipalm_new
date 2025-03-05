@@ -1,43 +1,49 @@
 <?php
-require_once '../inc/functions/connexion.php';
-require_once '../inc/functions/requete/requete_tickets.php';
+require_once('../includes/config.php');
+require_once('../includes/functions.php');
 
 header('Content-Type: application/json');
 
-if (!isset($_POST['ticket_ids']) || !is_array($_POST['ticket_ids'])) {
-    echo json_encode([
-        'success' => false,
-        'message' => 'Liste des tickets invalide ou non fournie'
-    ]);
-    exit;
-}
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    $ticket_ids = $_POST['ticket_ids'] ?? [];
+    $redirect_params = $_POST['redirect_params'] ?? [];
 
-$ticket_ids = array_map('intval', $_POST['ticket_ids']);
-
-try {
-    // Utiliser la date formatée au lieu de NOW()
-    $date_validation = date('Y-m-d H:i:s');
-    
-    $placeholders = str_repeat('?,', count($ticket_ids) - 1) . '?';
-    $sql = "UPDATE tickets SET date_validation_boss = ? WHERE id_ticket IN ($placeholders)";
-    
-    // Ajouter la date comme premier paramètre
-    $params = array_merge([$date_validation], $ticket_ids);
-    
-    $stmt = $conn->prepare($sql);
-    $result = $stmt->execute($params);
-    
-    if ($result && $stmt->rowCount() > 0) {
-        echo json_encode([
-            'success' => true,
-            'message' => 'Tickets validés avec succès'
-
-        ]);
+    if (empty($ticket_ids)) {
+        echo json_encode(['success' => false, 'message' => 'Aucun ticket sélectionné']);
+        exit;
     }
-} catch (PDOException $e) {
-    error_log("Erreur dans valider_tickets_simple.php: " . $e->getMessage());
-    echo json_encode([
-        'success' => false,
-        'message' => 'Erreur lors de la validation des tickets'
-    ]);
+
+    try {
+        $success = true;
+        $errors = [];
+
+        foreach ($ticket_ids as $id_ticket) {
+            $result = validerTicket($conn, $id_ticket);
+            if (!$result) {
+                $success = false;
+                $errors[] = "Erreur lors de la validation du ticket #$id_ticket";
+            }
+        }
+
+        if ($success) {
+            // Construire l'URL de redirection avec les paramètres
+            $params = http_build_query($redirect_params);
+            $redirect_url = 'tickets_attente.php' . ($params ? '?' . $params : '');
+            
+            echo json_encode([
+                'success' => true, 
+                'message' => 'Tous les tickets ont été validés avec succès',
+                'redirect_url' => $redirect_url
+            ]);
+        } else {
+            echo json_encode([
+                'success' => false, 
+                'message' => 'Erreurs lors de la validation : ' . implode(', ', $errors)
+            ]);
+        }
+    } catch (Exception $e) {
+        echo json_encode(['success' => false, 'message' => $e->getMessage()]);
+    }
+} else {
+    echo json_encode(['success' => false, 'message' => 'Méthode non autorisée']);
 }

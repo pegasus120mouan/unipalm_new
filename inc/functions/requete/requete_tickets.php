@@ -105,7 +105,7 @@ function getTicketsJour($conn) {
     return $stmt->fetchAll(PDO::FETCH_ASSOC);
 }
 
-function getTicketsAttente($conn, $agent_id = null, $usine_id = null) {
+function getTicketsAttente($conn, $agent_id = null, $usine_id = null, $date_debut = null, $date_fin = null) {
     $sql = "SELECT t.*, 
             CONCAT(u.nom, ' ', u.prenoms) AS utilisateur_nom_complet,
             u.contact AS utilisateur_contact,
@@ -129,16 +129,32 @@ function getTicketsAttente($conn, $agent_id = null, $usine_id = null) {
         $sql .= " AND t.id_usine = :usine_id";
     }
 
+    if ($date_debut) {
+        $sql .= " AND DATE(t.created_at) >= :date_debut";
+    }
+
+    if ($date_fin) {
+        $sql .= " AND DATE(t.created_at) <= :date_fin";
+    }
+
     $sql .= " ORDER BY t.created_at DESC";
 
     try {
         $stmt = $conn->prepare($sql);
+        
         if ($agent_id) {
             $stmt->bindValue(':agent_id', $agent_id, PDO::PARAM_INT);
         }
         if ($usine_id) {
             $stmt->bindValue(':usine_id', $usine_id, PDO::PARAM_INT);
         }
+        if ($date_debut) {
+            $stmt->bindValue(':date_debut', $date_debut, PDO::PARAM_STR);
+        }
+        if ($date_fin) {
+            $stmt->bindValue(':date_fin', $date_fin, PDO::PARAM_STR);
+        }
+        
         $stmt->execute();
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     } catch (PDOException $e) {
@@ -183,73 +199,135 @@ function getTicketsAttenteByUsine($conn, $id_usine) {
     return $stmt->fetchAll(PDO::FETCH_ASSOC);
 }
 
-function getTicketsValides($conn) {
-    $stmt = $conn->prepare(
-            "SELECT 
-    t.id_ticket,
-    t.date_ticket,
-    t.numero_ticket,
-    t.poids,
-    t.prix_unitaire,
-    t.date_validation_boss,
-    t.montant_paie,
-    t.date_paie,
-    CONCAT(u.nom, ' ', u.prenoms) AS utilisateur_nom_complet,
-    u.contact AS utilisateur_contact,
-    u.role AS utilisateur_role,
-    v.matricule_vehicule,
-    CONCAT(a.nom, ' ', a.prenom) AS agent_nom_complet,
-    us.nom_usine
-FROM 
-    tickets t
-INNER JOIN 
-    utilisateurs u ON t.id_utilisateur = u.id
-INNER JOIN 
-    vehicules v ON t.vehicule_id = v.vehicules_id
-INNER JOIN 
-    agents a ON t.id_agent = a.id_agent
-INNER JOIN 
-    usines us ON t.id_usine = us.id_usine
-WHERE 
-    t.prix_unitaire != 0.00  AND t.date_paie IS NOT NULL ORDER BY t.date_paie DESC"
-    );
-    
-    $stmt->execute();
-    return $stmt->fetchAll(PDO::FETCH_ASSOC);
-}
-
-function getTicketsPayes($conn) {
-    $stmt = $conn->prepare(
-        "SELECT 
-            t.id_ticket,
-            t.date_ticket,
-            t.numero_ticket,
-            t.poids,
-            t.prix_unitaire,
-            t.date_validation_boss,
-            t.montant_paie,
-            t.date_paie,
+function getTicketsValides($conn, $agent_id = null, $usine_id = null, $date_debut = null, $date_fin = null) {
+    $sql = "SELECT 
+            t.*, 
             CONCAT(u.nom, ' ', u.prenoms) AS utilisateur_nom_complet,
             u.contact AS utilisateur_contact,
             u.role AS utilisateur_role,
             v.matricule_vehicule,
             CONCAT(a.nom, ' ', a.prenom) AS agent_nom_complet,
-            us.nom_usine
-        FROM 
-            tickets t
-        INNER JOIN 
-            utilisateurs u ON t.id_utilisateur = u.id
-        INNER JOIN 
-            vehicules v ON t.vehicule_id = v.vehicules_id
-        INNER JOIN 
-            agents a ON t.id_agent = a.id_agent
-        INNER JOIN 
-            usines us ON t.id_usine = us.id_usine
-            WHERE t.date_paie IS NOT NULL AND DATE(t.date_ticket) IS NOT NULL"
-    );
+            us.nom_usine,
+            us.id_usine
+            FROM tickets t
+            INNER JOIN utilisateurs u ON t.id_utilisateur = u.id
+            INNER JOIN vehicules v ON t.vehicule_id = v.vehicules_id
+            INNER JOIN agents a ON t.id_agent = a.id_agent
+            INNER JOIN usines us ON t.id_usine = us.id_usine
+            WHERE t.date_validation_boss IS NOT NULL";
+
+    if ($agent_id) {
+        $sql .= " AND t.id_agent = :agent_id";
+    }
     
-    $stmt->execute();
-    return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    if ($usine_id) {
+        $sql .= " AND t.id_usine = :usine_id";
+    }
+
+    if ($date_debut) {
+        $sql .= " AND DATE(t.created_at) >= :date_debut";
+    }
+
+    if ($date_fin) {
+        $sql .= " AND DATE(t.created_at) <= :date_fin";
+    }
+
+    $sql .= " ORDER BY t.date_validation_boss DESC";
+
+    try {
+        $stmt = $conn->prepare($sql);
+        
+        if ($agent_id) {
+            $stmt->bindValue(':agent_id', $agent_id, PDO::PARAM_INT);
+        }
+        if ($usine_id) {
+            $stmt->bindValue(':usine_id', $usine_id, PDO::PARAM_INT);
+        }
+        if ($date_debut) {
+            $stmt->bindValue(':date_debut', $date_debut, PDO::PARAM_STR);
+        }
+        if ($date_fin) {
+            $stmt->bindValue(':date_fin', $date_fin, PDO::PARAM_STR);
+        }
+        
+        $stmt->execute();
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    } catch (PDOException $e) {
+        error_log("Erreur dans getTicketsValides: " . $e->getMessage());
+        return array();
+    }
+}
+
+function getTicketsPayes($conn, $agent_id = null, $usine_id = null, $date_debut = null, $date_fin = null) {
+    $sql = "SELECT 
+        t.id_ticket,
+        t.date_ticket,
+        t.numero_ticket,
+        t.poids,
+        t.prix_unitaire,
+        t.date_validation_boss,
+        t.montant_paie,
+        t.date_paie,
+        t.montant_payer,
+        (t.montant_paie - COALESCE(t.montant_payer, 0)) as montant_reste,
+        CONCAT(u.nom, ' ', u.prenoms) AS utilisateur_nom_complet,
+        u.contact AS utilisateur_contact,
+        u.role AS utilisateur_role,
+        v.matricule_vehicule,
+        CONCAT(a.nom, ' ', a.prenom) AS agent_nom_complet,
+        us.nom_usine
+    FROM 
+        tickets t
+    INNER JOIN 
+        utilisateurs u ON t.id_utilisateur = u.id
+    INNER JOIN 
+        vehicules v ON t.vehicule_id = v.vehicules_id
+    INNER JOIN 
+        agents a ON t.id_agent = a.id_agent
+    INNER JOIN 
+        usines us ON t.id_usine = us.id_usine
+    WHERE t.date_paie IS NOT NULL AND DATE(t.date_ticket) IS NOT NULL";
+
+    if ($agent_id) {
+        $sql .= " AND t.id_agent = :agent_id";
+    }
+    
+    if ($usine_id) {
+        $sql .= " AND t.id_usine = :usine_id";
+    }
+
+    if ($date_debut) {
+        $sql .= " AND DATE(t.date_ticket) >= :date_debut";
+    }
+
+    if ($date_fin) {
+        $sql .= " AND DATE(t.date_ticket) <= :date_fin";
+    }
+
+    $sql .= " ORDER BY t.date_ticket DESC";
+
+    try {
+        $stmt = $conn->prepare($sql);
+        
+        if ($agent_id) {
+            $stmt->bindValue(':agent_id', $agent_id, PDO::PARAM_INT);
+        }
+        if ($usine_id) {
+            $stmt->bindValue(':usine_id', $usine_id, PDO::PARAM_INT);
+        }
+        if ($date_debut) {
+            $stmt->bindValue(':date_debut', $date_debut, PDO::PARAM_STR);
+        }
+        if ($date_fin) {
+            $stmt->bindValue(':date_fin', $date_fin, PDO::PARAM_STR);
+        }
+        
+        $stmt->execute();
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    } catch (PDOException $e) {
+        error_log("Erreur dans getTicketsPayes: " . $e->getMessage());
+        return array();
+    }
 }
 
 function getTicketsNonSoldes($conn) {

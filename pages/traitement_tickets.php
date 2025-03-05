@@ -113,32 +113,34 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         // Traitement des données supplémentaires
         $id_ticket = $_POST["id_ticket"] ?? null;
         $prix_unitaire = $_POST["prix_unitaire"] ?? null;
-        $date = date("Y-m-d");
+        $redirect_url = $_POST['redirect'] ?? 'tickets_attente.php';
 
-        // Validation des données
-        if (!$id_ticket || !$prix_unitaire) {
-            $_SESSION['delete_pop'] = true; // Message d'erreur
-            header('Location: ' . ($_POST['redirect'] ?? 'tickets.php'));
-            exit;
+        try {
+            if ($id_ticket && $prix_unitaire) {
+                // Mettre à jour le ticket avec le nouveau prix unitaire
+                $date_validation = date('Y-m-d H:i:s');
+                $stmt = $conn->prepare("UPDATE tickets SET prix_unitaire = ?, date_validation_boss = ? WHERE id_ticket = ?");
+                $result = $stmt->execute([$prix_unitaire, $date_validation, $id_ticket]);
+                
+                if ($result) {
+                    // Calculer et mettre à jour le montant_paie
+                    $stmt = $conn->prepare("UPDATE tickets SET montant_paie = prix_unitaire * poids WHERE id_ticket = ?");
+                    $stmt->execute([$id_ticket]);
+                    
+                    $_SESSION['success'] = "Prix unitaire mis à jour avec succès";
+                } else {
+                    $_SESSION['error'] = "Erreur lors de la mise à jour du prix unitaire";
+                }
+            } else {
+                $_SESSION['error'] = "Données manquantes";
+            }
+        } catch (PDOException $e) {
+            error_log("Erreur dans traitement_tickets.php: " . $e->getMessage());
+            $_SESSION['error'] = "Erreur lors de la mise à jour du prix unitaire";
         }
 
-        // Requête SQL d'update
-        $sql = "UPDATE tickets
-                SET prix_unitaire = :prix_unitaire, date_validation_boss = :date_validation_boss 
-                WHERE id_ticket = :id_ticket";
-
-        // Préparation de la requête
-         // Appel de la fonction
-        $result = updateTicketPrixUnitaire($conn, $id_ticket, $prix_unitaire, $date);
-
-        if ($result) {
-            $_SESSION['popup'] = true; // Message de succès
-        } else {
-            $_SESSION['delete_pop'] = true; // Message d'erreur
-        }
-
-        // Redirection
-        header('Location: ' . ($_POST['redirect'] ?? 'tickets.php'));
+        // Rediriger vers l'URL d'origine avec tous les paramètres
+        header("Location: " . $redirect_url);
         exit;
     }
 
@@ -214,50 +216,65 @@ require_once '../inc/functions/requete/requete_agents.php';
 
 header('Content-Type: application/json');
 
-if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['numero_ticket'])) {
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     try {
-        $result = insertTicket(
-            $conn,
-            $_POST['id_usine'],
-            $_POST['date_ticket'],
-            $_POST['id_agent'],
-            $_POST['numero_ticket'],
-            $_POST['vehicule_id'],
-            $_POST['poids'],
-            $_SESSION['user_id'],
-            $_POST['prix_unitaire'] ?? null
-        );
-
-        if (!$result['success']) {
-            if (isset($result['exists'])) {
-                echo json_encode([
-                    'success' => false,
-                    'exists' => true,
-                    'numero_ticket' => $result['numero_ticket']
-                ]);
-            } else {
-                echo json_encode([
-                    'success' => false,
-                    'message' => $result['message']
-                ]);
-            }
-        } else {
-            echo json_encode([
-                'success' => true,
-                'message' => 'Ticket enregistré avec succès',
-                'redirect' => 'tickets.php'
-            ]);
-        }
+        $success = false;
+        $message = '';
         
-    } catch(Exception $e) {
+        // Validation d'un seul ticket
+        if (isset($_POST['id_ticket']) && isset($_POST['prix_unitaire'])) {
+            $id_ticket = $_POST['id_ticket'];
+            $prix_unitaire = $_POST['prix_unitaire'];
+            
+            // Mettre à jour le ticket avec le nouveau prix unitaire
+            $date_validation = date('Y-m-d H:i:s');
+            $stmt = $conn->prepare("UPDATE tickets SET prix_unitaire = ?, date_validation_boss = ? WHERE id_ticket = ?");
+            $success = $stmt->execute([$prix_unitaire, $date_validation, $id_ticket]);
+            
+            if ($success) {
+                // Calculer et mettre à jour le montant_paie
+                $stmt = $conn->prepare("UPDATE tickets SET montant_paie = prix_unitaire * poids WHERE id_ticket = ?");
+                $stmt->execute([$id_ticket]);
+                $message = 'Ticket validé avec succès';
+            } else {
+                $message = 'Erreur lors de la validation du ticket';
+            }
+        }
+        // Validation multiple
+        elseif (isset($_POST['ticket_ids'])) {
+            $ticket_ids = json_decode($_POST['ticket_ids']);
+            $success = true;
+            $errors = [];
+            
+            foreach ($ticket_ids as $id_ticket) {
+                $date_validation = date('Y-m-d H:i:s');
+                $stmt = $conn->prepare("UPDATE tickets SET date_validation_boss = ? WHERE id_ticket = ?");
+                if (!$stmt->execute([$date_validation, $id_ticket])) {
+                    $success = false;
+                    $errors[] = "Erreur pour le ticket #$id_ticket";
+                }
+            }
+            
+            $message = $success ? 'Tous les tickets ont été validés' : 'Erreurs: ' . implode(', ', $errors);
+        }
+        else {
+            $message = 'Paramètres invalides';
+        }
+
+        echo json_encode([
+            'success' => $success,
+            'message' => $message
+        ]);
+
+    } catch (Exception $e) {
         echo json_encode([
             'success' => false,
-            'message' => "Une erreur est survenue : " . $e->getMessage()
+            'message' => $e->getMessage()
         ]);
     }
-    exit();
+} else {
+    echo json_encode([
+        'success' => false,
+        'message' => 'Méthode non autorisée'
+    ]);
 }
-
-header('Location: ' . ($_POST['redirect'] ?? 'tickets_modifications.php'));
-exit;
-?>
