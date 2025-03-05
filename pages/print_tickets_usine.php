@@ -1,6 +1,16 @@
 <?php
-// Empêcher toute sortie avant le PDF
-ob_clean();
+// Désactiver la compression zlib
+if (ini_get('zlib.output_compression')) {
+    ini_set('zlib.output_compression', 'Off');
+}
+
+// Vider tous les buffers de sortie
+while (ob_get_level()) {
+    ob_end_clean();
+}
+
+// Démarrer un nouveau buffer
+ob_start();
 
 // Ajout de la gestion d'erreurs au début du fichier
 error_reporting(E_ALL);
@@ -148,14 +158,20 @@ if (isset($_POST['id_usine']) && isset($_POST['date_debut']) && isset($_POST['da
         // Génération du PDF
         $file_name = 'Tickets_' . $pdf->CleanString($tickets[0]['nom_usine']) . '_' . date('d-m-Y', strtotime($date_debut)) . '.pdf';
         
-        // S'assurer qu'il n'y a pas de sortie avant le PDF
-        ob_end_clean();
+        // Vider le buffer avant de générer le PDF
+        if (ob_get_length()) {
+            ob_clean();
+        }
+        
+        // Envoi du PDF
         $pdf->Output('I', $file_name);
         exit;
     } else {
-        echo "Aucun ticket trouvé pour cette période.";
+        echo "<script>alert('Aucun ticket trouvé pour cette période.'); window.history.back();</script>";
+        exit;
     }
 } else {
-    echo "Paramètres manquants.";
+    echo "<script>alert('Paramètres manquants.'); window.history.back();</script>";
+    exit;
 }
 ?>
