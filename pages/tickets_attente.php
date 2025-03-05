@@ -18,9 +18,10 @@ $date_debut = $_GET['date_debut'] ?? '';
 $date_fin = $_GET['date_fin'] ?? '';
 $search_agent = $_GET['search_agent'] ?? '';
 $search_usine = $_GET['search_usine'] ?? '';
+$numero_ticket = $_GET['numero_ticket'] ?? '';
 
 // Récupérer les tickets en attente avec les filtres
-$tickets = getTicketsAttente($conn, $agent_id, $usine_id, $date_debut, $date_fin);
+$tickets = getTicketsAttente($conn, $agent_id, $usine_id, $date_debut, $date_fin, $numero_ticket);
 
 // Filtrer les tickets si un terme de recherche est présent
 if (!empty($search_agent) || !empty($search_usine)) {
@@ -56,6 +57,16 @@ $usines = getUsines($conn);
         <div class="col-md-10">
             <form id="filterForm" method="GET">
                 <div class="row">
+                    <!-- Numéro de ticket -->
+                    <div class="col-md-3 mb-3">
+                        <input type="text" 
+                               class="form-control" 
+                               name="numero_ticket" 
+                               id="numero_ticket"
+                               placeholder="Numéro de ticket" 
+                               value="<?= htmlspecialchars($numero_ticket) ?>">
+                    </div>
+
                     <!-- Recherche par agent -->
                     <div class="col-md-3 mb-3">
                         <select class="form-control" name="agent_id" id="agent_select">
@@ -113,10 +124,19 @@ $usines = getUsines($conn);
             </form>
             
             <!-- Filtres actifs -->
-            <?php if($agent_id || $usine_id || $date_debut || $date_fin): ?>
+            <?php if($agent_id || $usine_id || $date_debut || $date_fin || $numero_ticket): ?>
             <div class="active-filters mt-3">
                 <div class="d-flex align-items-center flex-wrap">
                     <strong class="text-muted mr-2">Filtres actifs :</strong>
+                    <?php if($numero_ticket): ?>
+                        <span class="badge badge-info mr-2 p-2">
+                            <i class="fa fa-ticket"></i>
+                            Ticket N°: <?= htmlspecialchars($numero_ticket) ?>
+                            <a href="?<?= http_build_query(array_merge($_GET, ['numero_ticket' => null])) ?>" class="text-white ml-2">
+                                <i class="fa fa-times"></i>
+                            </a>
+                        </span>
+                    <?php endif; ?>
                     <?php if($agent_id): ?>
                         <?php 
                         $agent_name = '';
@@ -184,8 +204,12 @@ function appliquerFiltres() {
     const usine_id = document.getElementById('usine_select').value;
     const date_debut = document.getElementById('date_debut').value;
     const date_fin = document.getElementById('date_fin').value;
+    const numero_ticket = document.getElementById('numero_ticket').value;
     
     let params = new URLSearchParams(window.location.search);
+    
+    if (numero_ticket) params.set('numero_ticket', numero_ticket);
+    else params.delete('numero_ticket');
     
     if (agent_id) params.set('agent_id', agent_id);
     else params.delete('agent_id');
@@ -199,7 +223,7 @@ function appliquerFiltres() {
     if (date_fin) params.set('date_fin', date_fin);
     else params.delete('date_fin');
     
-    window.location.href = 'tickets_attente.php?' + params.toString();
+    window.location.href = '?' + params.toString();
 }
 
 // Initialiser les sélecteurs de date
@@ -745,7 +769,7 @@ function validerTicketsSelectionnes() {
     <form action="" method="get" class="items-per-page-form ml-3">
         <?php
         // Conserver les paramètres de filtrage actuels
-        foreach (['agent_id', 'usine_id', 'search_agent', 'search_usine'] as $param) {
+        foreach (['agent_id', 'usine_id', 'search_agent', 'search_usine', 'numero_ticket'] as $param) {
             if (isset($_GET[$param])) {
                 echo '<input type="hidden" name="' . $param . '" value="' . htmlspecialchars($_GET[$param]) . '">';
             }

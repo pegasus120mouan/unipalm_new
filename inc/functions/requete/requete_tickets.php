@@ -105,7 +105,7 @@ function getTicketsJour($conn) {
     return $stmt->fetchAll(PDO::FETCH_ASSOC);
 }
 
-function getTicketsAttente($conn, $agent_id = null, $usine_id = null, $date_debut = null, $date_fin = null) {
+function getTicketsAttente($conn, $agent_id = null, $usine_id = null, $date_debut = null, $date_fin = null, $numero_ticket = null) {
     $sql = "SELECT t.*, 
             CONCAT(u.nom, ' ', u.prenoms) AS utilisateur_nom_complet,
             u.contact AS utilisateur_contact,
@@ -136,6 +136,10 @@ function getTicketsAttente($conn, $agent_id = null, $usine_id = null, $date_debu
     if ($date_fin) {
         $sql .= " AND DATE(t.created_at) <= :date_fin";
     }
+    
+    if ($numero_ticket) {
+        $sql .= " AND t.numero_ticket LIKE :numero_ticket";
+    }
 
     $sql .= " ORDER BY t.created_at DESC";
 
@@ -153,6 +157,9 @@ function getTicketsAttente($conn, $agent_id = null, $usine_id = null, $date_debu
         }
         if ($date_fin) {
             $stmt->bindValue(':date_fin', $date_fin, PDO::PARAM_STR);
+        }
+        if ($numero_ticket) {
+            $stmt->bindValue(':numero_ticket', '%' . $numero_ticket . '%', PDO::PARAM_STR);
         }
         
         $stmt->execute();
