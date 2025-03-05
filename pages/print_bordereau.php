@@ -29,7 +29,7 @@ if (isset($_POST['id_agent']) && isset($_POST['date_debut']) && isset($_POST['da
     WHERE 1=1
         AND t.id_agent = :id_agent 
         AND t.date_ticket BETWEEN :date_debut AND :date_fin
-        AND t.status = 'validé'
+        AND t.date_validation_boss IS NOT NULL
     ORDER BY 
         u.nom_usine ASC,
         t.date_ticket ASC,
