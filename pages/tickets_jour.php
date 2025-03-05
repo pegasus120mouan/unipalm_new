@@ -4,37 +4,216 @@ require_once '../inc/functions/requete/requete_tickets.php';
 require_once '../inc/functions/requete/requete_usines.php';
 require_once '../inc/functions/requete/requete_chef_equipes.php';
 require_once '../inc/functions/requete/requete_vehicules.php';
-//require_once '../inc/functions/requete/requetes_selection_boutique.php';
+require_once '../inc/functions/requete/requete_agents.php';
 include('header.php');
 
-//$_SESSION['user_id'] = $user['id'];
- $id_user=$_SESSION['user_id'];
- //echo $id_user;
+$limit = $_GET['limit'] ?? 15;
+$page = isset($_GET['page']) ? (int)$_GET['page'] : 1;
 
-////$stmt = $conn->prepare("SELECT * FROM users");
-//$stmt->execute();
-//$users = $stmt->fetchAll();
-//foreach($users as $user)
+// Récupérer les paramètres de filtrage
+$agent_id = $_GET['agent_id'] ?? null;
+$usine_id = $_GET['usine_id'] ?? null;
+$date_debut = $_GET['date_debut'] ?? '';
+$date_fin = $_GET['date_fin'] ?? '';
+$search_agent = $_GET['search_agent'] ?? '';
+$search_usine = $_GET['search_usine'] ?? '';
+$numero_ticket = $_GET['numero_ticket'] ?? '';
 
-$limit = $_GET['limit'] ?? 15; // Nombre de tickets par page
-$page = isset($_GET['page']) ? (int)$_GET['page'] : 1; // Page actuelle
+// Récupérer les tickets du jour avec les filtres
+$tickets = getTicketsJour($conn);
 
-// Récupérer les données (functions)
-$tickets = getTicketsJour($conn); 
-$usines = getUsines($conn);
-$chefs_equipes=getChefEquipes($conn);
-$vehicules=getVehicules($conn);
-
-// Initialisation des variables
-$tickets_list = [];
-$ticket_pages = [];
-
-// Vérifiez si des tickets existent avant de procéder
-if (!empty($tickets)) {
-    $ticket_pages = array_chunk($tickets, $limit); // Divise les tickets en pages
-    $tickets_list = $ticket_pages[$page - 1] ?? []; // Tickets pour la page actuelle
+// Filtrer les tickets si un terme de recherche est présent
+if (!empty($search_agent) || !empty($search_usine) || !empty($agent_id) || !empty($usine_id) || !empty($date_debut) || !empty($date_fin) || !empty($numero_ticket)) {
+    $tickets = array_filter($tickets, function($ticket) use ($search_agent, $search_usine, $agent_id, $usine_id, $date_debut, $date_fin, $numero_ticket) {
+        $match = true;
+        
+        if (!empty($search_agent)) {
+            $match = $match && stripos($ticket['agent_nom_complet'], $search_agent) !== false;
+        }
+        if (!empty($search_usine)) {
+            $match = $match && stripos($ticket['nom_usine'], $search_usine) !== false;
+        }
+        if (!empty($agent_id)) {
+            $match = $match && $ticket['id_agent'] == $agent_id;
+        }
+        if (!empty($usine_id)) {
+            $match = $match && $ticket['id_usine'] == $usine_id;
+        }
+        if (!empty($numero_ticket)) {
+            $match = $match && stripos($ticket['numero_ticket'], $numero_ticket) !== false;
+        }
+        if (!empty($date_debut)) {
+            $match = $match && strtotime($ticket['date_ticket']) >= strtotime($date_debut);
+        }
+        if (!empty($date_fin)) {
+            $match = $match && strtotime($ticket['date_ticket']) <= strtotime($date_fin);
+        }
+        return $match;
+    });
 }
+
+// Récupérer les données pour les filtres
+$usines = getUsines($conn);
+$agents = getAgents($conn);
+$chefs_equipes = getChefEquipes($conn);
+$vehicules = getVehicules($conn);
+
+// Calculer la pagination
+$total_tickets = count($tickets);
+$total_pages = ceil($total_tickets / $limit);
+$page = max(1, min($page, $total_pages));
+$offset = ($page - 1) * $limit;
+
+// Extraire les tickets pour la page courante
+$tickets_list = array_slice($tickets, $offset, $limit);
 ?>
+
+<!-- Barre de recherche en haut -->
+<div class="search-container mb-4">
+    <div class="row justify-content-center">
+        <div class="col-md-10">
+            <form id="filterForm" method="GET">
+                <div class="row">
+                    <!-- Numéro de ticket -->
+                    <div class="col-md-3 mb-3">
+                        <input type="text" 
+                               class="form-control" 
+                               name="numero_ticket" 
+                               id="numero_ticket"
+                               placeholder="Numéro de ticket" 
+                               value="<?= htmlspecialchars($numero_ticket) ?>">
+                    </div>
+
+                    <!-- Recherche par agent -->
+                    <div class="col-md-3 mb-3">
+                        <select class="form-control" name="agent_id" id="agent_select">
+                            <option value="">Sélectionner un agent</option>
+                            <?php foreach($agents as $agent): ?>
+                                <option value="<?= $agent['id_agent'] ?>" <?= ($agent_id == $agent['id_agent']) ? 'selected' : '' ?>>
+                                    <?= htmlspecialchars($agent['nom_complet_agent']) ?>
+                                </option>
+                            <?php endforeach; ?>
+                        </select>
+                    </div>
+                    
+                    <!-- Recherche par usine -->
+                    <div class="col-md-3 mb-3">
+                        <select class="form-control" name="usine_id" id="usine_select">
+                            <option value="">Sélectionner une usine</option>
+                            <?php foreach($usines as $usine): ?>
+                                <option value="<?= $usine['id_usine'] ?>" <?= ($usine_id == $usine['id_usine']) ? 'selected' : '' ?>>
+                                    <?= htmlspecialchars($usine['nom_usine']) ?>
+                                </option>
+                            <?php endforeach; ?>
+                        </select>
+                    </div>
+
+                    <!-- Date de début -->
+                    <div class="col-md-3 mb-3">
+                        <input type="date" 
+                               class="form-control" 
+                               name="date_debut" 
+                               id="date_debut"
+                               placeholder="Date de début" 
+                               value="<?= htmlspecialchars($date_debut) ?>">
+                    </div>
+
+                    <!-- Date de fin -->
+                    <div class="col-md-3 mb-3">
+                        <input type="date" 
+                               class="form-control" 
+                               name="date_fin" 
+                               id="date_fin"
+                               placeholder="Date de fin" 
+                               value="<?= htmlspecialchars($date_fin) ?>">
+                    </div>
+
+                    <!-- Boutons -->
+                    <div class="col-12 text-center">
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fa fa-search"></i> Rechercher
+                        </button>
+                        <a href="tickets_jour.php" class="btn btn-outline-danger">
+                            <i class="fa fa-times"></i> Réinitialiser les filtres
+                        </a>
+                    </div>
+                </div>
+            </form>
+            
+            <!-- Filtres actifs -->
+            <?php if($agent_id || $usine_id || $date_debut || $date_fin || $numero_ticket): ?>
+            <div class="active-filters mt-3">
+                <div class="d-flex align-items-center flex-wrap">
+                    <strong class="text-muted mr-2">Filtres actifs :</strong>
+                    <?php if($numero_ticket): ?>
+                        <span class="badge badge-info mr-2 p-2">
+                            <i class="fa fa-ticket"></i>
+                            Ticket N°: <?= htmlspecialchars($numero_ticket) ?>
+                            <a href="?<?= http_build_query(array_merge($_GET, ['numero_ticket' => null])) ?>" class="text-white ml-2">
+                                <i class="fa fa-times"></i>
+                            </a>
+                        </span>
+                    <?php endif; ?>
+                    <?php if($agent_id): ?>
+                        <?php 
+                        $agent_name = '';
+                        foreach($agents as $agent) {
+                            if($agent['id_agent'] == $agent_id) {
+                                $agent_name = $agent['nom_complet_agent'];
+                                break;
+                            }
+                        }
+                        ?>
+                        <span class="badge badge-info mr-2 p-2">
+                            <i class="fa fa-user"></i> 
+                            Agent: <?= htmlspecialchars($agent_name) ?>
+                            <a href="?<?= http_build_query(array_merge($_GET, ['agent_id' => null])) ?>" class="text-white ml-2">
+                                <i class="fa fa-times"></i>
+                            </a>
+                        </span>
+                    <?php endif; ?>
+                    <?php if($usine_id): ?>
+                        <?php 
+                        $usine_name = '';
+                        foreach($usines as $usine) {
+                            if($usine['id_usine'] == $usine_id) {
+                                $usine_name = $usine['nom_usine'];
+                                break;
+                            }
+                        }
+                        ?>
+                        <span class="badge badge-info mr-2 p-2">
+                            <i class="fa fa-building"></i>
+                            Usine: <?= htmlspecialchars($usine_name) ?>
+                            <a href="?<?= http_build_query(array_merge($_GET, ['usine_id' => null])) ?>" class="text-white ml-2">
+                                <i class="fa fa-times"></i>
+                            </a>
+                        </span>
+                    <?php endif; ?>
+                    <?php if($date_debut): ?>
+                        <span class="badge badge-info mr-2 p-2">
+                            <i class="fa fa-calendar"></i>
+                            Depuis: <?= htmlspecialchars($date_debut) ?>
+                            <a href="?<?= http_build_query(array_merge($_GET, ['date_debut' => null])) ?>" class="text-white ml-2">
+                                <i class="fa fa-times"></i>
+                            </a>
+                        </span>
+                    <?php endif; ?>
+                    <?php if($date_fin): ?>
+                        <span class="badge badge-info mr-2 p-2">
+                            <i class="fa fa-calendar"></i>
+                            Jusqu'au: <?= htmlspecialchars($date_fin) ?>
+                            <a href="?<?= http_build_query(array_merge($_GET, ['date_fin' => null])) ?>" class="text-white ml-2">
+                                <i class="fa fa-times"></i>
+                            </a>
+                        </span>
+                    <?php endif; ?>
+                </div>
+            </div>
+            <?php endif; ?>
+        </div>
+    </div>
+</div>
 
 <!-- Main row -->
 <style>
@@ -119,50 +298,10 @@ label {
 
 
 <div class="row">
-
-    <div class="block-container">
-    <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#add-ticket" disabled>
-      <i class="fa fa-edit"></i>Enregistrer un ticket
-    </button>
-
-    <button type="button" class="btn btn-danger" data-toggle="modal" data-target="#add-point" disabled>
-      <i class="fa fa-print"></i> Imprimer un ticket
-    </button>
-
-    <button type="button" class="btn btn-success" data-toggle="modal" data-target="#search-commande" disabled>
-      <i class="fa fa-search"></i> Recherche un ticket
-    </button>
-
-    <button type="button" class="btn btn-dark" onclick="window.location.href='export_commandes.php'" disabled>
-              <i class="fa fa-print"></i> Exporter la liste les tickets
-             </button>
+    <div class="col-12">
+        <h4 class="mb-4">Liste des tickets du jour</h4>
+    </div>
 </div>
-
-
-
- <!-- <button type="button" class="btn btn-primary spacing" data-toggle="modal" data-target="#add-commande">
-    Enregistrer une commande
-  </button>
-
-
-    <button type="button" class="btn btn-outline-secondary spacing" data-toggle="modal" data-target="#recherche-commande1">
-        <i class="fas fa-print custom-icon"></i>
-    </button>
-
-
-  <a class="btn btn-outline-secondary" href="commandes_print.php"><i class="fa fa-print" style="font-size:24px;color:green"></i></a>
-
-
-     Utilisation du formulaire Bootstrap avec ms-auto pour aligner à droite
-<form action="page_recherche.php" method="GET" class="d-flex ml-auto">
-    <input class="form-control me-2" type="search" name="recherche" style="width: 400px;" placeholder="Recherche..." aria-label="Search">
-    <button class="btn btn-outline-primary spacing" style="margin-left: 15px;" type="submit">Rechercher</button>
-</form>
-
--->
-
-
-
 
 <div class="table-responsive">
     <table id="example1" class="table table-bordered table-striped">
@@ -340,9 +479,9 @@ label {
     <?php if($page > 1 ): ?>
         <a href="?page=<?= $page - 1 ?>" class="btn btn-primary"><</a>
     <?php endif; ?>
-    <span><?= $page . '/' . count($ticket_pages) ?></span>
+    <span><?= $page . '/' . $total_pages ?></span>
 
-    <?php if($page < count($ticket_pages)): ?>
+    <?php if($page < $total_pages): ?>
         <a href="?page=<?= $page + 1 ?>" class="btn btn-primary">></a>
     <?php endif; ?>
     <form action="" method="get" class="items-per-page-form">

@@ -147,12 +147,10 @@ label {
     </style>
     
 <div class="row">
-    <div class="block-container">
-        <div class="d-flex justify-content-between align-items-center">
-            <h3><i class="fa fa-money text-success"></i> Liste des tickets Soldés ou en cours de paiement</h3>
-            <div class="text-muted">
-                Total: <?php echo count($tickets); ?> ticket(s)
-            </div>
+    <div class="col-12">
+        <h4 class="mb-4">Liste des tickets Soldés ou en cours de paiement</h4>
+        <div class="text-muted mb-3">
+            Total: <?php echo count($tickets); ?> ticket(s)
         </div>
     </div>
 </div>
