@@ -147,7 +147,7 @@ function getTicketsAttente($conn, $agent_id = null, $usine_id = null, $date_debu
             INNER JOIN vehicules v ON t.vehicule_id = v.vehicules_id
             INNER JOIN agents a ON t.id_agent = a.id_agent
             INNER JOIN usines us ON t.id_usine = us.id_usine
-            WHERE t.date_validation_boss IS not NULL";
+            WHERE t.date_validation_boss IS NULL";
 
     if ($agent_id) {
         $sql .= " AND t.id_agent = :agent_id";
