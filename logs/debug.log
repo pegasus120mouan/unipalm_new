@@ -1858,3 +1858,72 @@
 [2025-03-06 16:54:55] Précédent: 0.00
 [2025-03-06 16:54:55] Reste: 704000.00
 [2025-03-06 16:54:55] Transaction validée avec succès
+[2025-03-06 17:26:50] Données reçues : Array
+(
+    [save_paiement] => 1
+    [id_ticket] => 289
+    [numero_ticket] => christian 02
+    [type] => all
+    [status] => all
+    [montant_reste] => 480000
+    [source_paiement] => transactions
+    [montant_affiche] => 50 000
+    [montant] => 50000
+)
+
+[2025-03-06 17:26:50] Montant : 50000
+[2025-03-06 17:26:50] Source : transactions
+[2025-03-06 17:26:50] Type : all
+[2025-03-06 17:26:50] Status : all
+[2025-03-06 17:26:50] Montants avant insertion:
+[2025-03-06 17:26:50] Total: 480000.00
+[2025-03-06 17:26:50] Payé: 50000.00
+[2025-03-06 17:26:50] Précédent: 0.00
+[2025-03-06 17:26:50] Reste: 430000.00
+[2025-03-06 17:26:50] Transaction validée avec succès
+[2025-03-06 17:27:35] Données reçues : Array
+(
+    [save_paiement] => 1
+    [id_ticket] => 289
+    [numero_ticket] => christian 02
+    [type] => all
+    [status] => all
+    [montant_reste] => 430000
+    [source_paiement] => transactions
+    [montant_affiche] => 50 000
+    [montant] => 50000
+)
+
+[2025-03-06 17:27:35] Montant : 50000
+[2025-03-06 17:27:35] Source : transactions
+[2025-03-06 17:27:35] Type : all
+[2025-03-06 17:27:35] Status : all
+[2025-03-06 17:27:35] Montants avant insertion:
+[2025-03-06 17:27:35] Total: 480000.00
+[2025-03-06 17:27:35] Payé: 50000.00
+[2025-03-06 17:27:35] Précédent: 50000.00
+[2025-03-06 17:27:35] Reste: 380000.00
+[2025-03-06 17:27:35] Transaction validée avec succès
+[2025-03-06 17:29:33] Données reçues : Array
+(
+    [save_paiement] => 1
+    [id_ticket] => 289
+    [numero_ticket] => christian 02
+    [type] => all
+    [status] => all
+    [montant_reste] => 380000
+    [source_paiement] => transactions
+    [montant_affiche] => 40 000
+    [montant] => 40000
+)
+
+[2025-03-06 17:29:33] Montant : 40000
+[2025-03-06 17:29:33] Source : transactions
+[2025-03-06 17:29:33] Type : all
+[2025-03-06 17:29:33] Status : all
+[2025-03-06 17:29:33] Montants avant insertion:
+[2025-03-06 17:29:33] Total: 480000.00
+[2025-03-06 17:29:33] Payé: 40000.00
+[2025-03-06 17:29:33] Précédent: 100000.00
+[2025-03-06 17:29:33] Reste: 340000.00
+[2025-03-06 17:29:33] Transaction validée avec succès
