@@ -8,6 +8,14 @@ require_once '../inc/functions/requete/requete_chef_equipes.php';
 require_once '../inc/functions/requete/requete_vehicules.php';
 require_once '../inc/functions/requete/requete_agents.php';
 
+if(isset($_GET['action']) && $_GET['action'] == 'delete') {
+    $id_bordereau = $_GET['id'];
+    $numero_bordereau = $_GET['numero_bordereau'];  
+    deleteBordereau($conn, $id_bordereau, $numero_bordereau);
+    header('Location: bordereaux.php');
+    exit();
+}
+
 // Traitement du formulaire avant tout affichage HTML
 if (isset($_POST['saveBordereau'])) {
     $id_agent = $_POST['id_agent'];
@@ -384,7 +392,7 @@ label {
           </td>
           <td><?= $bordereau['date_debut'] ? date('d/m/Y', strtotime($bordereau['date_debut'])) : '-' ?></td>
           <td><?= $bordereau['date_fin'] ? date('d/m/Y', strtotime($bordereau['date_fin'])) : '-' ?></td>
-          <td><?= number_format($bordereau['poids_total'], 2, ',', ' ') ?> kg</td>
+          <td><?= number_format($bordereau  ['poids_total'], 2, ',', ' ') ?> kg</td>
           <td><?= number_format($bordereau['montant_total'], 0, ',', ' ') ?> FCFA</td>
           <td><?= number_format($bordereau['montant_payer'] ?? 0, 0, ',', ' ') ?> FCFA</td>
           <td><?= number_format($bordereau['montant_reste'] ?? $bordereau['montant_total'], 0, ',', ' ') ?> FCFA</td>
@@ -406,8 +414,12 @@ label {
             <i class="fas fa-check"></i> Valider le bordereau
         </button>
     </form>
-</td>
+   </td>
           <td>
+         
+            <a href="?action=delete&id=<?= $bordereau['id_bordereau'] ?>&numero_bordereau=<?= $bordereau['numero_bordereau'] ?>" class="btn btn-sm btn-danger">
+                <i class="fas fa-trash"></i>
+            </a>
             <a href="print_visualisation_bordereau.php?id=<?= $bordereau['id_bordereau'] ?>" class="btn btn-sm btn-success" target="_blank">
               <i class="fas fa-print"></i>
             </a>
@@ -900,7 +912,7 @@ label {
       </div>
       <div class="modal-body">
         <?php 
-        $tickets = getTicketsAttente($conn, $bordereau['id_agent']);
+        $tickets = getTicketsNonAssigne($conn, $bordereau['id_agent']);
         if (!empty($tickets)) : 
         ?>
         <form id="ticketsForm<?= $bordereau['id_bordereau'] ?>" action="associer_tickets.php" method="post">

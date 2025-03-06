@@ -1830,3 +1830,31 @@
 [2025-03-06 14:29:20] Précédent: 0.00
 [2025-03-06 14:29:20] Reste: 100753100.00
 [2025-03-06 14:29:20] Transaction validée avec succès
+[2025-03-06 15:27:29] Erreur lors de la suppression du bordereau #35 par l'utilisateur 4 : SQLSTATE[42S02]: Base table or view not found: 1146 Table 'unipalmci_gestion_new.bordereau_tickets' doesn't exist
+[2025-03-06 15:27:34] Erreur lors de la suppression du bordereau #35 par l'utilisateur 4 : SQLSTATE[42S02]: Base table or view not found: 1146 Table 'unipalmci_gestion_new.bordereau_tickets' doesn't exist
+[2025-03-06 15:29:57] Erreur lors de la suppression du bordereau #36 par l'utilisateur 4 : Le bordereau n'existe pas ou est déjà validé
+[2025-03-06 15:35:01] Erreur lors de la suppression du bordereau #37 par l'utilisateur 4 : SQLSTATE[42S02]: Base table or view not found: 1146 Table 'unipalmci_gestion_new.bordereau_tickets' doesn't exist
+[2025-03-06 15:35:05] Erreur lors de la suppression du bordereau #37 par l'utilisateur 4 : SQLSTATE[42S02]: Base table or view not found: 1146 Table 'unipalmci_gestion_new.bordereau_tickets' doesn't exist
+[2025-03-06 16:54:55] Données reçues : Array
+(
+    [save_paiement] => 1
+    [id_bordereau] => 57
+    [numero_bordereau] => BORD-20250306-196-2374
+    [type] => all
+    [status] => all
+    [montant_reste] => 804000.00
+    [source_paiement] => transactions
+    [montant_affiche] => 100 000
+    [montant] => 100000
+)
+
+[2025-03-06 16:54:55] Montant : 100000
+[2025-03-06 16:54:55] Source : transactions
+[2025-03-06 16:54:55] Type : all
+[2025-03-06 16:54:55] Status : all
+[2025-03-06 16:54:55] Montants avant insertion:
+[2025-03-06 16:54:55] Total: 804000.00
+[2025-03-06 16:54:55] Payé: 100000.00
+[2025-03-06 16:54:55] Précédent: 0.00
+[2025-03-06 16:54:55] Reste: 704000.00
+[2025-03-06 16:54:55] Transaction validée avec succès

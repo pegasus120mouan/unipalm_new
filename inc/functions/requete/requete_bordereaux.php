@@ -31,7 +31,7 @@ function getBordereaux($conn, $page = 1, $limit = 15, $filters = []) {
             CONCAT(COALESCE(a.nom, ''), ' ', COALESCE(a.prenom, '')) AS nom_complet_agent,
             a.contact,
             (SELECT COUNT(*) FROM tickets t 
-             WHERE t.id_agent = a.id_agent and t.date_validation_boss is not null and t.prix_unitaire > 0) as nombre_tickets
+             WHERE t.id_agent = b.id_agent and t.date_validation_boss is not null and t.prix_unitaire > 0) as nombre_tickets
         FROM bordereau b
         INNER JOIN agents a ON b.id_agent = a.id_agent";
 
@@ -152,12 +152,20 @@ function updateBordereau($conn, $id_bordereau, $date_debut, $date_fin) {
     }
 }
 
-function deleteBordereau($conn, $id_bordereau) {
+function deleteBordereau($conn, $id_bordereau, $numero_bordereau) {
+
+
     try {
+        $stmt = $conn->prepare("update tickets set numero_bordereau = null where numero_bordereau = :numero_bordereau");
+        $stmt->bindParam(':numero_bordereau', $numero_bordereau);
+        $stmt->execute();
+
+
         $stmt = $conn->prepare("DELETE FROM bordereau WHERE id_bordereau = :id_bordereau");
         $stmt->bindParam(':id_bordereau', $id_bordereau, PDO::PARAM_INT);
         return $stmt->execute();
     } catch (PDOException $e) {
+        
         error_log("Erreur lors de la suppression du bordereau: " . $e->getMessage());
         return false;
     }
@@ -407,5 +415,7 @@ function updateBordereauStatus($conn, $id_bordereau) {
         return false;
     }
 }
+
+
 
 ?>

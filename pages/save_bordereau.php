@@ -15,9 +15,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     :id_agent, 
                     :date_debut, 
                     :date_fin, 
-                    0, 
-                    0
-                FROM DUAL";
+                    SUM(0), 
+                    SUM(0)
+                FROM tickets t 
+                WHERE t.id_agent = :id_agent 
+                AND t.created_at BETWEEN CONCAT(:date_debut, ' 00:00:00') AND CONCAT(:date_fin, ' 23:59:59')";
     
         $stmt = $conn->prepare($sql);
         $stmt->execute([

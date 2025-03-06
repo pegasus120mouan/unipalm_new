@@ -198,6 +198,74 @@ function getTicketsAttente($conn, $agent_id = null, $usine_id = null, $date_debu
     }
 }
 
+
+function getTicketsNonAssigne($conn, $agent_id = null, $usine_id = null, $date_debut = null, $date_fin = null, $numero_ticket = null) {
+    $sql = "SELECT t.*, 
+            CONCAT(u.nom, ' ', u.prenoms) AS utilisateur_nom_complet,
+            u.contact AS utilisateur_contact,
+            u.role AS utilisateur_role,
+            0 AS montant_total,
+            v.matricule_vehicule,
+            CONCAT(a.nom, ' ', a.prenom) AS agent_nom_complet,
+            us.nom_usine,
+            us.id_usine
+            FROM tickets t
+            INNER JOIN utilisateurs u ON t.id_utilisateur = u.id
+            INNER JOIN vehicules v ON t.vehicule_id = v.vehicules_id
+            INNER JOIN agents a ON t.id_agent = a.id_agent
+            INNER JOIN usines us ON t.id_usine = us.id_usine
+            WHERE t.date_validation_boss IS not NULL AND t.id_agent = :agent_id";
+
+    if ($agent_id) {
+        $sql .= " AND t.id_agent = :agent_id";
+    }
+    
+    if ($usine_id) {
+        $sql .= " AND t.id_usine = :usine_id";
+    }
+
+    if ($date_debut) {
+        $sql .= " AND DATE(t.created_at) >= :date_debut";
+    }
+
+    if ($date_fin) {
+        $sql .= " AND DATE(t.created_at) <= :date_fin";
+    }
+    
+    if ($numero_ticket) {
+        $sql .= " AND t.numero_ticket LIKE :numero_ticket";
+    }
+
+    $sql .= " ORDER BY t.created_at DESC";
+
+    
+    try {
+        $stmt = $conn->prepare($sql);
+        
+        if ($agent_id) {
+            $stmt->bindValue(':agent_id', $agent_id, PDO::PARAM_INT);
+        }
+        if ($usine_id) {
+            $stmt->bindValue(':usine_id', $usine_id, PDO::PARAM_INT);
+        }
+        if ($date_debut) {
+            $stmt->bindValue(':date_debut', $date_debut, PDO::PARAM_STR);
+        }
+        if ($date_fin) {
+            $stmt->bindValue(':date_fin', $date_fin, PDO::PARAM_STR);
+        }
+        if ($numero_ticket) {
+            $stmt->bindValue(':numero_ticket', '%' . $numero_ticket . '%', PDO::PARAM_STR);
+        }
+        
+        $stmt->execute();
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    } catch (PDOException $e) {
+        error_log("Erreur dans getTicketsAttente: " . $e->getMessage());
+        return array();
+    }
+}
+
 function getTicketsAttenteByUsine($conn, $id_usine) {
     $sql = "SELECT 
         t.id_ticket,
