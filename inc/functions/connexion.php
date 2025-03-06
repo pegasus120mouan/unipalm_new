@@ -1,6 +1,10 @@
 <?php 
 session_start(); 
 
+// Activer l'affichage des erreurs en local
+error_reporting(E_ALL);
+ini_set('display_errors', 1);
+
 // DB credentials.
 define('DB_HOST','localhost');
 define('DB_USER','root');
@@ -19,7 +23,8 @@ function getConnexion() {
             $conn->exec("SET CHARACTER SET utf8mb4");
             $conn->exec("SET character_set_connection=utf8mb4");
         } catch (PDOException $e) {
-            exit("Erreur de connexion : " . $e->getMessage());
+            echo "Erreur de connexion : " . $e->getMessage();
+            exit();
         }
     }
     
@@ -30,6 +35,7 @@ function getConnexion() {
 try {
     $conn = getConnexion();
 } catch (PDOException $e) {
-    exit("Erreur : " . $e->getMessage());
+    echo "Erreur : " . $e->getMessage();
+    exit();
 }
 ?>

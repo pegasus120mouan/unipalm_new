@@ -487,25 +487,17 @@ label {
     </style>
 
 
- <!--<div class="row"><
+<div class="row">
 
-    <div class="block-container">
-    <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#add-ticket">
-      <i class="fa fa-edit"></i>Enregistrer un ticket
-    </button>
-
-    <button type="button" class="btn btn-danger" data-toggle="modal" data-target="#print-bordereau">
-      <i class="fa fa-print"></i> Imprimer un bordereau
-    </button>
-
-    <button type="button" class="btn btn-success" data-toggle="modal" data-target="#search_ticket">
-      <i class="fa fa-search"></i> Recherche un ticket
-    </button>
-
-    <button type="button" class="btn btn-dark" onclick="window.location.href='export_tickets.php'">
-              <i class="fa fa-print"></i> Exporter la liste les tickets
-             </button>
-</div>-->
+<div class="block-container">
+    <div class="d-flex justify-content-between align-items-center">
+        <h3><i class="fa fa-stop text-success"></i> Liste des Tickets attente</h3>
+        <div class="text-muted">
+            Total: <?php echo $total_tickets; ?> ticket(s) en attente
+        </div>
+    </div>
+</div>
+</div>
 
 
 

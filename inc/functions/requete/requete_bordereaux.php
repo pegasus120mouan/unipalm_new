@@ -30,7 +30,8 @@ function getBordereaux($conn, $page = 1, $limit = 15, $filters = []) {
             a.id_agent,
             CONCAT(COALESCE(a.nom, ''), ' ', COALESCE(a.prenom, '')) AS nom_complet_agent,
             a.contact,
-            (SELECT COUNT(*) FROM tickets t WHERE t.created_at BETWEEN CONCAT(b.date_debut, ' 00:00:00') AND CONCAT(b.date_fin, ' 23:59:59') AND t.id_agent = b.id_agent) as nombre_tickets
+            (SELECT COUNT(*) FROM tickets t 
+             WHERE t.id_agent = a.id_agent and t.date_validation_boss is not null and t.prix_unitaire > 0) as nombre_tickets
         FROM bordereau b
         INNER JOIN agents a ON b.id_agent = a.id_agent";
 
@@ -38,19 +39,14 @@ function getBordereaux($conn, $page = 1, $limit = 15, $filters = []) {
         $params = [];
         $where_conditions = [];
 
-        if (!empty($filters['agent'])) {
-            $where_conditions[] = "b.id_agent = :agent_id";
-            $params[':agent_id'] = $filters['agent'];
-        }
-
-        if (!empty($filters['date'])) {
-            $where_conditions[] = "DATE(b.created_at) = :date";
-            $params[':date'] = $filters['date'];
-        }
-
         if (!empty($filters['numero'])) {
             $where_conditions[] = "b.numero_bordereau LIKE :numero";
             $params[':numero'] = '%' . $filters['numero'] . '%';
+        }
+
+        if (!empty($filters['agent'])) {
+            $where_conditions[] = "b.id_agent = :agent_id";
+            $params[':agent_id'] = $filters['agent'];
         }
 
         if (!empty($filters['date_debut'])) {
@@ -61,6 +57,11 @@ function getBordereaux($conn, $page = 1, $limit = 15, $filters = []) {
         if (!empty($filters['date_fin'])) {
             $where_conditions[] = "b.date_fin <= :date_fin";
             $params[':date_fin'] = $filters['date_fin'];
+        }
+
+        if (!empty($filters['date'])) {
+            $where_conditions[] = "DATE(b.created_at) = :date";
+            $params[':date'] = $filters['date'];
         }
 
         if (!empty($where_conditions)) {
@@ -76,7 +77,7 @@ function getBordereaux($conn, $page = 1, $limit = 15, $filters = []) {
         $query .= " ORDER BY b.created_at DESC";
         
         // Add LIMIT and OFFSET
-        $query .= " LIMIT :limit OFFSET :offset";
+       // $query .= " LIMIT :limit OFFSET :offset";
         
         $stmt = $conn->prepare($query);
         
@@ -84,11 +85,13 @@ function getBordereaux($conn, $page = 1, $limit = 15, $filters = []) {
         foreach ($params as $key => $value) {
             $stmt->bindValue($key, $value);
         }
-        $stmt->bindValue(':limit', $limit, PDO::PARAM_INT);
-        $stmt->bindValue(':offset', $offset, PDO::PARAM_INT);
+       // $stmt->bindValue(':limit', $limit, PDO::PARAM_INT);
+        //$stmt->bindValue(':offset', $offset, PDO::PARAM_INT);
         
         $stmt->execute();
         $bordereaux = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+        
         
         return [
             'data' => $bordereaux,
@@ -246,6 +249,8 @@ function saveBordereau($conn, $id_agent, $date_debut, $date_fin) {
         AND NOT EXISTS (
             SELECT 1 FROM bordereau_tickets bt WHERE bt.id_ticket = t.id_ticket
         )
+        AND t.date_validation_boss IS NOT NULL
+        AND t.prix_unitaire > 0
         AND t.statut_ticket = 'disponible'";
 
         $stmt = $conn->prepare($sql);
@@ -268,6 +273,8 @@ function saveBordereau($conn, $id_agent, $date_debut, $date_fin) {
                 AND NOT EXISTS (
                     SELECT 1 FROM bordereau_tickets bt WHERE bt.id_ticket = t.id_ticket
                 )
+                AND t.date_validation_boss IS NOT NULL
+                AND t.prix_unitaire > 0
                 AND t.statut_ticket = 'disponible'";
 
         $stmt = $conn->prepare($sql);

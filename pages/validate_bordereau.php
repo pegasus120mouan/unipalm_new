@@ -1,6 +1,5 @@
 <?php
 require_once '../inc/functions/connexion.php';
-header('Content-Type: application/json');
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $id_bordereau = $_POST['id_bordereau'] ?? null;
@@ -16,20 +15,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     WHERE id_bordereau = ?
                 ");
                 $stmt->execute([$id_bordereau]);
-
-                // Récupérer la date de validation
-                $stmt = $conn->prepare("
-                    SELECT date_validation_boss 
-                    FROM bordereau 
-                    WHERE id_bordereau = ?
-                ");
-                $stmt->execute([$id_bordereau]);
-                $date_validation = $stmt->fetchColumn();
-
-                echo json_encode([
-                    'success' => true,
-                    'date_validation' => $date_validation
-                ]);
             } else {
                 // Annuler la validation
                 $stmt = $conn->prepare("
@@ -38,29 +23,23 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     WHERE id_bordereau = ?
                 ");
                 $stmt->execute([$id_bordereau]);
-
-                echo json_encode([
-                    'success' => true
-                ]);
             }
+
+            // Redirection vers la page des bordereaux après l'action
+            header('Location: bordereaux.php');
+            exit;
         } catch (PDOException $e) {
-            http_response_code(500);
-            echo json_encode([
-                'success' => false,
-                'error' => 'Une erreur est survenue lors de la validation du bordereau.'
-            ]);
+            // En cas d'erreur, tu peux aussi rediriger vers bordereaux.php avec un message d'erreur (optionnel)
+            header('Location: bordereaux.php?error=1');
+            exit;
         }
     } else {
-        http_response_code(400);
-        echo json_encode([
-            'success' => false,
-            'error' => 'ID du bordereau manquant.'
-        ]);
+        // Redirection avec message d'erreur si id_bordereau manquant
+        header('Location: bordereaux.php?error=missing_id');
+        exit;
     }
 } else {
-    http_response_code(405);
-    echo json_encode([
-        'success' => false,
-        'error' => 'Méthode non autorisée.'
-    ]);
+    // Si la méthode n'est pas POST, redirection simple
+    header('Location: bordereaux.php');
+    exit;
 }

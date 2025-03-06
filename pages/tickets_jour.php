@@ -298,8 +298,14 @@ label {
 
 
 <div class="row">
-    <div class="col-12">
-        <h4 class="mb-4">Liste des tickets du jour</h4>
+
+    <div class="block-container">
+        <div class="d-flex justify-content-between align-items-center">
+            <h3><i class="fa fa-calendar text-success"></i> Liste des Tickets du jours</h3>
+            <div class="text-muted">
+                Total: <?php echo $total_tickets; ?> ticket(s)
+            </div>
+        </div>
     </div>
 </div>
 

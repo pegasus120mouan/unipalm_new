@@ -1,4 +1,7 @@
 <?php
+// Désactiver la mise en mémoire tampon de sortie
+ob_clean();
+
 require('../fpdf/fpdf.php');
 require_once '../inc/functions/connexion.php';
 
@@ -32,7 +35,7 @@ if (isset($_GET['numero'])) {
                 // Sous-titre en vert clair
                 $this->SetTextColor(144, 238, 144);
                 $this->SetFont('Arial', '', 11);
-                $this->Cell(0, 5, utf8_decode('Société Coopérative Agricole Unie pour le Palmier'), 0, 1, 'C');
+                $this->Cell(0, 5, iconv('UTF-8', 'windows-1252', 'Société Coopérative Agricole Unie pour le Palmier'), 0, 1, 'C');
                 
                 $this->Ln(15);
             }
@@ -47,7 +50,7 @@ if (isset($_GET['numero'])) {
                 // Informations de contact en vert clair
                 $this->SetTextColor(144, 238, 144);
                 $this->SetFont('Arial', '', 8);
-                $this->Cell(0, 10, utf8_decode('Contact: +225 XX XX XX XX XX - Email: contact@unipalm.ci'), 0, 0, 'C');
+                $this->Cell(0, 10, iconv('UTF-8', 'windows-1252', 'Contact: +225 XX XX XX XX XX - Email: contact@unipalm.ci'), 0, 0, 'C');
             }
         }
 
@@ -58,7 +61,7 @@ if (isset($_GET['numero'])) {
         // Titre du bordereau
         $pdf->SetFont('Arial', 'B', 14);
         $pdf->SetTextColor(0, 0, 0);
-        $pdf->Cell(0, 10, utf8_decode('BORDEREAU DE DÉCHARGEMENT N° ') . $bordereau['numero_bordereau'], 0, 1, 'C');
+        $pdf->Cell(0, 10, iconv('UTF-8', 'windows-1252', 'BORDEREAU DE DÉCHARGEMENT N° ') . $bordereau['numero_bordereau'], 0, 1, 'C');
         $pdf->Ln(5);
 
         // Informations du bordereau dans un cadre
@@ -66,10 +69,10 @@ if (isset($_GET['numero'])) {
         $pdf->Cell(190, 7, 'Informations du bordereau', 1, 1, 'L');
         
         $pdf->SetFont('Arial', '', 10);
-        $pdf->Cell(190, 7, 'Agent: ' . $bordereau['nom_complet_agent'], 1, 1, 'L');
-        $pdf->Cell(190, 7, utf8_decode('Période du: ') . date('d/m/Y', strtotime($bordereau['date_debut'])) . ' Au: ' . date('d/m/Y', strtotime($bordereau['date_fin'])), 1, 1, 'L');
+        $pdf->Cell(190, 7, 'Agent: ' . iconv('UTF-8', 'windows-1252', $bordereau['nom_complet_agent']), 1, 1, 'L');
+        $pdf->Cell(190, 7, iconv('UTF-8', 'windows-1252', 'Période du: ') . date('d/m/Y', strtotime($bordereau['date_debut'])) . ' Au: ' . date('d/m/Y', strtotime($bordereau['date_fin'])), 1, 1, 'L');
         $pdf->Cell(190, 7, 'Poids total: ' . number_format($bordereau['poids_total'], 0, ',', ' ') . ' Kg', 1, 1, 'L');
-        $pdf->Cell(190, 7, utf8_decode('Date de création: ') . date('d/m/Y H:i', strtotime($bordereau['created_at'])), 1, 1, 'L');
+        $pdf->Cell(190, 7, iconv('UTF-8', 'windows-1252', 'Date de création: ') . date('d/m/Y H:i', strtotime($bordereau['created_at'])), 1, 1, 'L');
         
         $pdf->Ln(10);
 
@@ -77,9 +80,9 @@ if (isset($_GET['numero'])) {
         $pdf->SetFont('Arial', 'B', 10);
         $pdf->SetFillColor(197, 217, 241); // Bleu clair comme dans l'image
         $pdf->Cell(30, 7, 'Date', 1, 0, 'C', true);
-        $pdf->Cell(45, 7, utf8_decode('N° Ticket'), 1, 0, 'C', true);
+        $pdf->Cell(45, 7, iconv('UTF-8', 'windows-1252', 'N° Ticket'), 1, 0, 'C', true);
         $pdf->Cell(45, 7, 'Usine', 1, 0, 'C', true);
-        $pdf->Cell(35, 7, utf8_decode('Véhicule'), 1, 0, 'C', true);
+        $pdf->Cell(35, 7, iconv('UTF-8', 'windows-1252', 'Véhicule'), 1, 0, 'C', true);
         $pdf->Cell(35, 7, 'Poids (Kg)', 1, 1, 'C', true);
 
         // Récupérer les tickets associés au bordereau
@@ -97,11 +100,6 @@ if (isset($_GET['numero'])) {
         $stmt->execute();
         $tickets = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-        // Convertir les matricules en UTF-8
-        foreach ($tickets as &$ticket) {
-            $ticket['matricule_vehicule'] = utf8_decode($ticket['matricule_vehicule']);
-        }
-
         // Données du tableau
         $pdf->SetFont('Arial', '', 10);
         $total_poids = 0;
@@ -112,7 +110,7 @@ if (isset($_GET['numero'])) {
             if ($current_usine != $ticket['nom_usine'] && $current_usine != '') {
                 // Sous-total
                 $pdf->SetFont('Arial', 'I', 10);
-                $pdf->Cell(155, 7, 'Sous-total ' . $current_usine, 1, 0, 'R');
+                $pdf->Cell(155, 7, 'Sous-total ' . iconv('UTF-8', 'windows-1252', $current_usine), 1, 0, 'R');
                 $pdf->Cell(35, 7, number_format($sous_total_poids, 0, ',', ' '), 1, 1, 'R');
                 $sous_total_poids = 0;
                 $pdf->SetFont('Arial', '', 10);
@@ -123,8 +121,8 @@ if (isset($_GET['numero'])) {
 
             $pdf->Cell(30, 7, date('d/m/Y', strtotime($ticket['date_ticket'])), 1, 0, 'C');
             $pdf->Cell(45, 7, $ticket['numero_ticket'], 1, 0, 'C');
-            $pdf->Cell(45, 7, utf8_decode($ticket['nom_usine']), 1, 0, 'L');
-            $pdf->Cell(35, 7, $ticket['matricule_vehicule'], 1, 0, 'C');
+            $pdf->Cell(45, 7, iconv('UTF-8', 'windows-1252', $ticket['nom_usine']), 1, 0, 'L');
+            $pdf->Cell(35, 7, iconv('UTF-8', 'windows-1252', $ticket['matricule_vehicule']), 1, 0, 'C');
             $pdf->Cell(35, 7, number_format($poids, 0, ',', ' '), 1, 1, 'R');
 
             $total_poids += $poids;
@@ -134,7 +132,7 @@ if (isset($_GET['numero'])) {
         // Dernier sous-total
         if ($current_usine != '') {
             $pdf->SetFont('Arial', 'I', 10);
-            $pdf->Cell(155, 7, 'Sous-total ' . $current_usine, 1, 0, 'R');
+            $pdf->Cell(155, 7, 'Sous-total ' . iconv('UTF-8', 'windows-1252', $current_usine), 1, 0, 'R');
             $pdf->Cell(35, 7, number_format($sous_total_poids, 0, ',', ' '), 1, 1, 'R');
         }
 

@@ -1663,3 +1663,170 @@
 [2025-03-04 19:40:32] Montant : 100000
 [2025-03-04 19:40:32] Source : transactions
 [2025-03-04 19:40:32] Transaction validée avec succès
+[2025-03-06 14:10:07] Données reçues : Array
+(
+    [id_bordereau] => 35
+    [numero_bordereau] => BORD-20250306-192-6566
+    [type] => all
+    [status] => all
+    [montant_reste] => 100853100.00
+    [source_paiement] => transactions
+    [montant_affiche] => 100 000
+    [montant] => 100000
+    [save_paiement] => 
+)
+
+[2025-03-06 14:10:07] Montant : 100000
+[2025-03-06 14:10:07] Source : transactions
+[2025-03-06 14:10:07] Erreur finale : SQLSTATE[22003]: Numeric value out of range: 1264 Out of range value for column 'montant_total' at row 1
+[2025-03-06 14:10:07] Trace : #0 C:\laragon\www\angenor\pages\save_paiement.php(136): PDOStatement->execute(Array)
+#1 {main}
+[2025-03-06 14:14:39] Données reçues : Array
+(
+    [id_bordereau] => 35
+    [numero_bordereau] => BORD-20250306-192-6566
+    [type] => all
+    [status] => all
+    [montant_reste] => 100853100.00
+    [source_paiement] => transactions
+    [montant_affiche] => 100 000
+    [montant] => 100000
+    [save_paiement] => 
+)
+
+[2025-03-06 14:14:39] Montant : 100000
+[2025-03-06 14:14:39] Source : transactions
+[2025-03-06 14:14:39] Erreur finale : SQLSTATE[22003]: Numeric value out of range: 1264 Out of range value for column 'montant_total' at row 1
+[2025-03-06 14:14:39] Trace : #0 C:\laragon\www\angenor\pages\save_paiement.php(136): PDOStatement->execute(Array)
+#1 {main}
+[2025-03-06 14:14:58] Données reçues : Array
+(
+    [id_ticket] => 228
+    [numero_ticket] => ?LKNMLNM?ML?ML?ML
+    [type] => all
+    [status] => all
+    [montant_reste] => 260000
+    [source_paiement] => transactions
+    [montant_affiche] => 100 000
+    [montant] => 100000
+    [save_paiement] => 
+)
+
+[2025-03-06 14:14:58] Montant : 100000
+[2025-03-06 14:14:58] Source : transactions
+[2025-03-06 14:14:58] Erreur finale : SQLSTATE[23000]: Integrity constraint violation: 1048 Column 'montant_precedent' cannot be null
+[2025-03-06 14:14:58] Trace : #0 C:\laragon\www\angenor\pages\save_paiement.php(136): PDOStatement->execute(Array)
+#1 {main}
+[2025-03-06 14:16:02] Données reçues : Array
+(
+    [id_bordereau] => 35
+    [numero_bordereau] => BORD-20250306-192-6566
+    [type] => all
+    [status] => all
+    [montant_reste] => 100853100.00
+    [source_paiement] => transactions
+    [montant_affiche] => 100 000
+    [montant] => 100000
+    [save_paiement] => 
+)
+
+[2025-03-06 14:16:02] Montant : 100000
+[2025-03-06 14:16:02] Source : transactions
+[2025-03-06 14:16:02] Erreur finale : SQLSTATE[22003]: Numeric value out of range: 1264 Out of range value for column 'montant_total' at row 1
+[2025-03-06 14:16:02] Trace : #0 C:\laragon\www\angenor\pages\save_paiement.php(136): PDOStatement->execute(Array)
+#1 {main}
+[2025-03-06 14:19:47] Données reçues : Array
+(
+    [save_paiement] => 1
+    [id_bordereau] => 35
+    [numero_bordereau] => BORD-20250306-192-6566
+    [type] => all
+    [status] => all
+    [montant_reste] => 100853100.00
+    [source_paiement] => transactions
+    [montant_affiche] => 100 000
+    [montant] => 100000
+)
+
+[2025-03-06 14:19:47] Montant : 100000
+[2025-03-06 14:19:47] Source : transactions
+[2025-03-06 14:19:47] Erreur finale : SQLSTATE[22003]: Numeric value out of range: 1264 Out of range value for column 'montant_total' at row 1
+[2025-03-06 14:19:47] Trace : #0 C:\laragon\www\angenor\pages\save_paiement.php(136): PDOStatement->execute(Array)
+#1 {main}
+[2025-03-06 14:21:56] Données reçues : Array
+(
+    [save_paiement] => 1
+    [id_bordereau] => 35
+    [numero_bordereau] => BORD-20250306-192-6566
+    [type] => all
+    [status] => all
+    [montant_reste] => 100853100.00
+    [source_paiement] => transactions
+    [montant_affiche] => 100 000
+    [montant] => 100000
+)
+
+[2025-03-06 14:21:56] Montant : 100000
+[2025-03-06 14:21:56] Source : transactions
+[2025-03-06 14:21:56] Erreur finale : SQLSTATE[22003]: Numeric value out of range: 1264 Out of range value for column 'montant_total' at row 1
+[2025-03-06 14:21:56] Trace : #0 C:\laragon\www\angenor\pages\save_paiement.php(136): PDOStatement->execute(Array)
+#1 {main}
+[2025-03-06 14:22:54] Données reçues : Array
+(
+    [save_paiement] => 1
+    [id_bordereau] => 35
+    [numero_bordereau] => BORD-20250306-192-6566
+    [type] => all
+    [status] => all
+    [montant_reste] => 100853100.00
+    [source_paiement] => transactions
+    [montant_affiche] => 100 000
+    [montant] => 100000
+)
+
+[2025-03-06 14:22:54] Montant : 100000
+[2025-03-06 14:22:54] Source : transactions
+[2025-03-06 14:22:54] Erreur finale : SQLSTATE[22003]: Numeric value out of range: 1264 Out of range value for column 'montant_total' at row 1
+[2025-03-06 14:22:54] Trace : #0 C:\laragon\www\angenor\pages\save_paiement.php(136): PDOStatement->execute(Array)
+#1 {main}
+[2025-03-06 14:23:05] Données reçues : Array
+(
+    [save_paiement] => 1
+    [id_ticket] => 228
+    [numero_ticket] => ?LKNMLNM?ML?ML?ML
+    [type] => all
+    [status] => all
+    [montant_reste] => 260000
+    [source_paiement] => transactions
+    [montant_affiche] => 100 000
+    [montant] => 100000
+)
+
+[2025-03-06 14:23:05] Montant : 100000
+[2025-03-06 14:23:05] Source : transactions
+[2025-03-06 14:23:05] Erreur finale : SQLSTATE[23000]: Integrity constraint violation: 1048 Column 'montant_precedent' cannot be null
+[2025-03-06 14:23:05] Trace : #0 C:\laragon\www\angenor\pages\save_paiement.php(136): PDOStatement->execute(Array)
+#1 {main}
+[2025-03-06 14:29:20] Données reçues : Array
+(
+    [save_paiement] => 1
+    [id_bordereau] => 35
+    [numero_bordereau] => BORD-20250306-192-6566
+    [type] => all
+    [status] => all
+    [montant_reste] => 100853100.00
+    [source_paiement] => transactions
+    [montant_affiche] => 100 000
+    [montant] => 100000
+)
+
+[2025-03-06 14:29:20] Montant : 100000
+[2025-03-06 14:29:20] Source : transactions
+[2025-03-06 14:29:20] Type : all
+[2025-03-06 14:29:20] Status : all
+[2025-03-06 14:29:20] Montants avant insertion:
+[2025-03-06 14:29:20] Total: 100853100.00
+[2025-03-06 14:29:20] Payé: 100000.00
+[2025-03-06 14:29:20] Précédent: 0.00
+[2025-03-06 14:29:20] Reste: 100753100.00
+[2025-03-06 14:29:20] Transaction validée avec succès

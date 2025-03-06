@@ -137,6 +137,7 @@ function getTicketsAttente($conn, $agent_id = null, $usine_id = null, $date_debu
             CONCAT(u.nom, ' ', u.prenoms) AS utilisateur_nom_complet,
             u.contact AS utilisateur_contact,
             u.role AS utilisateur_role,
+            0 AS montant_total,
             v.matricule_vehicule,
             CONCAT(a.nom, ' ', a.prenom) AS agent_nom_complet,
             us.nom_usine,
@@ -146,7 +147,7 @@ function getTicketsAttente($conn, $agent_id = null, $usine_id = null, $date_debu
             INNER JOIN vehicules v ON t.vehicule_id = v.vehicules_id
             INNER JOIN agents a ON t.id_agent = a.id_agent
             INNER JOIN usines us ON t.id_usine = us.id_usine
-            WHERE t.date_validation_boss IS NULL";
+            WHERE t.date_validation_boss IS not NULL";
 
     if ($agent_id) {
         $sql .= " AND t.id_agent = :agent_id";
@@ -207,6 +208,8 @@ function getTicketsAttenteByUsine($conn, $id_usine) {
         t.date_validation_boss,
         t.montant_paie,
         t.date_paie,
+        t.montant_payer,
+        t.montant_reste,
         t.created_at,
         CONCAT(u.nom, ' ', u.prenoms) AS utilisateur_nom_complet,
         v.matricule_vehicule,
@@ -381,9 +384,9 @@ function getTicketsNonSoldes($conn) {
             t.prix_unitaire,
             t.date_validation_boss,
             t.montant_paie,
+            t.date_paie,
             t.montant_payer,
             t.montant_reste,
-            t.date_paie,
             t.created_at,
             CONCAT(u.nom, ' ', u.prenoms) AS utilisateur_nom_complet,
             u.contact AS utilisateur_contact,
@@ -747,6 +750,17 @@ function updateTicketsBordereau($conn, $ticket_ids, $numero_bordereau) {
 
 function getTicketsByBordereau($conn, $id_bordereau) {
     try {
+        // D'abord, récupérer le bordereau pour avoir ses dates et l'agent
+        $sql_bordereau = "SELECT id_agent, date_debut, date_fin, numero_bordereau FROM bordereau WHERE id_bordereau = :id_bordereau";
+        $stmt = $conn->prepare($sql_bordereau);
+        $stmt->execute([':id_bordereau' => $id_bordereau]);
+        $bordereau = $stmt->fetch(PDO::FETCH_ASSOC);
+
+        if (!$bordereau) {
+            return [];
+        }
+
+        // Ensuite, récupérer tous les tickets disponibles pour ce bordereau
         $sql = "SELECT 
             t.id_ticket,
             t.numero_ticket,
@@ -754,20 +768,31 @@ function getTicketsByBordereau($conn, $id_bordereau) {
             t.poids,
             t.prix_unitaire,
             (t.poids * t.prix_unitaire) as montant_total,
+            t.numero_bordereau,
             v.matricule_vehicule,
             us.nom_usine
         FROM tickets t
         INNER JOIN vehicules v ON t.vehicule_id = v.vehicules_id
         INNER JOIN usines us ON t.id_usine = us.id_usine
-        INNER JOIN bordereau b ON t.id_agent = b.id_agent
-        WHERE b.id_bordereau = :id_bordereau
-        AND t.created_at BETWEEN CONCAT(b.date_debut, ' 00:00:00') AND CONCAT(b.date_fin, ' 23:59:59')
+        WHERE (t.numero_bordereau = :numero_bordereau 
+              OR (t.id_agent = :id_agent 
+                  AND t.created_at BETWEEN :date_debut AND :date_fin
+                  AND t.date_validation_boss IS NOT NULL
+                  AND t.prix_unitaire IS NOT NULL 
+                  AND t.prix_unitaire > 0
+                  AND (t.numero_bordereau IS NULL OR t.numero_bordereau = :numero_bordereau)))
         ORDER BY t.date_ticket ASC";
         
         $stmt = $conn->prepare($sql);
-        $stmt->execute([':id_bordereau' => $id_bordereau]);
+        $stmt->execute([
+            ':numero_bordereau' => $bordereau['numero_bordereau'],
+            ':id_agent' => $bordereau['id_agent'],
+            ':date_debut' => $bordereau['date_debut'],
+            ':date_fin' => $bordereau['date_fin']
+        ]);
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     } catch (PDOException $e) {
+        error_log("Erreur dans getTicketsByBordereau: " . $e->getMessage());
         return [];
     }
 }
