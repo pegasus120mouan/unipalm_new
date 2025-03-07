@@ -225,7 +225,11 @@ label {
     </button>
 
     <button type="button" class="btn btn-dark" onclick="window.location.href='export_tickets.php'">
-              <i class="fa fa-print"></i> Exporter la liste les tickets
+              <i class="fa fa-print"></i> Exporter tous  les tickets
+    </button>
+
+    <button type="button" class="btn btn-outline-dark" data-toggle="modal" data-target="#exportDateModal">
+              <i class="fas fa-file-excel"></i> Exporter  les tickets sur une période
     </button>
  
 </div>
@@ -762,6 +766,118 @@ label {
     </div>
 </div>
 
+<!-- Modal Recherche par Date -->
+<div class="modal fade" id="exportDateModal" tabindex="-1" role="dialog" aria-labelledby="searchByDateModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header bg-dark text-white">
+                <h5 class="modal-title" id="searchByDateModalLabel">
+                    <i class="fas fa-calendar-alt mr-2"></i>Exporter Tickets sur une période
+                </h5>
+                <button type="button" class="close text-white" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <form id="exportDateForm" method="get" action="export_tickets_periode.php" target="_blank">
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label for="date_debut" class="font-weight-bold mb-2">Date de début</label>
+                        <div class="input-group">
+                            <div class="input-group-prepend">
+                                <span class="input-group-text"><i class="fas fa-calendar"></i></span>
+                            </div>
+                            <input type="date" class="form-control custom-input" id="date_debut" name="date_debut" required 
+                                   style="padding: 0.5rem; border: 1px solid #ced4da; border-radius: 0 0.25rem 0.25rem 0;">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="date_fin" class="font-weight-bold mb-2">Date fin</label>
+                        <div class="input-group">
+                            <div class="input-group-prepend">
+                                <span class="input-group-text"><i class="fas fa-calendar"></i></span>
+                            </div>
+                            <input type="date" class="form-control custom-input" id="date_fin" name="date_fin" required
+                                   style="padding: 0.5rem; border: 1px solid #ced4da; border-radius: 0 0.25rem 0.25rem 0;">
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">
+                        <i class="fas fa-times mr-2"></i>Annuler
+                    </button>
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-file-export mr-2"></i>Exporter
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<style>
+.custom-input {
+    background-color: #fff;
+    transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+    color: #495057;
+}
+
+.custom-input:focus {
+    border-color: #80bdff;
+    box-shadow: 0 0 0 0.2rem rgba(0,123,255,.25);
+    outline: 0;
+}
+
+.custom-input:hover {
+    border-color: #80bdff;
+}
+
+.input-group-text {
+    background-color: #f8f9fa;
+    border: 1px solid #ced4da;
+    color: #495057;
+}
+
+.modal-header {
+    border-bottom: 2px solid #dee2e6;
+}
+
+.modal-footer {
+    border-top: 2px solid #dee2e6;
+}
+
+.form-group label {
+    color: #212529;
+}
+
+/* Match Select2 dropdown styling */
+.modal-content {
+    box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
+}
+</style>
+
+<script>
+$(document).ready(function() {
+    // Auto-clear on modal close
+    $('#exportDateModal').on('hidden.bs.modal', function () {
+        $('#exportDateForm')[0].reset();
+    });
+    
+    // Date validation with French error message
+    $('#exportDateForm').on('submit', function(e) {
+        var dateDebut = new Date($('#date_debut').val());
+        var dateFin = new Date($('#date_fin').val());
+        
+        if (dateFin < dateDebut) {
+            e.preventDefault();
+            alert('La date de fin doit être supérieure à la date de début');
+            return false;
+        }
+        
+        // Close modal after successful submission
+        $('#exportDateModal').modal('hide');
+    });
+});
+</script>
 <div class="modal fade" id="searchByBetweendateModal" tabindex="-1" role="dialog" aria-labelledby="searchByDateModalLabel" aria-hidden="true">
     <div class="modal-dialog" role="document">
         <div class="modal-content">
@@ -865,6 +981,26 @@ document.getElementById('searchByBetweendateForm').addEventListener('submit', fu
         window.location.href = 'tickets.php?date_debut=' + date_debut + '&date_fin=' + date_fin;
     }
 });
+</script>
+
+<script>
+function handleExportSubmit(event) {
+    event.preventDefault();
+    
+    const dateDebut = document.getElementById('date_debut').value;
+    const dateFin = document.getElementById('date_fin').value;
+    
+    if (!dateDebut || !dateFin) {
+        alert('Veuillez sélectionner les dates de début et de fin');
+        return;
+    }
+    
+    // Rediriger vers la page d'export avec les paramètres
+    window.location.href = `export_tickets_periode.php?date_debut=${dateDebut}&date_fin=${dateFin}`;
+    
+    // Fermer le modal
+    $('#exportDateModal').modal('hide');
+}
 </script>
 
 <?php foreach ($tickets_list as $ticket) : ?>
