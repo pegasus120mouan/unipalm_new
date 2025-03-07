@@ -16,39 +16,31 @@ function getTickets($conn, $filters = []) {
         $params[':usine'] = $filters['usine'];
     }
 
-    // Filtre par véhicule
-    if (!empty($filters['vehicule'])) {
-        $where_conditions[] = "t.vehicule_id = :vehicule";
-        $params[':vehicule'] = $filters['vehicule'];
-    }
-
     // Filtre par date
     if (!empty($filters['date_debut']) && !empty($filters['date_fin'])) {
         $where_conditions[] = "DATE(t.date_ticket) BETWEEN :date_debut AND :date_fin";
         $params[':date_debut'] = $filters['date_debut'];
         $params[':date_fin'] = $filters['date_fin'];
+    } elseif (!empty($filters['date_debut'])) {
+        $where_conditions[] = "DATE(t.date_ticket) >= :date_debut";
+        $params[':date_debut'] = $filters['date_debut'];
+    } elseif (!empty($filters['date_fin'])) {
+        $where_conditions[] = "DATE(t.date_ticket) <= :date_fin";
+        $params[':date_fin'] = $filters['date_fin'];
     }
 
     $sql = "SELECT 
-        t.id_ticket,
-        t.date_ticket,
-        t.numero_ticket,
-        t.poids,
-        t.prix_unitaire,
-        t.date_validation_boss,
-        t.montant_paie,
-        t.date_paie,
-        t.montant_payer,
-        t.montant_reste,
-        t.created_at,
+        t.*,
         CONCAT(a.nom, ' ', a.prenom) as nom_complet_agent,
+        a.id_agent,
         CONCAT(u.nom, ' ', u.prenoms) AS utilisateur_nom_complet,
         v.matricule_vehicule,
-        us.nom_usine
+        us.nom_usine,
+        us.id_usine
     FROM 
         tickets t
-    INNER JOIN
-    utilisateurs u ON t.id_utilisateur = u.id
+    LEFT JOIN
+        utilisateurs u ON t.id_utilisateur = u.id
     LEFT JOIN 
         agents a ON t.id_agent = a.id_agent
     LEFT JOIN 
@@ -62,9 +54,17 @@ function getTickets($conn, $filters = []) {
 
     $sql .= " ORDER BY t.date_ticket DESC";
 
-    $stmt = $conn->prepare($sql);
-    $stmt->execute($params);
-    return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    try {
+        $stmt = $conn->prepare($sql);
+        foreach ($params as $key => $value) {
+            $stmt->bindValue($key, $value);
+        }
+        $stmt->execute();
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    } catch (PDOException $e) {
+        error_log("Erreur dans getTickets: " . $e->getMessage());
+        return [];
+    }
 }
 
 function getTicketsJour($conn, $agent_id = null, $usine_id = null, $date_debut = null, $date_fin = null, $numero_ticket = null) {
