@@ -34,7 +34,7 @@ if (isset($_POST['id_agent']) && isset($_POST['date_debut']) && isset($_POST['da
     INNER JOIN agents a ON t.id_agent = a.id_agent
     WHERE 1=1
         AND t.id_agent = :id_agent 
-        AND t.date_ticket BETWEEN :date_debut AND :date_fin
+        AND t.created_at BETWEEN :date_debut AND :date_fin
     ORDER BY 
         u.nom_usine ASC,
         t.date_ticket ASC,
