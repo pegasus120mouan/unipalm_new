@@ -1927,3 +1927,26 @@
 [2025-03-06 17:29:33] Précédent: 100000.00
 [2025-03-06 17:29:33] Reste: 340000.00
 [2025-03-06 17:29:33] Transaction validée avec succès
+[2025-03-07 11:11:39] Données reçues : Array
+(
+    [save_paiement] => 1
+    [id_ticket] => 289
+    [numero_ticket] => christian 02
+    [type] => all
+    [status] => all
+    [montant_reste] => 340000
+    [source_paiement] => transactions
+    [montant_affiche] => 10 000
+    [montant] => 10000
+)
+
+[2025-03-07 11:11:39] Montant : 10000
+[2025-03-07 11:11:39] Source : transactions
+[2025-03-07 11:11:39] Type : all
+[2025-03-07 11:11:39] Status : all
+[2025-03-07 11:11:39] Montants avant insertion:
+[2025-03-07 11:11:39] Total: 480000.00
+[2025-03-07 11:11:39] Payé: 10000.00
+[2025-03-07 11:11:39] Précédent: 140000.00
+[2025-03-07 11:11:39] Reste: 330000.00
+[2025-03-07 11:11:39] Transaction validée avec succès

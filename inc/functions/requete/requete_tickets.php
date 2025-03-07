@@ -198,7 +198,6 @@ function getTicketsAttente($conn, $agent_id = null, $usine_id = null, $date_debu
     }
 }
 
-
 function getTicketsNonAssigne($conn, $agent_id = null, $usine_id = null, $date_debut = null, $date_fin = null, $numero_ticket = null) {
     $sql = "SELECT t.*, 
             CONCAT(u.nom, ' ', u.prenoms) AS utilisateur_nom_complet,
@@ -476,7 +475,8 @@ function getTicketsNonSoldes($conn) {
             t.montant_reste > 0
             AND t.prix_unitaire IS NOT NULL
             AND t.prix_unitaire > 0
-        ORDER BY t.created_at DESC"
+        ORDER BY 
+            t.created_at DESC"
     );
     $stmt->execute();
     return $stmt->fetchAll();
@@ -516,7 +516,8 @@ function getTicketsSoldes($conn) {
             t.montant_reste = 0
             AND t.prix_unitaire IS NOT NULL
             AND t.prix_unitaire > 0
-        ORDER BY t.created_at DESC"
+        ORDER BY 
+            t.created_at DESC"
     );
     $stmt->execute();
     return $stmt->fetchAll();
