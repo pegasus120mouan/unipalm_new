@@ -27,7 +27,10 @@ if (isset($_POST['id_agent']) && isset($_POST['date_debut']) && isset($_POST['da
         v.type_vehicule,
         CONCAT(COALESCE(a.nom, ''), ' ', COALESCE(a.prenom, '')) AS nom_complet_agent,
         DATE(t.date_ticket) as date_ticket_only,
-        DATE(t.created_at) as date_reception
+        DATE(t.created_at) as date_reception,
+        CAST(t.poids AS DECIMAL(10,2)) as poids,
+        CAST(t.prix_unitaire AS DECIMAL(10,2)) as prix_unitaire,
+        CAST((t.poids * t.prix_unitaire) AS DECIMAL(15,2)) as montant_total
     FROM tickets t
     INNER JOIN usines u ON t.id_usine = u.id_usine
     INNER JOIN vehicules v ON t.vehicule_id = v.vehicules_id
@@ -35,6 +38,8 @@ if (isset($_POST['id_agent']) && isset($_POST['date_debut']) && isset($_POST['da
     WHERE 1=1
         AND t.id_agent = :id_agent 
         AND t.created_at BETWEEN :date_debut AND :date_fin
+        AND t.date_validation_boss IS NOT NULL
+        AND t.prix_unitaire > 0
     ORDER BY 
         u.nom_usine ASC,
         t.date_ticket ASC,
@@ -61,15 +66,32 @@ if (isset($_POST['id_agent']) && isset($_POST['date_debut']) && isset($_POST['da
         echo "Nombre de tickets trouvés : " . count($resultat) . "<br><br>";
 
         if (empty($resultat)) {
-            // Vérifier s'il y a des tickets sans les conditions
-            $sql_check = "SELECT COUNT(*) as total FROM tickets WHERE id_agent = :id_agent";
-            $check = $conn->prepare($sql_check);
-            $check->bindParam(':id_agent', $id_agent);
-            $check->execute();
-            $total = $check->fetch(PDO::FETCH_ASSOC)['total'];
+            // Vérifier les tickets sans les conditions de validation et prix
+            $sql_debug = "SELECT 
+                COUNT(*) as total,
+                SUM(CASE WHEN date_validation_boss IS NOT NULL THEN 1 ELSE 0 END) as validated,
+                SUM(CASE WHEN prix_unitaire > 0 THEN 1 ELSE 0 END) as with_price
+            FROM tickets 
+            WHERE id_agent = :id_agent 
+            AND created_at BETWEEN :date_debut AND :date_fin";
             
-            echo "Nombre total de tickets pour cet agent (sans conditions) : " . $total . "<br>";
-            die("Aucun ticket trouvé pour cette période. Vérifiez les dates.");
+            $check = $conn->prepare($sql_debug);
+            $check->bindParam(':id_agent', $id_agent);
+            $check->bindParam(':date_debut', $date_debut);
+            $check->bindParam(':date_fin', $date_fin);
+            $check->execute();
+            $debug_info = $check->fetch(PDO::FETCH_ASSOC);
+            
+            echo "<div style='margin: 20px; padding: 20px; border: 1px solid red;'>";
+            echo "<h3>Informations de débogage :</h3>";
+            echo "<p>Total des tickets pour la période : " . $debug_info['total'] . "</p>";
+            echo "<p>Tickets validés par le boss : " . $debug_info['validated'] . "</p>";
+            echo "<p>Tickets avec prix > 0 : " . $debug_info['with_price'] . "</p>";
+            echo "<p>Agent ID : " . $id_agent . "</p>";
+            echo "<p>Période : du " . $date_debut . " au " . $date_fin . "</p>";
+            echo "</div>";
+            
+            die("Aucun ticket trouvé pour cette période. Vérifiez que les tickets sont validés par le boss et ont un prix unitaire.");
         }
 
         // Désactiver la mise en mémoire tampon de sortie
@@ -169,7 +191,7 @@ if (isset($_POST['id_agent']) && isset($_POST['date_debut']) && isset($_POST['da
             $pdf->SetFillColor(230, 230, 230);
             $pdf->SetDrawColor(0);
 
-            $w = array(35, 35, 40, 40, 40);
+            $w = array(30, 30, 35, 50, 25);
             
             $pdf->Cell($w[0], 8, iconv('UTF-8', 'windows-1252', 'Date Réception'), 1, 0, 'C', true);
             $pdf->Cell($w[1], 8, 'Date Ticket', 1, 0, 'C', true);
@@ -191,8 +213,8 @@ if (isset($_POST['id_agent']) && isset($_POST['date_debut']) && isset($_POST['da
 
             // Sous-total pour l'usine
             $pdf->SetFont('Arial', 'B', 10);
-            $pdf->Cell(array_sum($w)-40, 8, 'Sous-total ' . iconv('UTF-8', 'windows-1252', $usine) . ' (' . $data['nombre_tickets'] . ' tickets)', 1, 0, 'R', true);
-            $pdf->Cell(40, 8, number_format($data['total_poids'], 0, ',', ' '), 1, 1, 'R', true);
+            $pdf->Cell(array_sum($w)-25, 8, 'Sous-total ' . iconv('UTF-8', 'windows-1252', $usine) . ' (' . $data['nombre_tickets'] . ' tickets)', 1, 0, 'R', true);
+            $pdf->Cell(25, 8, number_format($data['total_poids'], 0, ',', ' '), 1, 1, 'R', true);
             
             $pdf->Ln(4);
             
@@ -202,8 +224,8 @@ if (isset($_POST['id_agent']) && isset($_POST['date_debut']) && isset($_POST['da
 
         // Total général
         $pdf->SetFont('Arial', 'B', 10);
-        $pdf->Cell(array_sum($w)-40, 8, iconv('UTF-8', 'windows-1252', 'TOTAL GÉNÉRAL (' . $grand_total_tickets . ' tickets)'), 1, 0, 'R', true);
-        $pdf->Cell(40, 8, number_format($grand_total_poids, 0, ',', ' '), 1, 1, 'R', true);
+        $pdf->Cell(array_sum($w)-25, 8, iconv('UTF-8', 'windows-1252', 'TOTAL GÉNÉRAL (' . $grand_total_tickets . ' tickets)'), 1, 0, 'R', true);
+        $pdf->Cell(25, 8, number_format($grand_total_poids, 0, ',', ' '), 1, 1, 'R', true);
 
         // Signature
         $pdf->Ln(15);

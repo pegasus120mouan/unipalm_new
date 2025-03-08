@@ -398,7 +398,13 @@ if (!isset($_SESSION['user_id'])) {
                     <p>Financements</p>
                   </a>
                 </li>
-
+                <li class="nav-item">
+                  <a href="gestion_usines.php" class="nav-link">
+                    <i class="fas fa-money-bill-wave"></i>
+                    <p>Montant Usines</p>
+                  </a>
+                </li>
+                
                 <li class="nav-item">
                   <a href="recus.php" class="nav-link">
                     <i class="fas fa-receipt"></i>

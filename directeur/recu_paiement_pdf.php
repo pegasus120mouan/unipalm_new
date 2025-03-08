@@ -308,6 +308,11 @@ $montant_actuel_format = formatMontant($montant_actuel);
 $montant_deja_paye_format = formatMontant($montant_deja_paye);
 $reste_a_payer_format = formatMontant($reste_a_payer);
 
+if(! $reimprimer) {
+    header("Location: paiements.php");
+    exit;
+}
+
 // Créer le PDF
 $pdf = new PDF();
 $pdf->AddPage();
@@ -322,4 +327,5 @@ $pdf->genererRecu(150, $logo_path, $paiement, $numero_recu, $numero_document, $t
 
 // Sortie du PDF
 $pdf->Output('I', 'Recu_' . $numero_recu . '.pdf');
+
 ?>

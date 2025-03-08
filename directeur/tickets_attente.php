@@ -14,11 +14,14 @@ $page = isset($_GET['page']) ? (int)$_GET['page'] : 1;
 // Récupérer les paramètres de filtrage
 $agent_id = $_GET['agent_id'] ?? null;
 $usine_id = $_GET['usine_id'] ?? null;
+$date_debut = $_GET['date_debut'] ?? '';
+$date_fin = $_GET['date_fin'] ?? '';
 $search_agent = $_GET['search_agent'] ?? '';
 $search_usine = $_GET['search_usine'] ?? '';
+$numero_ticket = $_GET['numero_ticket'] ?? '';
 
 // Récupérer les tickets en attente avec les filtres
-$tickets = getTicketsAttente($conn, $agent_id, $usine_id);
+$tickets = getTicketsAttente($conn, $agent_id, $usine_id, $date_debut, $date_fin, $numero_ticket);
 
 // Filtrer les tickets si un terme de recherche est présent
 if (!empty($search_agent) || !empty($search_usine)) {
@@ -52,80 +55,193 @@ $usines = getUsines($conn);
 <div class="search-container mb-4">
     <div class="row justify-content-center">
         <div class="col-md-10">
-            <div class="row">
-                <!-- Recherche par agent -->
-                <div class="col-md-6 mb-3">
-                    <form action="" method="get" class="form-inline w-100">
-                        <div class="input-group w-100">
-                            <input type="text" 
-                                   class="form-control" 
-                                   name="search_agent" 
-                                   id="agent_search"
-                                   placeholder="Rechercher par nom d'agent" 
-                                   value="<?= htmlspecialchars($search_agent) ?>"
-                                   autocomplete="off">
-                            <div class="input-group-append">
-                                <button class="btn btn-primary" type="submit">
-                                    <i class="fa fa-search"></i>
-                                </button>
-                            </div>
-                        </div>
-                    </form>
+            <form id="filterForm" method="GET">
+                <div class="row">
+                    <!-- Numéro de ticket -->
+                    <div class="col-md-3 mb-3">
+                        <input type="text" 
+                               class="form-control" 
+                               name="numero_ticket" 
+                               id="numero_ticket"
+                               placeholder="Numéro de ticket" 
+                               value="<?= htmlspecialchars($numero_ticket) ?>">
+                    </div>
+
+                    <!-- Recherche par agent -->
+                    <div class="col-md-3 mb-3">
+                        <select class="form-control" name="agent_id" id="agent_select">
+                            <option value="">Sélectionner un agent</option>
+                            <?php foreach($agents as $agent): ?>
+                                <option value="<?= $agent['id_agent'] ?>" <?= ($agent_id == $agent['id_agent']) ? 'selected' : '' ?>>
+                                    <?= htmlspecialchars($agent['nom_complet_agent']) ?>
+                                </option>
+                            <?php endforeach; ?>
+                        </select>
+                    </div>
+                    
+                    <!-- Recherche par usine -->
+                    <div class="col-md-3 mb-3">
+                        <select class="form-control" name="usine_id" id="usine_select">
+                            <option value="">Sélectionner une usine</option>
+                            <?php foreach($usines as $usine): ?>
+                                <option value="<?= $usine['id_usine'] ?>" <?= ($usine_id == $usine['id_usine']) ? 'selected' : '' ?>>
+                                    <?= htmlspecialchars($usine['nom_usine']) ?>
+                                </option>
+                            <?php endforeach; ?>
+                        </select>
+                    </div>
+
+                    <!-- Date de début -->
+                    <div class="col-md-3 mb-3">
+                        <input type="date" 
+                               class="form-control" 
+                               name="date_debut" 
+                               id="date_debut"
+                               placeholder="Date de début" 
+                               value="<?= htmlspecialchars($date_debut) ?>">
+                    </div>
+
+                    <!-- Date de fin -->
+                    <div class="col-md-3 mb-3">
+                        <input type="date" 
+                               class="form-control" 
+                               name="date_fin" 
+                               id="date_fin"
+                               placeholder="Date de fin" 
+                               value="<?= htmlspecialchars($date_fin) ?>">
+                    </div>
+
+                    <!-- Boutons -->
+                    <div class="col-12 text-center">
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fa fa-search"></i> Rechercher
+                        </button>
+                        <a href="tickets_attente.php" class="btn btn-outline-danger">
+                            <i class="fa fa-times"></i> Réinitialiser les filtres
+                        </a>
+                    </div>
                 </div>
-                
-                <!-- Recherche par usine -->
-                <div class="col-md-6 mb-3">
-                    <form action="" method="get" class="form-inline w-100">
-                        <div class="input-group w-100">
-                            <input type="text" 
-                                   class="form-control" 
-                                   name="search_usine" 
-                                   id="usine_search"
-                                   placeholder="Rechercher par nom d'usine" 
-                                   value="<?= htmlspecialchars($search_usine) ?>"
-                                   autocomplete="off">
-                            <div class="input-group-append">
-                                <button class="btn btn-primary" type="submit">
-                                    <i class="fa fa-search"></i>
-                                </button>
-                            </div>
-                        </div>
-                    </form>
-                </div>
-            </div>
+            </form>
             
             <!-- Filtres actifs -->
-            <?php if($agent_id || $usine_id): ?>
+            <?php if($agent_id || $usine_id || $date_debut || $date_fin || $numero_ticket): ?>
             <div class="active-filters mt-3">
                 <div class="d-flex align-items-center flex-wrap">
                     <strong class="text-muted mr-2">Filtres actifs :</strong>
+                    <?php if($numero_ticket): ?>
+                        <span class="badge badge-info mr-2 p-2">
+                            <i class="fa fa-ticket"></i>
+                            Ticket N°: <?= htmlspecialchars($numero_ticket) ?>
+                            <a href="?<?= http_build_query(array_merge($_GET, ['numero_ticket' => null])) ?>" class="text-white ml-2">
+                                <i class="fa fa-times"></i>
+                            </a>
+                        </span>
+                    <?php endif; ?>
                     <?php if($agent_id): ?>
+                        <?php 
+                        $agent_name = '';
+                        foreach($agents as $agent) {
+                            if($agent['id_agent'] == $agent_id) {
+                                $agent_name = $agent['nom_complet_agent'];
+                                break;
+                            }
+                        }
+                        ?>
                         <span class="badge badge-info mr-2 p-2">
                             <i class="fa fa-user"></i> 
-                            Agent: <?= htmlspecialchars($search_agent) ?>
+                            Agent: <?= htmlspecialchars($agent_name) ?>
                             <a href="?<?= http_build_query(array_merge($_GET, ['agent_id' => null])) ?>" class="text-white ml-2">
                                 <i class="fa fa-times"></i>
                             </a>
                         </span>
                     <?php endif; ?>
                     <?php if($usine_id): ?>
+                        <?php 
+                        $usine_name = '';
+                        foreach($usines as $usine) {
+                            if($usine['id_usine'] == $usine_id) {
+                                $usine_name = $usine['nom_usine'];
+                                break;
+                            }
+                        }
+                        ?>
                         <span class="badge badge-info mr-2 p-2">
                             <i class="fa fa-building"></i>
-                            Usine: <?= htmlspecialchars($search_usine) ?>
+                            Usine: <?= htmlspecialchars($usine_name) ?>
                             <a href="?<?= http_build_query(array_merge($_GET, ['usine_id' => null])) ?>" class="text-white ml-2">
                                 <i class="fa fa-times"></i>
                             </a>
                         </span>
                     <?php endif; ?>
-                    <a href="tickets_attente.php" class="btn btn-outline-danger btn-sm ml-auto">
-                        <i class="fa fa-times"></i> Réinitialiser tous les filtres
-                    </a>
+                    <?php if($date_debut): ?>
+                        <span class="badge badge-info mr-2 p-2">
+                            <i class="fa fa-calendar"></i>
+                            Depuis: <?= htmlspecialchars($date_debut) ?>
+                            <a href="?<?= http_build_query(array_merge($_GET, ['date_debut' => null])) ?>" class="text-white ml-2">
+                                <i class="fa fa-times"></i>
+                            </a>
+                        </span>
+                    <?php endif; ?>
+                    <?php if($date_fin): ?>
+                        <span class="badge badge-info mr-2 p-2">
+                            <i class="fa fa-calendar"></i>
+                            Jusqu'au: <?= htmlspecialchars($date_fin) ?>
+                            <a href="?<?= http_build_query(array_merge($_GET, ['date_fin' => null])) ?>" class="text-white ml-2">
+                                <i class="fa fa-times"></i>
+                            </a>
+                        </span>
+                    <?php endif; ?>
                 </div>
             </div>
             <?php endif; ?>
         </div>
     </div>
 </div>
+
+<script>
+function appliquerFiltres() {
+    const agent_id = document.getElementById('agent_select').value;
+    const usine_id = document.getElementById('usine_select').value;
+    const date_debut = document.getElementById('date_debut').value;
+    const date_fin = document.getElementById('date_fin').value;
+    const numero_ticket = document.getElementById('numero_ticket').value;
+    
+    let params = new URLSearchParams(window.location.search);
+    
+    if (numero_ticket) params.set('numero_ticket', numero_ticket);
+    else params.delete('numero_ticket');
+    
+    if (agent_id) params.set('agent_id', agent_id);
+    else params.delete('agent_id');
+    
+    if (usine_id) params.set('usine_id', usine_id);
+    else params.delete('usine_id');
+    
+    if (date_debut) params.set('date_debut', date_debut);
+    else params.delete('date_debut');
+    
+    if (date_fin) params.set('date_fin', date_fin);
+    else params.delete('date_fin');
+    
+    window.location.href = '?' + params.toString();
+}
+
+// Initialiser les sélecteurs de date
+document.addEventListener('DOMContentLoaded', function() {
+    const date_debut = document.getElementById('date_debut');
+    const date_fin = document.getElementById('date_fin');
+    
+    // Mettre à jour la date de fin minimale lorsque la date de début change
+    date_debut.addEventListener('change', function() {
+        date_fin.min = this.value;
+    });
+    
+    // Mettre à jour la date de début maximale lorsque la date de fin change
+    date_fin.addEventListener('change', function() {
+        date_debut.max = this.value;
+    });
+});
+</script>
 
 <!-- Ajout du style pour l'autocomplétion -->
 <style>
@@ -371,25 +487,17 @@ label {
     </style>
 
 
- <!--<div class="row"><
+<div class="row">
 
-    <div class="block-container">
-    <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#add-ticket">
-      <i class="fa fa-edit"></i>Enregistrer un ticket
-    </button>
-
-    <button type="button" class="btn btn-danger" data-toggle="modal" data-target="#print-bordereau">
-      <i class="fa fa-print"></i> Imprimer un bordereau
-    </button>
-
-    <button type="button" class="btn btn-success" data-toggle="modal" data-target="#search_ticket">
-      <i class="fa fa-search"></i> Recherche un ticket
-    </button>
-
-    <button type="button" class="btn btn-dark" onclick="window.location.href='export_tickets.php'">
-              <i class="fa fa-print"></i> Exporter la liste les tickets
-             </button>
-</div>-->
+<div class="block-container">
+    <div class="d-flex justify-content-between align-items-center">
+        <h3><i class="fa fa-stop text-success"></i> Liste des Tickets attente</h3>
+        <div class="text-muted">
+            Total: <?php echo $total_tickets; ?> ticket(s) en attente
+        </div>
+    </div>
+</div>
+</div>
 
 
 
@@ -508,74 +616,16 @@ label {
   
           <td class="actions">
             <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#valider_ticket<?= $ticket['id_ticket'] ?>">
-              <i class="fa fa-edit"></i>Valider un ticket
+              <i class="fa fa-edit"></i> Valider un ticket
             </button>
           </td>
-           <!-- Lien pour déclencher la modale -->
-<!--a href="#" class="trash" data-toggle="modal" data-target="#confirmDeleteModal" data-id="<?= $ticket['id_ticket'] ?>">
-    <i class="fas fa-trash fa-xs" style="font-size:24px;color:red"></i>
-</a-->
-
-<!-- Modale de confirmation -->
-<div class="modal fade" id="confirmDeleteModal" tabindex="-1" role="dialog" aria-labelledby="confirmDeleteModalLabel" aria-hidden="true">
-    <div class="modal-dialog" role="document">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="confirmDeleteModalLabel">Confirmer la suppression</h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
-            </div>
-            <div class="modal-body">
-                Êtes-vous sûr de vouloir supprimer ce ticket ?
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-dismiss="modal">Annuler</button>
-                <a href="#" id="confirmDeleteBtn" class="btn btn-danger">Supprimer</a>
-            </div>
-        </div>
-    </div>
-</div>
-
-          </td>
-
-          <div class="modal fade" id="editModalTicket<?= $ticket['id_ticket'] ?>" tabindex="-1" role="dialog" aria-labelledby="editModalLabel" aria-hidden="true">
-    <div class="modal-dialog" role="document">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="editModalLabel">Modification Ticket <?= $ticket['id_ticket'] ?></h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
-            </div>
-            <div class="modal-body">
-                <!-- Formulaire de modification du ticket -->
-                <form action="tickets_update.php?id=<?= $ticket['id_ticket'] ?>" method="post">
-                <div class="form-group">
-                <label for="exampleInputEmail1">Date ticket</label>
-                <input type="date" class="form-control" id="exampleInputEmail1" placeholder="date ticket" name="date_ticket" value="<?= $ticket['date_ticket'] ?>"> 
-              </div> 
-                <div class="form-group">
-                        <label for="prix_unitaire">Numéro du ticket</label>
-                        <input type="text" class="form-control" id="numero_ticket" name="numero_ticket" value="<?= $ticket['numero_ticket'] ?>" required>
-                    </div>
-                    <button type="submit" class="btn btn-primary">Sauvegarder les modifications</button>
-                </form>
-            </div>
-        </div>
-    </div>
-</div>
-
-          
-
-
-         <div class="modal" id="valider_ticket<?= $ticket['id_ticket'] ?>">
+          <div class="modal" id="valider_ticket<?= $ticket['id_ticket'] ?>">
           <div class="modal-dialog">
             <div class="modal-content">
               <div class="modal-body">
-                <form action="traitement_tickets.php" method="post" onsubmit="return validatePrixUnitaire(this);">
+                <form id="form-validation-<?= $ticket['id_ticket'] ?>" onsubmit="return submitValidation(event, <?= $ticket['id_ticket'] ?>);">
                   <input type="hidden" name="id_ticket" value="<?= $ticket['id_ticket'] ?>">
-                  <input type="hidden" name="redirect" value="tickets_attente.php">
+                  <input type="hidden" name="current_url" value="<?= $_SERVER['REQUEST_URI'] ?>">
                   <div class="form-group">
                     <label>Ajouter le prix unitaire</label>
                   </div>
@@ -590,7 +640,7 @@ label {
                            required>
                   </div>
                   <div class="modal-footer">
-                    <button type="submit" class="btn btn-primary" name="saveCommande">Valider</button>
+                    <button type="submit" class="btn btn-primary">Valider</button>
                     <button type="button" class="btn btn-secondary" data-dismiss="modal">Annuler</button>
                   </div>
                 </form>
@@ -600,13 +650,89 @@ label {
         </div>
 
 <script>
-function validatePrixUnitaire(form) {
-    const prixUnitaire = parseFloat(form.querySelector('[name="prix_unitaire"]').value);
-    if (prixUnitaire <= 0) {
-        alert('Le prix unitaire doit être supérieur à 0');
-        return false;
+function submitValidation(event, ticketId) {
+    event.preventDefault();
+    const form = document.getElementById('form-validation-' + ticketId);
+    const prix_unitaire = form.querySelector('[name="prix_unitaire"]').value;
+    const id_ticket = form.querySelector('[name="id_ticket"]').value;
+
+    console.log('Données envoyées:', {
+        ticket_id: id_ticket,
+        prix_unitaire: prix_unitaire
+    });
+
+    $.ajax({
+        url: 'valider_tickets.php',
+        method: 'POST',
+        data: {
+            ticket_id: id_ticket,
+            prix_unitaire: prix_unitaire
+        },
+        success: function(response) {
+            console.log('Response:', response);
+            try {
+                const data = typeof response === 'string' ? JSON.parse(response) : response;
+                if (data.success) {
+                    // Fermer le modal
+                    $(`#valider_ticket${ticketId}`).modal('hide');
+                    // Recharger la page
+                   // window.location.reload();
+                } else {
+                    alert(data.message || 'Erreur lors de la validation du ticket');
+                }
+            } catch (e) {
+                console.error('Erreur de parsing:', e);
+                alert('Erreur lors du traitement de la réponse');
+            }
+        },
+        error: function(xhr, status, error) {
+            console.error('Erreur:', error);
+            console.error('Status:', status);
+            console.error('Response:', xhr.responseText);
+            alert('Erreur lors de la validation du ticket: ' + error);
+        }
+    });
+
+    return false;
+}
+
+// Pour la validation multiple
+function validerTicketsSelectionnes() {
+    const selectedTickets = [];
+    $('.ticket-checkbox:checked').each(function() {
+        selectedTickets.push($(this).val());
+    });
+
+    if (selectedTickets.length === 0) {
+        alert('Veuillez sélectionner au moins un ticket à valider');
+        return;
     }
-    return true;
+
+    if (confirm('Voulez-vous vraiment valider les tickets sélectionnés ?')) {
+        $.ajax({
+            url: 'valider_tickets.php',
+            method: 'POST',
+            data: { ticket_ids: selectedTickets },
+            success: function(response) {
+                try {
+                    const data = typeof response === 'string' ? JSON.parse(response) : response;
+                    if (data.success) {
+                        window.location.reload();
+                    } else {
+                        alert(data.message || 'Erreur lors de la validation des tickets');
+                    }
+                } catch (e) {
+                    console.error('Erreur de parsing:', e);
+                    alert('Erreur lors du traitement de la réponse');
+                }
+            },
+            error: function(xhr, status, error) {
+                console.error('Erreur:', error);
+                console.error('Response:', xhr.responseText);
+                alert('Erreur lors de la validation des tickets: ' + error);
+            }
+        });
+    }
 }
 </script>
 
@@ -635,7 +761,7 @@ function validatePrixUnitaire(form) {
     <form action="" method="get" class="items-per-page-form ml-3">
         <?php
         // Conserver les paramètres de filtrage actuels
-        foreach (['agent_id', 'usine_id', 'search_agent', 'search_usine'] as $param) {
+        foreach (['agent_id', 'usine_id', 'search_agent', 'search_usine', 'numero_ticket'] as $param) {
             if (isset($_GET[$param])) {
                 echo '<input type="hidden" name="' . $param . '" value="' . htmlspecialchars($_GET[$param]) . '">';
             }
@@ -987,6 +1113,173 @@ document.getElementById('searchByVehiculeForm').addEventListener('submit', funct
 </html>
 
 <script>
+function getUrlParams() {
+    const params = new URLSearchParams(window.location.search);
+    const urlParams = {};
+    
+    // Récupérer tous les paramètres actuels
+    for(const [key, value] of params.entries()) {
+        if(value) urlParams[key] = value;
+    }
+    
+    return urlParams;
+}
+
+function submitValidation(event, ticketId) {
+    event.preventDefault();
+    const form = document.getElementById('form-validation-' + ticketId);
+    const formData = new FormData(form);
+
+    $.ajax({
+        url: 'valider_tickets.php',
+        method: 'POST',
+        data: {
+            id_ticket: formData.get('id_ticket'),
+            prix_unitaire: formData.get('prix_unitaire')
+        },
+        dataType: 'json',
+        success: function(response) {
+            console.log('Response:', response);  // Pour le debug
+            if (response && response.success) {
+                // Fermer le modal
+                $(`#valider_ticket${ticketId}`).modal('hide');
+                
+                // Recharger la page avec les mêmes paramètres
+                window.location.reload();
+            } else {
+                alert(response && response.message ? response.message : 'Erreur lors de la validation du ticket');
+            }
+        },
+        error: function(xhr, status, error) {
+            console.error('Erreur:', error);
+            console.error('Status:', status);
+            console.error('Response:', xhr.responseText);  // Pour voir la réponse brute
+            alert('Erreur lors de la validation du ticket: ' + error);
+        }
+    });
+
+    return false;
+}
+
+// Pour la validation multiple
+function validerTicketsSelectionnes() {
+    const selectedTickets = [];
+    $('.ticket-checkbox:checked').each(function() {
+        selectedTickets.push($(this).val());
+    });
+
+    if (selectedTickets.length === 0) {
+        alert('Veuillez sélectionner au moins un ticket à valider');
+        return;
+    }
+
+    if (confirm('Voulez-vous vraiment valider les tickets sélectionnés ?')) {
+        $.ajax({
+            url: 'valider_tickets.php',
+            method: 'POST',
+            data: { ticket_ids: selectedTickets },
+            success: function(response) {
+                if (response.success) {
+                    // Fermer le modal
+                    $(`#valider_ticket${ticketId}`).modal('hide');
+                    
+                    // Recharger la page avec les mêmes paramètres
+                    window.location.reload();
+                } else {
+                    alert(response.message || 'Erreur lors de la validation des tickets');
+                }
+            },
+            error: function(xhr, status, error) {
+                console.error('Erreur:', error);
+                alert('Erreur lors de la validation des tickets');
+            }
+        });
+    }
+}
+</script>
+<script>
+function validateAndSubmit(event, ticketId) {
+    event.preventDefault();
+    const form = document.getElementById('validation-form-' + ticketId);
+    const prixUnitaire = form.querySelector('[name="prix_unitaire"]').value;
+    const id_ticket = form.querySelector('[name="id_ticket"]').value;
+
+    $.ajax({
+        url: 'valider_tickets.php',
+        method: 'POST',
+        data: { 
+            ticket_id: id_ticket,
+            prix_unitaire: prixUnitaire
+        },
+        success: function(response) {
+            if (response.success) {
+                // Construire l'URL de redirection avec les paramètres actuels
+                const params = new URLSearchParams(urlParams);
+                window.location.href = 'tickets_attente.php?' + params.toString();
+            } else {
+                alert(response.message || 'Erreur lors de la validation du ticket');
+            }
+        },
+        error: function(xhr, status, error) {
+            console.error('Erreur:', error);
+            alert('Erreur lors de la validation du ticket');
+        }
+    });
+
+    return false;
+}
+</script>
+<script>
+// Pour la validation multiple
+function validerTicketsSelectionnes() {
+    const selectedTickets = [];
+    $('.ticket-checkbox:checked').each(function() {
+        selectedTickets.push($(this).val());
+    });
+
+    if (selectedTickets.length === 0) {
+        alert('Veuillez sélectionner au moins un ticket à valider');
+        return;
+    }
+
+    if (confirm('Voulez-vous vraiment valider les tickets sélectionnés ?')) {
+        // Récupérer les paramètres actuels de l'URL
+        const params = new URLSearchParams(window.location.search);
+        const data = {
+            ticket_ids: selectedTickets,
+            agent_id: params.get('agent_id'),
+            usine_id: params.get('usine_id'),
+            date_debut: params.get('date_debut'),
+            date_fin: params.get('date_fin')
+        };
+
+        $.ajax({
+            url: 'valider_tickets.php',
+            method: 'POST',
+            data: data,
+            success: function(response) {
+                if (response.success) {
+                    // Construire l'URL de redirection avec les paramètres actuels
+                    const redirectParams = new URLSearchParams();
+                    if (data.agent_id) redirectParams.set('agent_id', data.agent_id);
+                    if (data.usine_id) redirectParams.set('usine_id', data.usine_id);
+                    if (data.date_debut) redirectParams.set('date_debut', data.date_debut);
+                    if (data.date_fin) redirectParams.set('date_fin', data.date_fin);
+                    
+                    window.location.href = 'tickets_attente.php?' + redirectParams.toString();
+                } else {
+                    alert(response.message || 'Erreur lors de la validation des tickets');
+                }
+            },
+            error: function(xhr, status, error) {
+                console.error('Erreur:', error);
+                alert('Erreur lors de la validation des tickets');
+            }
+        });
+    }
+}
+</script>
+<script>
 document.addEventListener('DOMContentLoaded', function() {
     // Initialisation de tous les modals
     $('.modal').modal({
@@ -1196,7 +1489,7 @@ $(document).ready(function() {
     window.validerUnTicket = function(ticketId, buttonElement) {
         if (confirm('Voulez-vous vraiment valider ce ticket ?')) {
             $.ajax({
-                url: 'valider_ticket_simple.php',
+                url: 'valider_tickets.php',
                 method: 'POST',
                 data: { id_ticket: ticketId },
                 dataType: 'json',
@@ -1235,7 +1528,7 @@ $(document).ready(function() {
 
         if (confirm('Voulez-vous vraiment valider les tickets sélectionnés ?')) {
             $.ajax({
-                url: 'valider_tickets_simple.php',
+                url: 'valider_tickets.php',
                 method: 'POST',
                 data: { ticket_ids: selectedTickets },
                 dataType: 'json',

@@ -1,8 +1,6 @@
 <?php
 require_once '../inc/functions/connexion.php';
 
-header('Content-Type: application/json');
-
 if (isset($_POST['numero_ticket'])) {
     $numero_ticket = trim($_POST['numero_ticket']);
     
@@ -12,12 +10,14 @@ if (isset($_POST['numero_ticket'])) {
         $stmt->execute([':numero_ticket' => $numero_ticket]);
         $result = $stmt->fetch(PDO::FETCH_ASSOC);
         
+        header('Content-Type: application/json');
         echo json_encode([
             'exists' => $result['count'] > 0,
             'numero_ticket' => $numero_ticket
         ]);
         exit;
     } catch(PDOException $e) {
+        header('Content-Type: application/json');
         echo json_encode([
             'error' => true,
             'message' => 'Erreur lors de la vérification'
@@ -26,6 +26,7 @@ if (isset($_POST['numero_ticket'])) {
     }
 }
 
+header('Content-Type: application/json');
 echo json_encode([
     'error' => true,
     'message' => 'Numéro de ticket non fourni'

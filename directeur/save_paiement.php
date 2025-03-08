@@ -9,7 +9,19 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['save_paiement'])) {
         // Log des données reçues
         writeLog("Données reçues : " . print_r($_POST, true));
 
+        // Vérification des données requises
+        if (!isset($_POST['montant']) || empty($_POST['montant'])) {
+            throw new Exception("Le montant est requis");
+        }
+        if (!isset($_POST['source_paiement']) || empty($_POST['source_paiement'])) {
+            throw new Exception("La source de paiement est requise");
+        }
+
         $montant = floatval($_POST['montant']);
+        if ($montant <= 0) {
+            throw new Exception("Le montant doit être supérieur à 0");
+        }
+
         $source_paiement = $_POST['source_paiement'];
         $type = $_POST['type'];
         $status = $_POST['status'];
@@ -17,6 +29,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['save_paiement'])) {
         // Log des variables
         writeLog("Montant : " . $montant);
         writeLog("Source : " . $source_paiement);
+        writeLog("Type : " . $type);
+        writeLog("Status : " . $status);
 
         // Générer un numéro de reçu unique
         $numero_recu = date('Ymd') . sprintf("%04d", rand(1, 9999));
@@ -122,16 +136,31 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['save_paiement'])) {
                 numero_recu, type_document, id_document, numero_document,
                 montant_total, montant_paye, montant_precedent, reste_a_payer,
                 id_agent, nom_agent, contact_agent, nom_usine, matricule_vehicule,
-                id_caissier, nom_caissier, source_paiement
+                id_caissier, nom_caissier, source_paiement, date_creation
             ) VALUES (
                 ?, ?, ?, ?, 
                 ?, ?, ?, ?,
                 ?, ?, ?, ?, ?,
-                ?, ?, ?
+                ?, ?, ?, NOW()
             )
         ");
         
+        // S'assurer que montant_precedent n'est pas null
+        $montant_precedent = $montant_precedent ?? 0;
         $reste_a_payer = $montant_total - ($montant_precedent + $montant);
+        
+        // Convertir les montants en décimal pour éviter les problèmes de dépassement
+        $montant_total = number_format($montant_total, 2, '.', '');
+        $montant = number_format($montant, 2, '.', '');
+        $montant_precedent = number_format($montant_precedent, 2, '.', '');
+        $reste_a_payer = number_format($reste_a_payer, 2, '.', '');
+        
+        // Log des montants avant insertion
+        writeLog("Montants avant insertion:");
+        writeLog("Total: " . $montant_total);
+        writeLog("Payé: " . $montant);
+        writeLog("Précédent: " . $montant_precedent);
+        writeLog("Reste: " . $reste_a_payer);
         
         $stmt->execute([
             $numero_recu, $type_document, $id_document, $numero_document,

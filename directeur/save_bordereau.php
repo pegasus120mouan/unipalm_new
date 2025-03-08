@@ -15,8 +15,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     :id_agent, 
                     :date_debut, 
                     :date_fin, 
-                    COALESCE(SUM(t.poids), 0), 
-                    COALESCE(SUM(t.prix_unitaire * t.poids), 0)
+                    SUM(0), 
+                    SUM(0)
                 FROM tickets t 
                 WHERE t.id_agent = :id_agent 
                 AND t.created_at BETWEEN CONCAT(:date_debut, ' 00:00:00') AND CONCAT(:date_fin, ' 23:59:59')";

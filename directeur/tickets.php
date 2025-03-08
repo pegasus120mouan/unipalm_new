@@ -44,31 +44,6 @@ $agents = getAgents($conn);
 include('header.php');
 ?>
 
-<!-- Modal pour ticket en doublon -->
-<div class="modal fade" id="ticketExistModal" tabindex="-1" role="dialog">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header bg-danger text-white">
-                <h5 class="modal-title">
-                    <i class="fas fa-exclamation-triangle"></i> Attention !
-                </h5>
-                <button type="button" class="close text-white" data-dismiss="modal">
-                    <span aria-hidden="true">&times;</span>
-                </button>
-            </div>
-            <div class="modal-body text-center">
-                <i class="fas fa-times-circle text-danger fa-4x mb-3"></i>
-                <h4 class="text-danger">Numéro de ticket en double</h4>
-                <p class="mb-0">Le ticket numéro <strong id="duplicateTicketNumber"></strong> existe déjà.</p>
-                <p>Veuillez utiliser un autre numéro.</p>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-dismiss="modal">Fermer</button>
-            </div>
-        </div>
-    </div>
-</div>
-
 <!-- Message d'erreur/succès -->
 <?php if (isset($_SESSION['error'])): ?>
 <div class="alert alert-danger alert-dismissible fade show" role="alert">
@@ -105,18 +80,13 @@ $(document).ready(function() {
                 dataType: 'json',
                 success: function(response) {
                     if (response.exists) {
-                        $('#duplicateTicketNumber').text(numero_ticket);
-                        $('#ticketExistModal').modal('show');
+                        // Afficher le message d'erreur
+                        alert('Le ticket numéro ' + numero_ticket + ' existe déjà.');
                         $('input[name="numero_ticket"]').val('');
                     }
                 }
             });
         }
-    });
-
-    // Focus sur le champ après fermeture du modal
-    $('#ticketExistModal').on('hidden.bs.modal', function() {
-        $('input[name="numero_ticket"]').focus();
     });
 });
 </script>
@@ -244,21 +214,25 @@ label {
     <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#add-ticket">
       <i class="fa fa-edit"></i>Enregistrer un ticket
     </button>
-
-    <button type="button" class="btn btn-danger" data-toggle="modal" data-target="#print-bordereau">
-      <i class="fa fa-print"></i> Imprimer un bordereau
+    <button type="button" class="btn btn-danger" data-toggle="modal" data-target="#print-bordereau-agent">
+      <i class="fa fa-print"></i> Imprimer Bordereau
     </button>
-
+    <button type="button" class="btn btn-info" data-toggle="modal" data-target="#print-bordereau">
+      <i class="fas fa-file-pdf"></i> Imprimer ticket par usine
+    </button>
     <button type="button" class="btn btn-success" data-toggle="modal" data-target="#search_ticket">
       <i class="fa fa-search"></i> Rechercher un ticket
     </button>
 
     <button type="button" class="btn btn-dark" onclick="window.location.href='export_tickets.php'">
-              <i class="fa fa-print"></i> Exporter la liste les tickets
-             </button>
+              <i class="fa fa-print"></i> Exporter tous  les tickets
+    </button>
+
+    <button type="button" class="btn btn-outline-dark" data-toggle="modal" data-target="#exportDateModal">
+              <i class="fas fa-file-excel"></i> Exporter  les tickets sur une période
+    </button>
+ 
 </div>
-
-
 
   <div class="table-responsive">
     <table id="example1" class="table table-bordered table-striped">
@@ -480,8 +454,6 @@ label {
     </form>
 </div>
 
-
-
   <div class="modal fade" id="add-ticket" tabindex="-1" role="dialog" aria-labelledby="addTicketModalLabel" aria-hidden="true">
     <div class="modal-dialog" role="document">
       <div class="modal-content">
@@ -504,13 +476,14 @@ label {
               </div>
                <div class="form-group">
                   <label>Selection Usine</label>
-                  <select id="select" name="usine" class="form-control">
+                  <select class="form-control" name="usine" id="select">
+                      <option value="">Sélectionner une usine</option>
                       <?php
                       // Vérifier si des usines existent
                       if (!empty($usines)) {
 
                           foreach ($usines as $usine) {
-                              echo '<option value="' . htmlspecialchars($usine['id_usine']) . '">' . htmlspecialchars($usine['nom_usine']) . '</option>';
+                              echo '<option value="' . $usine['id_usine'] . '">' . $usine['nom_usine'] . '</option>';
                           }
                       } else {
                           echo '<option value="">Aucune usine disponible</option>';
@@ -526,7 +499,7 @@ label {
                       // Vérifier si des usines existent
                       if (!empty($agents)) {
                           foreach ($agents as $agent) {
-                              echo '<option value="' . htmlspecialchars($agent['id_agent']) . '">' . htmlspecialchars($agent['nom_complet_agent']) . '</option>';
+                              echo '<option value="' . $agent['id_agent'] . '">' . $agent['nom_complet_agent'] . '</option>';
                           }
                       } else {
                           echo '<option value="">Aucune chef eéuipe disponible</option>';
@@ -542,7 +515,7 @@ label {
                       // Vérifier si des usines existent
                       if (!empty($vehicules)) {
                           foreach ($vehicules as $vehicule) {
-                              echo '<option value="' . htmlspecialchars($vehicule['vehicules_id']) . '">' . htmlspecialchars($vehicule['matricule_vehicule']) . '</option>';
+                              echo '<option value="' . $vehicule['vehicules_id'] . '">' . $vehicule['matricule_vehicule'] . '</option>';
                           }
                       } else {
                           echo '<option value="">Aucun vehicule disponible</option>';
@@ -572,48 +545,86 @@ label {
   <div class="modal fade" id="print-bordereau">
     <div class="modal-dialog">
       <div class="modal-content">
-        <div class="modal-header">
-          <h4 class="modal-title">Impression bordereau</h4>
+        <div class="modal-header bg-success text-white">
+          <h5 class="modal-title">
+            <i class="fas fa-file-pdf"></i> Impression des tickets par usine
+          </h5>
+          <button type="button" class="close text-white" data-dismiss="modal">
+            <span aria-hidden="true">&times;</span>
+          </button>
         </div>
-        <div class="modal-body">
-          <form class="forms-sample" method="post" action="print_bordereau.php" target="_blank">
-            <div class="card-body">
-              <div class="form-group">
-                  <label>Chargé de Mission</label>
-                  <select id="select" name="id_agent" class="form-control">
-                      <?php
-                      // Vérifier si des usines existent
-                      if (!empty($agents)) {
-                          foreach ($agents as $agent) {
-                              echo '<option value="' . htmlspecialchars($agent['id_agent']) . '">' . htmlspecialchars($agent['nom_complet_agent']) . '</option>';
-                          }
-                      } else {
-                          echo '<option value="">Aucune chef eéuipe disponible</option>';
-                      }
-                      ?>
-                  </select>
-              </div>
-              <div class="form-group">
-                <label for="exampleInputPassword1">Date de debut</label>
-                <input type="date" class="form-control" id="exampleInputPassword1" placeholder="Poids" name="date_debut">
-              </div>
-              <div class="form-group">
-                <label for="exampleInputPassword1">Date Fin</label>
-                <input type="date" class="form-control" id="exampleInputPassword1" placeholder="Poids" name="date_fin">
-              </div>
-
-              <button type="submit" class="btn btn-primary mr-2" name="saveCommande">Imprimer</button>
-              <button type="button" class="btn btn-light" data-dismiss="modal">Annuler</button>
+        <form action="print_tickets_usine.php" method="POST" target="_blank">
+          <div class="modal-body">
+            <div class="form-group">
+              <label for="id_usine">Sélectionner une usine</label>
+              <select class="form-control" name="id_usine" id="id_usine" required>
+                <option value="">Choisir une usine</option>
+                <?php foreach($usines as $usine): ?>
+                  <option value="<?= $usine['id_usine'] ?>"><?= htmlspecialchars($usine['nom_usine']) ?></option>
+                <?php endforeach; ?>
+              </select>
             </div>
-          </form>
-        </div>
+            <div class="form-group">
+              <label for="date_debut">Date début</label>
+              <input type="date" class="form-control" name="date_debut" id="date_debut" required>
+            </div>
+            <div class="form-group">
+              <label for="date_fin">Date fin</label>
+              <input type="date" class="form-control" name="date_fin" id="date_fin" required>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-dismiss="modal">Fermer</button>
+            <button type="submit" class="btn btn-success">
+              <i class="fas fa-file-pdf"></i> Générer PDF
+            </button>
+          </div>
+        </form>
       </div>
-      <!-- /.modal-content -->
     </div>
-
-
-    <!-- /.modal-dialog -->
   </div>
+
+  <!-- Modal pour impression bordereau par agent -->
+<div class="modal fade" id="print-bordereau-agent">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title">Impression bordereau</h4>
+            </div>
+            <div class="modal-body">
+                <form class="forms-sample" method="post" action="print_bordereau.php" target="_blank">
+                    <div class="card-body">
+                        <div class="form-group">
+                            <label>Chargé de Mission</label>
+                            <select id="select" name="id_agent" class="form-control">
+                                <?php
+                                if (!empty($agents)) {
+                                    foreach ($agents as $agent) {
+                                        echo '<option value="' . $agent['id_agent'] . '">' . $agent['nom_complet_agent'] . '</option>';
+                                    }
+                                } else {
+                                    echo '<option value="">Aucune chef équipe disponible</option>';
+                                }
+                                ?>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="date_debut">Date de debut</label>
+                            <input type="date" class="form-control" id="date_debut" name="date_debut" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="date_fin">Date Fin</label>
+                            <input type="date" class="form-control" id="date_fin" name="date_fin" required>
+                        </div>
+
+                        <button type="submit" class="btn btn-primary mr-2" name="saveCommande">Imprimer</button>
+                        <button type="button" class="btn btn-light" data-dismiss="modal">Annuler</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
 
 <!-- Recherche par tickets-->
 <div class="modal fade" id="search_ticket">
@@ -755,6 +766,118 @@ label {
     </div>
 </div>
 
+<!-- Modal Recherche par Date -->
+<div class="modal fade" id="exportDateModal" tabindex="-1" role="dialog" aria-labelledby="searchByDateModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header bg-dark text-white">
+                <h5 class="modal-title" id="searchByDateModalLabel">
+                    <i class="fas fa-calendar-alt mr-2"></i>Exporter Tickets sur une période
+                </h5>
+                <button type="button" class="close text-white" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <form id="exportDateForm" method="get" action="export_tickets_periode.php" target="_blank">
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label for="date_debut" class="font-weight-bold mb-2">Date de début</label>
+                        <div class="input-group">
+                            <div class="input-group-prepend">
+                                <span class="input-group-text"><i class="fas fa-calendar"></i></span>
+                            </div>
+                            <input type="date" class="form-control custom-input" id="date_debut" name="date_debut" required 
+                                   style="padding: 0.5rem; border: 1px solid #ced4da; border-radius: 0 0.25rem 0.25rem 0;">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="date_fin" class="font-weight-bold mb-2">Date fin</label>
+                        <div class="input-group">
+                            <div class="input-group-prepend">
+                                <span class="input-group-text"><i class="fas fa-calendar"></i></span>
+                            </div>
+                            <input type="date" class="form-control custom-input" id="date_fin" name="date_fin" required
+                                   style="padding: 0.5rem; border: 1px solid #ced4da; border-radius: 0 0.25rem 0.25rem 0;">
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">
+                        <i class="fas fa-times mr-2"></i>Annuler
+                    </button>
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-file-export mr-2"></i>Exporter
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<style>
+.custom-input {
+    background-color: #fff;
+    transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+    color: #495057;
+}
+
+.custom-input:focus {
+    border-color: #80bdff;
+    box-shadow: 0 0 0 0.2rem rgba(0,123,255,.25);
+    outline: 0;
+}
+
+.custom-input:hover {
+    border-color: #80bdff;
+}
+
+.input-group-text {
+    background-color: #f8f9fa;
+    border: 1px solid #ced4da;
+    color: #495057;
+}
+
+.modal-header {
+    border-bottom: 2px solid #dee2e6;
+}
+
+.modal-footer {
+    border-top: 2px solid #dee2e6;
+}
+
+.form-group label {
+    color: #212529;
+}
+
+/* Match Select2 dropdown styling */
+.modal-content {
+    box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
+}
+</style>
+
+<script>
+$(document).ready(function() {
+    // Auto-clear on modal close
+    $('#exportDateModal').on('hidden.bs.modal', function () {
+        $('#exportDateForm')[0].reset();
+    });
+    
+    // Date validation with French error message
+    $('#exportDateForm').on('submit', function(e) {
+        var dateDebut = new Date($('#date_debut').val());
+        var dateFin = new Date($('#date_fin').val());
+        
+        if (dateFin < dateDebut) {
+            e.preventDefault();
+            alert('La date de fin doit être supérieure à la date de début');
+            return false;
+        }
+        
+        // Close modal after successful submission
+        $('#exportDateModal').modal('hide');
+    });
+});
+</script>
 <div class="modal fade" id="searchByBetweendateModal" tabindex="-1" role="dialog" aria-labelledby="searchByDateModalLabel" aria-hidden="true">
     <div class="modal-dialog" role="document">
         <div class="modal-content">
@@ -858,6 +981,26 @@ document.getElementById('searchByBetweendateForm').addEventListener('submit', fu
         window.location.href = 'tickets.php?date_debut=' + date_debut + '&date_fin=' + date_fin;
     }
 });
+</script>
+
+<script>
+function handleExportSubmit(event) {
+    event.preventDefault();
+    
+    const dateDebut = document.getElementById('date_debut').value;
+    const dateFin = document.getElementById('date_fin').value;
+    
+    if (!dateDebut || !dateFin) {
+        alert('Veuillez sélectionner les dates de début et de fin');
+        return;
+    }
+    
+    // Rediriger vers la page d'export avec les paramètres
+    window.location.href = `export_tickets_periode.php?date_debut=${dateDebut}&date_fin=${dateFin}`;
+    
+    // Fermer le modal
+    $('#exportDateModal').modal('hide');
+}
 </script>
 
 <?php foreach ($tickets_list as $ticket) : ?>
@@ -1154,111 +1297,3 @@ if (isset($_SESSION['delete_pop']) && $_SESSION['delete_pop'] ==  true) {
   $_SESSION['delete_pop'] = false;
 }
 ?>
-<!-- AdminLTE dashboard demo (This is only for demo purposes) -->
-<!--<script src="dist/js/pages/dashboard.js"></script>-->
-<script>
-    $(document).on('click', '.btn-valider', function(e) {
-    e.preventDefault();
-    
-    var id_demande = $(this).data('id');
-
-    if (confirm('Voulez-vous vraiment valider cette demande ?')) {
-        // Ajout d'un loader (optionnel)
-        var $btn = $(this);
-        $btn.prop('disabled', true).text('Validation...');
-
-        $.ajax({
-            url: 'valider_demande.php',
-            type: 'POST',
-            data: { id_demande: id_demande },
-            dataType: 'json',
-            success: function(response) {
-                if (response.success) {
-                    // Affiche la modale de succès
-                    $('#successModal').modal('show');
-                    setTimeout(function() {
-                        location.reload();  // Recharge la page après 2 secondes
-                    }, 2000);
-                } else {
-                    alert('Erreur: ' + response.message);
-                    $btn.prop('disabled', false).text('Valider');
-                }
-            },
-            error: function(xhr, status, error) {
-                console.error('Erreur AJAX:', error);
-                alert('Erreur lors de la validation');
-                $btn.prop('disabled', false).text('Valider');
-            }
-        });
-    }
-});
-
-</script>
-<script>
-function showSearchModal(modalId) {
-  // Hide all modals
-  document.querySelectorAll('.modal').forEach(modal => {
-    $(modal).modal('hide');
-  });
-
-  // Show the selected modal
-  $('#' + modalId).modal('show');
-}
-</script>
-<script>
-// Afficher le modal si le ticket existe
-<?php if (isset($_SESSION['ticket_error']) && $_SESSION['ticket_error']): ?>
-    $(document).ready(function() {
-        $('#existingTicketNumber').text('<?= $_SESSION['numero_ticket'] ?>');
-        $('#ticketExistModal').modal('show');
-    });
-    <?php 
-    unset($_SESSION['ticket_error']);
-    unset($_SESSION['numero_ticket']);
-    ?>
-<?php endif; ?>
-
-// Validation du formulaire
-$(document).ready(function() {
-    $('form').on('submit', function(e) {
-        var numeroTicket = $('#numero_ticket').val();
-        
-        // Vérification AJAX du numéro de ticket
-        $.ajax({
-            url: 'check_ticket.php',
-            method: 'POST',
-            data: { numero_ticket: numeroTicket },
-            success: function(response) {
-                if (response.exists) {
-                    e.preventDefault();
-                    $('#existingTicketNumber').text(numeroTicket);
-                    $('#ticketExistModal').modal('show');
-                }
-            }
-        });
-    });
-});
-</script>
-
-<!-- Modal pour ticket existant -->
-<div class="modal fade" id="ticketExistModal" tabindex="-1" role="dialog" aria-labelledby="ticketExistModalLabel" aria-hidden="true">
-    <div class="modal-dialog" role="document">
-        <div class="modal-content">
-            <div class="modal-header bg-warning">
-                <h5 class="modal-title" id="ticketExistModalLabel">
-                    <i class="fas fa-exclamation-triangle"></i> Ticket déjà existant
-                </h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
-            </div>
-            <div class="modal-body">
-                <p>Le ticket numéro <strong id="existingTicketNumber"></strong> existe déjà dans la base de données.</p>
-                <p>Veuillez utiliser un autre numéro de ticket.</p>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-dismiss="modal">Fermer</button>
-            </div>
-        </div>
-    </div>
-</div>

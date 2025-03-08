@@ -52,7 +52,7 @@ foreach ($tickets as $ticket) {
         formatDate($ticket['date_ticket']),
         $ticket['numero_ticket'],
         $ticket['nom_usine'],
-        $ticket['agent_nom_complet'],
+        $ticket['nom_complet_agent'],
         $ticket['matricule_vehicule'],
         $ticket['poids'],
         $ticket['utilisateur_nom_complet'],
