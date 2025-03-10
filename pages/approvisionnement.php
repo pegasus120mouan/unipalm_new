@@ -87,7 +87,7 @@ label {
                 </div>
                 <span class="progress-description">
                     <h1 style="text-align: center; font-size: 70px;">
-                        <strong><?php echo number_format($somme_caisse['solde_caisse'], 0, ',', ' '); ?> FCFA</strong>
+                    <strong><?php echo number_format($somme_caisse['solde_caisse']?? 0, 0, ',', ' '); ?> FCFA</strong>
                     </h1>
                 </span>
             </div>
@@ -191,27 +191,28 @@ label {
                     </div>
                 <?php endif; ?>
                 
-                <form class="forms-sample" method="post" action="save_transaction.php">
+                <form class="forms-sample" method="post" action="save_approvisionnement.php">
+                    <input type="hidden" name="save_approvisionnement" value="1">
                     <div class="form-group">
                         <label>Type de Transaction</label>
-                        <select class="form-control" name="type_transaction" required>
+                        <select class="form-control" name="type_transaction" required disabled>
                             <option value="approvisionnement">Entrée de caisse</option>
                         </select>
                     </div>
                     <div class="form-group">
-    <label>Montant</label>
-    <input 
-        type="text" 
-        class="form-control montant-input" 
-        placeholder="Montant (ex: 10 000)" 
-        required
-    >
-    <input type="hidden" name="montant" value="">
-</div>
-
-
-                    <button type="submit" class="btn btn-primary" name="save_transaction">Enregistrer</button>
-                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Annuler</button>
+                        <label for="montant">Montant (FCFA) <span class="text-danger">*</span></label>
+                        <input type="number" class="form-control" id="montant" name="montant" required min="1" step="1">
+                    </div>
+                    <div class="form-group">
+                        <label for="motifs">Motif <span class="text-danger">*</span></label>
+                        <textarea class="form-control" id="motifs" name="motifs" rows="3" required></textarea>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Fermer</button>
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-save"></i> Enregistrer
+                        </button>
+                    </div>
                 </form>
             </div>
         </div>

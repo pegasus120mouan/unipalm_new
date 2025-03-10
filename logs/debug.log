@@ -1950,3 +1950,1521 @@
 [2025-03-07 11:11:39] Précédent: 140000.00
 [2025-03-07 11:11:39] Reste: 330000.00
 [2025-03-07 11:11:39] Transaction validée avec succès
+[2025-03-08 11:26:01] Données reçues : Array
+(
+    [save_paiement] => 1
+    [id_ticket] => 290
+    [numero_ticket] => erge gtgtgf01122255
+    [type] => all
+    [status] => all
+    [montant_reste] => 240000
+    [source_paiement] => transactions
+    [montant_affiche] => 100 000
+    [montant] => 100000
+)
+
+[2025-03-08 11:26:01] Montant : 100000
+[2025-03-08 11:26:01] Source : transactions
+[2025-03-08 11:26:01] Type : all
+[2025-03-08 11:26:01] Status : all
+[2025-03-08 11:26:01] Montants avant insertion:
+[2025-03-08 11:26:01] Total: 240000.00
+[2025-03-08 11:26:01] Payé: 100000.00
+[2025-03-08 11:26:01] Précédent: 0.00
+[2025-03-08 11:26:01] Reste: 140000.00
+[2025-03-08 11:26:01] Transaction validée avec succès
+[2025-03-08 11:28:54] Données reçues : Array
+(
+    [save_paiement] => 1
+    [id_ticket] => 290
+    [numero_ticket] => erge gtgtgf01122255
+    [type] => all
+    [status] => all
+    [montant_reste] => 140000
+    [source_paiement] => transactions
+    [montant_affiche] => 100 000
+    [montant] => 100000
+)
+
+[2025-03-08 11:28:54] Montant : 100000
+[2025-03-08 11:28:54] Source : transactions
+[2025-03-08 11:28:54] Type : all
+[2025-03-08 11:28:54] Status : all
+[2025-03-08 11:28:54] Montants avant insertion:
+[2025-03-08 11:28:54] Total: 240000.00
+[2025-03-08 11:28:54] Payé: 100000.00
+[2025-03-08 11:28:54] Précédent: 100000.00
+[2025-03-08 11:28:54] Reste: 40000.00
+[2025-03-08 11:28:54] Transaction validée avec succès
+[2025-03-08 12:23:10] Données reçues : Array
+(
+    [save_paiement] => 1
+    [id_ticket] => 291
+    [numero_ticket] => svfvff fdr fddf0002
+    [type] => all
+    [status] => all
+    [montant_reste] => 2400000
+    [source_paiement] => transactions
+    [montant_affiche] => 100 000
+    [montant] => 100000
+)
+
+[2025-03-08 12:23:10] Montant : 100000
+[2025-03-08 12:23:10] Source : transactions
+[2025-03-08 12:23:10] Type : all
+[2025-03-08 12:23:10] Status : all
+[2025-03-08 12:23:10] Montants avant insertion:
+[2025-03-08 12:23:10] Total: 2400000.00
+[2025-03-08 12:23:10] Payé: 100000.00
+[2025-03-08 12:23:10] Précédent: 0.00
+[2025-03-08 12:23:10] Reste: 2300000.00
+[2025-03-08 12:23:10] Transaction validée avec succès
+[2025-03-08 12:25:12] Données reçues : Array
+(
+    [save_paiement] => 1
+    [id_ticket] => 291
+    [numero_ticket] => svfvff fdr fddf0002
+    [type] => all
+    [status] => all
+    [montant_reste] => 2300000
+    [source_paiement] => transactions
+    [montant_affiche] => 100 000
+    [montant] => 100000
+)
+
+[2025-03-08 12:25:12] Montant : 100000
+[2025-03-08 12:25:12] Source : transactions
+[2025-03-08 12:25:12] Type : all
+[2025-03-08 12:25:12] Status : all
+[2025-03-08 12:25:12] Montants avant insertion:
+[2025-03-08 12:25:12] Total: 2400000.00
+[2025-03-08 12:25:12] Payé: 100000.00
+[2025-03-08 12:25:12] Précédent: 100000.00
+[2025-03-08 12:25:12] Reste: 2200000.00
+[2025-03-08 12:25:12] Transaction validée avec succès
+[2025-03-08 12:31:35] Données reçues : Array
+(
+    [save_paiement] => 1
+    [id_ticket] => 291
+    [numero_ticket] => svfvff fdr fddf0002
+    [type] => all
+    [status] => all
+    [montant_reste] => 2200000
+    [source_paiement] => transactions
+    [montant_affiche] => 100 000
+    [montant] => 100000
+)
+
+[2025-03-08 12:31:35] Montant : 100000
+[2025-03-08 12:31:35] Source : transactions
+[2025-03-08 12:31:35] Type : all
+[2025-03-08 12:31:35] Status : all
+[2025-03-08 12:31:35] Montants avant insertion:
+[2025-03-08 12:31:35] Total: 2400000.00
+[2025-03-08 12:31:35] Payé: 100000.00
+[2025-03-08 12:31:35] Précédent: 200000.00
+[2025-03-08 12:31:35] Reste: 2100000.00
+[2025-03-08 12:31:35] Transaction validée avec succès
+[2025-03-08 12:39:50] Données reçues : Array
+(
+    [save_paiement] => 1
+    [id_ticket] => 291
+    [numero_ticket] => svfvff fdr fddf0002
+    [type] => all
+    [status] => all
+    [montant_reste] => 2100000
+    [source_paiement] => transactions
+    [montant_affiche] => 100 000
+    [montant] => 100000
+)
+
+[2025-03-08 12:39:50] Montant : 100000
+[2025-03-08 12:39:50] Source : transactions
+[2025-03-08 12:39:50] Type : all
+[2025-03-08 12:39:50] Status : all
+[2025-03-08 12:39:50] Montants avant insertion:
+[2025-03-08 12:39:50] Total: 2400000.00
+[2025-03-08 12:39:50] Payé: 100000.00
+[2025-03-08 12:39:50] Précédent: 300000.00
+[2025-03-08 12:39:50] Reste: 2000000.00
+[2025-03-08 12:39:50] Transaction validée avec succès
+[2025-03-08 12:54:48] Données reçues : Array
+(
+    [save_paiement] => 1
+    [id_ticket] => 291
+    [numero_ticket] => svfvff fdr fddf0002
+    [type] => all
+    [status] => all
+    [montant_reste] => 2000000
+    [source_paiement] => transactions
+    [montant_affiche] => 100 000
+    [montant] => 100000
+)
+
+[2025-03-08 12:54:48] Montant : 100000
+[2025-03-08 12:54:48] Source : transactions
+[2025-03-08 12:54:48] Type : all
+[2025-03-08 12:54:48] Status : all
+[2025-03-08 12:54:48] Montants avant insertion:
+[2025-03-08 12:54:48] Total: 2400000.00
+[2025-03-08 12:54:48] Payé: 100000.00
+[2025-03-08 12:54:48] Précédent: 400000.00
+[2025-03-08 12:54:48] Reste: 1900000.00
+[2025-03-08 12:54:48] Transaction validée avec succès
+[2025-03-08 12:58:13] Données reçues : Array
+(
+    [save_paiement] => 1
+    [id_ticket] => 291
+    [numero_ticket] => svfvff fdr fddf0002
+    [type] => all
+    [status] => all
+    [montant_reste] => 1900000
+    [source_paiement] => transactions
+    [montant_affiche] => 10 000
+    [montant] => 10000
+)
+
+[2025-03-08 12:58:13] Montant : 10000
+[2025-03-08 12:58:13] Source : transactions
+[2025-03-08 12:58:13] Type : all
+[2025-03-08 12:58:13] Status : all
+[2025-03-08 12:58:13] Montants avant insertion:
+[2025-03-08 12:58:13] Total: 2400000.00
+[2025-03-08 12:58:13] Payé: 10000.00
+[2025-03-08 12:58:13] Précédent: 500000.00
+[2025-03-08 12:58:13] Reste: 1890000.00
+[2025-03-08 12:58:13] Transaction validée avec succès
+[2025-03-08 13:02:31] Données reçues : Array
+(
+    [save_paiement] => 1
+    [id_ticket] => 291
+    [numero_ticket] => svfvff fdr fddf0002
+    [type] => all
+    [status] => all
+    [montant_reste] => 1890000
+    [source_paiement] => transactions
+    [montant_affiche] => 200 000
+    [montant] => 200000
+)
+
+[2025-03-08 13:02:31] Montant : 200000
+[2025-03-08 13:02:31] Source : transactions
+[2025-03-08 13:02:31] Type : all
+[2025-03-08 13:02:31] Status : all
+[2025-03-08 13:02:31] Montants avant insertion:
+[2025-03-08 13:02:31] Total: 2400000.00
+[2025-03-08 13:02:31] Payé: 200000.00
+[2025-03-08 13:02:31] Précédent: 510000.00
+[2025-03-08 13:02:31] Reste: 1690000.00
+[2025-03-08 13:02:31] Transaction validée avec succès
+[2025-03-08 13:05:03] Données reçues : Array
+(
+    [save_paiement] => 1
+    [id_ticket] => 291
+    [numero_ticket] => svfvff fdr fddf0002
+    [type] => all
+    [status] => all
+    [montant_reste] => 1690000
+    [source_paiement] => transactions
+    [montant_affiche] => 100 000
+    [montant] => 100000
+)
+
+[2025-03-08 13:05:03] Montant : 100000
+[2025-03-08 13:05:03] Source : transactions
+[2025-03-08 13:05:03] Type : all
+[2025-03-08 13:05:03] Status : all
+[2025-03-08 13:05:03] Montants avant insertion:
+[2025-03-08 13:05:03] Total: 2400000.00
+[2025-03-08 13:05:03] Payé: 100000.00
+[2025-03-08 13:05:03] Précédent: 710000.00
+[2025-03-08 13:05:03] Reste: 1590000.00
+[2025-03-08 13:05:03] Transaction validée avec succès
+[2025-03-08 13:08:45] Données reçues : Array
+(
+    [save_paiement] => 1
+    [id_ticket] => 291
+    [numero_ticket] => svfvff fdr fddf0002
+    [type] => all
+    [status] => all
+    [montant_reste] => 1590000
+    [source_paiement] => transactions
+    [montant_affiche] => 100 000
+    [montant] => 100000
+)
+
+[2025-03-08 13:08:45] Montant : 100000
+[2025-03-08 13:08:45] Source : transactions
+[2025-03-08 13:08:45] Type : all
+[2025-03-08 13:08:45] Status : all
+[2025-03-08 13:08:45] Montants avant insertion:
+[2025-03-08 13:08:45] Total: 2400000.00
+[2025-03-08 13:08:45] Payé: 100000.00
+[2025-03-08 13:08:45] Précédent: 810000.00
+[2025-03-08 13:08:45] Reste: 1490000.00
+[2025-03-08 13:08:45] Transaction validée avec succès
+[2025-03-08 13:12:18] Données reçues : Array
+(
+    [save_paiement] => 1
+    [id_ticket] => 291
+    [numero_ticket] => svfvff fdr fddf0002
+    [type] => all
+    [status] => all
+    [montant_reste] => 1490000
+    [source_paiement] => transactions
+    [montant_affiche] => 15 000
+    [montant] => 15000
+)
+
+[2025-03-08 13:12:18] Montant : 15000
+[2025-03-08 13:12:18] Source : transactions
+[2025-03-08 13:12:18] Type : all
+[2025-03-08 13:12:18] Status : all
+[2025-03-08 13:12:18] Montants avant insertion:
+[2025-03-08 13:12:18] Total: 2400000.00
+[2025-03-08 13:12:18] Payé: 15000.00
+[2025-03-08 13:12:18] Précédent: 910000.00
+[2025-03-08 13:12:18] Reste: 1475000.00
+[2025-03-08 13:12:18] Transaction validée avec succès
+[2025-03-08 13:16:28] Données reçues : Array
+(
+    [save_paiement] => 1
+    [id_ticket] => 291
+    [numero_ticket] => svfvff fdr fddf0002
+    [type] => all
+    [status] => all
+    [montant_reste] => 1475000
+    [source_paiement] => transactions
+    [montant_affiche] => 100 000
+    [montant] => 100000
+)
+
+[2025-03-08 13:16:28] Montant : 100000
+[2025-03-08 13:16:28] Source : transactions
+[2025-03-08 13:16:29] Type : all
+[2025-03-08 13:16:29] Status : all
+[2025-03-08 13:16:29] Montants avant insertion:
+[2025-03-08 13:16:29] Total: 2400000.00
+[2025-03-08 13:16:29] Payé: 100000.00
+[2025-03-08 13:16:29] Précédent: 925000.00
+[2025-03-08 13:16:29] Reste: 1375000.00
+[2025-03-08 13:16:29] Transaction validée avec succès
+[2025-03-08 13:21:02] Données reçues : Array
+(
+    [save_paiement] => 1
+    [id_ticket] => 291
+    [numero_ticket] => svfvff fdr fddf0002
+    [type] => all
+    [status] => all
+    [montant_reste] => 1375000
+    [source_paiement] => transactions
+    [montant_affiche] => 100 000
+    [montant] => 100000
+)
+
+[2025-03-08 13:21:02] Montant : 100000
+[2025-03-08 13:21:02] Source : transactions
+[2025-03-08 13:21:02] Type : all
+[2025-03-08 13:21:02] Status : all
+[2025-03-08 13:21:02] Montants avant insertion:
+[2025-03-08 13:21:02] Total: 2400000.00
+[2025-03-08 13:21:02] Payé: 100000.00
+[2025-03-08 13:21:02] Précédent: 1025000.00
+[2025-03-08 13:21:02] Reste: 1275000.00
+[2025-03-08 13:21:02] Transaction validée avec succès
+[2025-03-08 13:21:59] Données reçues : Array
+(
+    [save_paiement] => 1
+    [id_ticket] => 291
+    [numero_ticket] => svfvff fdr fddf0002
+    [type] => all
+    [status] => all
+    [montant_reste] => 1275000
+    [source_paiement] => transactions
+    [montant_affiche] => 100 000
+    [montant] => 100000
+)
+
+[2025-03-08 13:21:59] Montant : 100000
+[2025-03-08 13:21:59] Source : transactions
+[2025-03-08 13:21:59] Type : all
+[2025-03-08 13:21:59] Status : all
+[2025-03-08 13:21:59] Montants avant insertion:
+[2025-03-08 13:21:59] Total: 2400000.00
+[2025-03-08 13:21:59] Payé: 100000.00
+[2025-03-08 13:21:59] Précédent: 1125000.00
+[2025-03-08 13:21:59] Reste: 1175000.00
+[2025-03-08 13:21:59] Transaction validée avec succès
+[2025-03-08 13:22:33] Données reçues : Array
+(
+    [save_paiement] => 1
+    [id_ticket] => 291
+    [numero_ticket] => svfvff fdr fddf0002
+    [type] => all
+    [status] => all
+    [montant_reste] => 1175000
+    [source_paiement] => transactions
+    [montant_affiche] => 100 000
+    [montant] => 100000
+)
+
+[2025-03-08 13:22:33] Montant : 100000
+[2025-03-08 13:22:33] Source : transactions
+[2025-03-08 13:22:33] Type : all
+[2025-03-08 13:22:33] Status : all
+[2025-03-08 13:22:33] Montants avant insertion:
+[2025-03-08 13:22:33] Total: 2400000.00
+[2025-03-08 13:22:33] Payé: 100000.00
+[2025-03-08 13:22:33] Précédent: 1225000.00
+[2025-03-08 13:22:33] Reste: 1075000.00
+[2025-03-08 13:22:33] Transaction validée avec succès
+[2025-03-08 13:23:08] Données reçues : Array
+(
+    [save_paiement] => 1
+    [id_ticket] => 291
+    [numero_ticket] => svfvff fdr fddf0002
+    [type] => all
+    [status] => all
+    [montant_reste] => 1075000
+    [source_paiement] => transactions
+    [montant_affiche] => 150 000
+    [montant] => 150000
+)
+
+[2025-03-08 13:23:08] Montant : 150000
+[2025-03-08 13:23:08] Source : transactions
+[2025-03-08 13:23:08] Type : all
+[2025-03-08 13:23:08] Status : all
+[2025-03-08 13:23:08] Montants avant insertion:
+[2025-03-08 13:23:08] Total: 2400000.00
+[2025-03-08 13:23:08] Payé: 150000.00
+[2025-03-08 13:23:08] Précédent: 1325000.00
+[2025-03-08 13:23:08] Reste: 925000.00
+[2025-03-08 13:23:08] Transaction validée avec succès
+[2025-03-08 13:29:07] Données reçues : Array
+(
+    [save_paiement] => 1
+    [id_ticket] => 291
+    [numero_ticket] => svfvff fdr fddf0002
+    [type] => all
+    [status] => all
+    [montant_reste] => 925000
+    [source_paiement] => transactions
+    [montant_affiche] => 100 000
+    [montant] => 100000
+)
+
+[2025-03-08 13:29:07] Montant : 100000
+[2025-03-08 13:29:07] Source : transactions
+[2025-03-08 13:29:07] Type : all
+[2025-03-08 13:29:07] Status : all
+[2025-03-08 13:29:07] Montants avant insertion:
+[2025-03-08 13:29:07] Total: 2400000.00
+[2025-03-08 13:29:07] Payé: 100000.00
+[2025-03-08 13:29:07] Précédent: 1475000.00
+[2025-03-08 13:29:07] Reste: 825000.00
+[2025-03-08 13:29:07] Transaction validée avec succès
+[2025-03-08 13:34:06] Erreur lors du paiement : SQLSTATE[42S22]: Column not found: 1054 Unknown column 'id_ticket' in 'field list'
+[2025-03-08 13:34:18] Erreur lors du paiement : SQLSTATE[42S22]: Column not found: 1054 Unknown column 'id_ticket' in 'field list'
+[2025-03-08 13:47:17] Données reçues : Array
+(
+    [save_paiement] => 1
+    [id_ticket] => 291
+    [numero_ticket] => svfvff fdr fddf0002
+    [type] => all
+    [status] => all
+    [montant_reste] => 825000
+    [source_paiement] => transactions
+    [montant_affiche] => 100 000
+    [montant] => 100000
+)
+
+[2025-03-08 13:47:17] Montant : 100000
+[2025-03-08 13:47:17] Source : transactions
+[2025-03-08 13:47:17] Type : all
+[2025-03-08 13:47:17] Status : all
+[2025-03-08 13:47:17] Montants avant insertion:
+[2025-03-08 13:47:17] Total: 2400000.00
+[2025-03-08 13:47:17] Payé: 100000.00
+[2025-03-08 13:47:17] Précédent: 1575000.00
+[2025-03-08 13:47:17] Reste: 725000.00
+[2025-03-08 13:47:17] Transaction validée avec succès
+[2025-03-08 13:47:40] Données reçues : Array
+(
+    [save_paiement] => 1
+    [id_ticket] => 291
+    [numero_ticket] => svfvff fdr fddf0002
+    [type] => all
+    [status] => all
+    [montant_reste] => 725000
+    [source_paiement] => transactions
+    [montant_affiche] => 50 000
+    [montant] => 50000
+)
+
+[2025-03-08 13:47:40] Montant : 50000
+[2025-03-08 13:47:40] Source : transactions
+[2025-03-08 13:47:40] Type : all
+[2025-03-08 13:47:40] Status : all
+[2025-03-08 13:47:40] Montants avant insertion:
+[2025-03-08 13:47:40] Total: 2400000.00
+[2025-03-08 13:47:40] Payé: 50000.00
+[2025-03-08 13:47:40] Précédent: 1675000.00
+[2025-03-08 13:47:40] Reste: 675000.00
+[2025-03-08 13:47:40] Transaction validée avec succès
+[2025-03-08 13:56:50] Données reçues : Array
+(
+    [save_paiement] => 1
+    [id_ticket] => 291
+    [numero_ticket] => svfvff fdr fddf0002
+    [type] => all
+    [status] => all
+    [montant_reste] => 675000
+    [source_paiement] => transactions
+    [montant_affiche] => 25 000
+    [montant] => 25000
+)
+
+[2025-03-08 13:56:50] Montant : 25000
+[2025-03-08 13:56:50] Source : transactions
+[2025-03-08 13:56:51] Type : all
+[2025-03-08 13:56:51] Status : all
+[2025-03-08 13:56:51] Montants avant insertion:
+[2025-03-08 13:56:51] Total: 2400000.00
+[2025-03-08 13:56:51] Payé: 25000.00
+[2025-03-08 13:56:51] Précédent: 1725000.00
+[2025-03-08 13:56:51] Reste: 650000.00
+[2025-03-08 13:56:51] Transaction validée avec succès
+[2025-03-08 13:57:11] Données reçues : Array
+(
+    [save_paiement] => 1
+    [id_ticket] => 291
+    [numero_ticket] => svfvff fdr fddf0002
+    [type] => all
+    [status] => all
+    [montant_reste] => 650000
+    [source_paiement] => transactions
+    [montant_affiche] => 100 000
+    [montant] => 100000
+)
+
+[2025-03-08 13:57:11] Montant : 100000
+[2025-03-08 13:57:11] Source : transactions
+[2025-03-08 13:57:11] Type : all
+[2025-03-08 13:57:11] Status : all
+[2025-03-08 13:57:11] Montants avant insertion:
+[2025-03-08 13:57:11] Total: 2400000.00
+[2025-03-08 13:57:11] Payé: 100000.00
+[2025-03-08 13:57:11] Précédent: 1750000.00
+[2025-03-08 13:57:11] Reste: 550000.00
+[2025-03-08 13:57:11] Transaction validée avec succès
+[2025-03-08 14:01:45] Données reçues : Array
+(
+    [save_paiement] => 1
+    [id_ticket] => 291
+    [numero_ticket] => svfvff fdr fddf0002
+    [type] => all
+    [status] => all
+    [montant_reste] => 550000
+    [source_paiement] => transactions
+    [montant_affiche] => 50 000
+    [montant] => 50000
+)
+
+[2025-03-08 14:01:45] Montant : 50000
+[2025-03-08 14:01:45] Source : transactions
+[2025-03-08 14:01:45] Type : all
+[2025-03-08 14:01:45] Status : all
+[2025-03-08 14:01:45] Montants avant insertion:
+[2025-03-08 14:01:45] Total: 2400000.00
+[2025-03-08 14:01:45] Payé: 50000.00
+[2025-03-08 14:01:45] Précédent: 1850000.00
+[2025-03-08 14:01:45] Reste: 500000.00
+[2025-03-08 14:01:45] Transaction validée avec succès
+[2025-03-08 14:02:04] Données reçues : Array
+(
+    [save_paiement] => 1
+    [id_ticket] => 291
+    [numero_ticket] => svfvff fdr fddf0002
+    [type] => all
+    [status] => all
+    [montant_reste] => 500000
+    [source_paiement] => transactions
+    [montant_affiche] => 25 000
+    [montant] => 25000
+)
+
+[2025-03-08 14:02:04] Montant : 25000
+[2025-03-08 14:02:04] Source : transactions
+[2025-03-08 14:02:04] Type : all
+[2025-03-08 14:02:04] Status : all
+[2025-03-08 14:02:04] Montants avant insertion:
+[2025-03-08 14:02:04] Total: 2400000.00
+[2025-03-08 14:02:04] Payé: 25000.00
+[2025-03-08 14:02:04] Précédent: 1900000.00
+[2025-03-08 14:02:04] Reste: 475000.00
+[2025-03-08 14:02:04] Transaction validée avec succès
+[2025-03-08 14:12:05] Données reçues : Array
+(
+    [save_paiement] => 1
+    [id_ticket] => 291
+    [numero_ticket] => svfvff fdr fddf0002
+    [type] => all
+    [status] => all
+    [montant_reste] => 475000
+    [source_paiement] => transactions
+    [montant_affiche] => 15 000
+    [montant] => 15000
+)
+
+[2025-03-08 14:12:05] Montant : 15000
+[2025-03-08 14:12:05] Source : transactions
+[2025-03-08 14:12:05] Type : all
+[2025-03-08 14:12:05] Status : all
+[2025-03-08 14:12:05] Montants avant insertion:
+[2025-03-08 14:12:05] Total: 2400000.00
+[2025-03-08 14:12:05] Payé: 15000.00
+[2025-03-08 14:12:05] Précédent: 1925000.00
+[2025-03-08 14:12:05] Reste: 460000.00
+[2025-03-08 14:12:05] Transaction validée avec succès
+[2025-03-08 14:50:47] Données reçues : Array
+(
+    [save_paiement] => 1
+    [id_ticket] => 291
+    [numero_ticket] => svfvff fdr fddf0002
+    [type] => all
+    [status] => all
+    [montant_reste] => 460000
+    [source_paiement] => transactions
+    [montant_affiche] => 10 000
+    [montant] => 10000
+)
+
+[2025-03-08 14:50:47] Montant : 10000
+[2025-03-08 14:50:47] Source : transactions
+[2025-03-08 14:50:47] Type : all
+[2025-03-08 14:50:47] Status : all
+[2025-03-08 14:50:47] Montants avant insertion:
+[2025-03-08 14:50:47] Total: 2400000.00
+[2025-03-08 14:50:47] Payé: 10000.00
+[2025-03-08 14:50:47] Précédent: 1940000.00
+[2025-03-08 14:50:47] Reste: 450000.00
+[2025-03-08 14:50:47] Transaction validée avec succès
+[2025-03-08 14:59:23] Données reçues : Array
+(
+    [save_paiement] => 1
+    [id_ticket] => 291
+    [numero_ticket] => svfvff fdr fddf0002
+    [type] => all
+    [status] => all
+    [montant_reste] => 450000
+    [source_paiement] => transactions
+    [montant_affiche] => 100 000
+    [montant] => 100000
+)
+
+[2025-03-08 14:59:23] Montant : 100000
+[2025-03-08 14:59:23] Source : transactions
+[2025-03-08 14:59:24] Type : all
+[2025-03-08 14:59:24] Status : all
+[2025-03-08 14:59:24] Montants avant insertion:
+[2025-03-08 14:59:24] Total: 2400000.00
+[2025-03-08 14:59:24] Payé: 100000.00
+[2025-03-08 14:59:24] Précédent: 1950000.00
+[2025-03-08 14:59:24] Reste: 350000.00
+[2025-03-08 14:59:24] Transaction validée avec succès
+[2025-03-08 15:06:20] Erreur lors de l'annulation : Impossible de supprimer le paiement : le ticket est déjà validé
+[2025-03-08 15:06:20] Trace : #0 {main}
+[2025-03-08 15:06:35] Erreur lors de l'annulation : Impossible de supprimer le paiement : le ticket est déjà validé
+[2025-03-08 15:06:35] Trace : #0 {main}
+[2025-03-08 15:09:32] Début de delete_recus_paiement.php
+[2025-03-08 15:09:32] POST data: Array
+(
+    [id_recu] => 33
+)
+
+[2025-03-08 15:09:32] ID reçu à supprimer: 33
+[2025-03-08 15:09:32] Transaction démarrée
+[2025-03-08 15:09:32] Données du reçu: Array
+(
+    [id_recu] => 33
+    [numero_recu] => 202503087943
+    [date_creation] => 2025-03-08 14:59:24
+    [type_document] => ticket
+    [id_document] => 291
+    [numero_document] => svfvff fdr fddf0002
+    [montant_total] => 2400000.00
+    [montant_paye] => 100000.00
+    [montant_precedent] => 1950000.00
+    [reste_a_payer] => 350000.00
+    [id_agent] => 196
+    [nom_agent] => Fisher Pegasus
+    [contact_agent] => 0101020301
+    [nom_usine] => VOP
+    [matricule_vehicule] => 1130CR01
+    [id_caissier] => 4
+    [nom_caissier] => Angenor Beugré
+    [source_paiement] => transactions
+    [id_transaction] => 97
+)
+
+[2025-03-08 15:09:32] Validation ticket: Array
+(
+    [date_validation_boss] => 2025-03-08 12:21:20
+)
+
+[2025-03-08 15:09:33] ERREUR: Impossible de supprimer le paiement : le ticket est déjà validé
+[2025-03-08 15:09:33] Trace: #0 {main}
+[2025-03-08 15:09:33] Redirection vers recus.php
+[2025-03-08 15:09:59] Début de delete_recus_paiement.php
+[2025-03-08 15:09:59] POST data: Array
+(
+    [id_recu] => 33
+)
+
+[2025-03-08 15:09:59] ID reçu à supprimer: 33
+[2025-03-08 15:09:59] Transaction démarrée
+[2025-03-08 15:09:59] Données du reçu: Array
+(
+    [id_recu] => 33
+    [numero_recu] => 202503087943
+    [date_creation] => 2025-03-08 14:59:24
+    [type_document] => ticket
+    [id_document] => 291
+    [numero_document] => svfvff fdr fddf0002
+    [montant_total] => 2400000.00
+    [montant_paye] => 100000.00
+    [montant_precedent] => 1950000.00
+    [reste_a_payer] => 350000.00
+    [id_agent] => 196
+    [nom_agent] => Fisher Pegasus
+    [contact_agent] => 0101020301
+    [nom_usine] => VOP
+    [matricule_vehicule] => 1130CR01
+    [id_caissier] => 4
+    [nom_caissier] => Angenor Beugré
+    [source_paiement] => transactions
+    [id_transaction] => 97
+)
+
+[2025-03-08 15:09:59] Validation ticket: Array
+(
+    [date_validation_boss] => 2025-03-08 12:21:20
+)
+
+[2025-03-08 15:09:59] ERREUR: Impossible de supprimer le paiement : le ticket est déjà validé
+[2025-03-08 15:09:59] Trace: #0 {main}
+[2025-03-08 15:09:59] Redirection vers recus.php
+[2025-03-08 15:13:26] Données reçues : Array
+(
+    [save_paiement] => 1
+    [id_ticket] => 291
+    [numero_ticket] => svfvff fdr fddf0002
+    [type] => all
+    [status] => all
+    [montant_reste] => 350000
+    [source_paiement] => transactions
+    [montant_affiche] => 10 000
+    [montant] => 10000
+)
+
+[2025-03-08 15:13:26] Montant : 10000
+[2025-03-08 15:13:26] Source : transactions
+[2025-03-08 15:13:26] Type : all
+[2025-03-08 15:13:26] Status : all
+[2025-03-08 15:13:26] Montants avant insertion:
+[2025-03-08 15:13:26] Total: 2400000.00
+[2025-03-08 15:13:26] Payé: 10000.00
+[2025-03-08 15:13:26] Précédent: 2050000.00
+[2025-03-08 15:13:26] Reste: 340000.00
+[2025-03-08 15:13:26] Transaction validée avec succès
+[2025-03-08 15:13:32] Début de delete_recus_paiement.php
+[2025-03-08 15:13:32] POST data: Array
+(
+    [id_recu] => 34
+)
+
+[2025-03-08 15:13:32] ID reçu à supprimer: 34
+[2025-03-08 15:13:32] Transaction démarrée
+[2025-03-08 15:13:32] Données du reçu: Array
+(
+    [id_recu] => 34
+    [numero_recu] => 202503081056
+    [date_creation] => 2025-03-08 15:13:26
+    [type_document] => ticket
+    [id_document] => 291
+    [numero_document] => svfvff fdr fddf0002
+    [montant_total] => 2400000.00
+    [montant_paye] => 10000.00
+    [montant_precedent] => 2050000.00
+    [reste_a_payer] => 340000.00
+    [id_agent] => 196
+    [nom_agent] => Fisher Pegasus
+    [contact_agent] => 0101020301
+    [nom_usine] => VOP
+    [matricule_vehicule] => 1130CR01
+    [id_caissier] => 4
+    [nom_caissier] => Angenor Beugré
+    [source_paiement] => transactions
+    [id_transaction] => 98
+)
+
+[2025-03-08 15:13:32] Validation ticket: Array
+(
+    [date_validation_boss] => 2025-03-08 12:21:20
+)
+
+[2025-03-08 15:13:32] ERREUR: Impossible de supprimer le paiement : le ticket est déjà validé
+[2025-03-08 15:13:32] Trace: #0 {main}
+[2025-03-08 15:13:32] Redirection vers recus.php
+[2025-03-08 15:15:21] Début de delete_recus_paiement.php
+[2025-03-08 15:15:21] POST data: Array
+(
+    [id_recu] => 34
+)
+
+[2025-03-08 15:15:21] ID reçu à supprimer: 34
+[2025-03-08 15:15:21] Transaction démarrée
+[2025-03-08 15:15:21] Données du reçu: Array
+(
+    [id_recu] => 34
+    [numero_recu] => 202503081056
+    [date_creation] => 2025-03-08 15:13:26
+    [type_document] => ticket
+    [id_document] => 291
+    [numero_document] => svfvff fdr fddf0002
+    [montant_total] => 2400000.00
+    [montant_paye] => 10000.00
+    [montant_precedent] => 2050000.00
+    [reste_a_payer] => 340000.00
+    [id_agent] => 196
+    [nom_agent] => Fisher Pegasus
+    [contact_agent] => 0101020301
+    [nom_usine] => VOP
+    [matricule_vehicule] => 1130CR01
+    [id_caissier] => 4
+    [nom_caissier] => Angenor Beugré
+    [source_paiement] => transactions
+    [id_transaction] => 98
+)
+
+[2025-03-08 15:15:21] ERREUR: Impossible de supprimer le paiement : le document est déjà validé
+[2025-03-08 15:15:21] Redirection vers recus.php
+[2025-03-08 15:26:34] Transaction démarrée pour suppression du reçu #34
+[2025-03-08 15:26:34] ID Transaction associé : 98
+[2025-03-08 15:26:34] Reçu #34 supprimé avec succès
+[2025-03-08 15:26:34] Transaction #98 supprimée avec succès
+[2025-03-08 15:26:34] Transaction validée pour la suppression du reçu #34 et de la transaction #98
+[2025-03-08 15:27:01] Transaction démarrée pour suppression du reçu #34
+[2025-03-08 15:27:01] ERREUR : Aucun reçu trouvé avec cet ID.
+[2025-03-08 15:29:24] Transaction démarrée pour suppression du reçu #32
+[2025-03-08 15:29:24] ID Transaction associé : 96
+[2025-03-08 15:29:24] Reçu #32 supprimé avec succès
+[2025-03-08 15:29:24] Transaction #96 supprimée avec succès
+[2025-03-08 15:29:24] Transaction validée pour la suppression du reçu #32 et de la transaction #96
+[2025-03-08 15:30:42] Transaction démarrée pour suppression du reçu #33
+[2025-03-08 15:30:42] ID Transaction associé : 97
+[2025-03-08 15:30:42] Reçu #33 supprimé avec succès
+[2025-03-08 15:30:42] Transaction #97 supprimée avec succès
+[2025-03-08 15:30:42] Transaction validée pour la suppression du reçu #33 et de la transaction #97
+[2025-03-08 15:33:21] Données reçues : Array
+(
+    [save_paiement] => 1
+    [id_ticket] => 291
+    [numero_ticket] => svfvff fdr fddf0002
+    [type] => all
+    [status] => all
+    [montant_reste] => 340000
+    [source_paiement] => transactions
+    [montant_affiche] => 100 000
+    [montant] => 100000
+)
+
+[2025-03-08 15:33:21] Montant : 100000
+[2025-03-08 15:33:21] Source : transactions
+[2025-03-08 15:33:21] Type : all
+[2025-03-08 15:33:21] Status : all
+[2025-03-08 15:33:21] Montants avant insertion:
+[2025-03-08 15:33:21] Total: 2400000.00
+[2025-03-08 15:33:21] Payé: 100000.00
+[2025-03-08 15:33:21] Précédent: 2060000.00
+[2025-03-08 15:33:21] Reste: 240000.00
+[2025-03-08 15:33:21] Transaction validée avec succès
+[2025-03-08 15:34:18] Transaction démarrée pour suppression du reçu #35
+[2025-03-08 15:34:18] ID Transaction associé : 100
+[2025-03-08 15:34:18] Reçu #35 supprimé avec succès
+[2025-03-08 15:34:18] Transaction #100 supprimée avec succès
+[2025-03-08 15:34:18] Transaction validée pour la suppression du reçu #35 et de la transaction #100
+[2025-03-08 15:39:07] Données reçues : Array
+(
+    [save_paiement] => 1
+    [id_ticket] => 291
+    [numero_ticket] => svfvff fdr fddf0002
+    [type] => all
+    [status] => all
+    [montant_reste] => 240000
+    [source_paiement] => transactions
+    [montant_affiche] => 100 000
+    [montant] => 100000
+)
+
+[2025-03-08 15:39:07] Montant : 100000
+[2025-03-08 15:39:07] Source : transactions
+[2025-03-08 15:39:07] Type : all
+[2025-03-08 15:39:07] Status : all
+[2025-03-08 15:39:07] Montants avant insertion:
+[2025-03-08 15:39:07] Total: 2400000.00
+[2025-03-08 15:39:07] Payé: 100000.00
+[2025-03-08 15:39:07] Précédent: 2160000.00
+[2025-03-08 15:39:07] Reste: 140000.00
+[2025-03-08 15:39:07] Transaction validée avec succès
+[2025-03-08 15:39:38] Transaction démarrée pour suppression du reçu #36
+[2025-03-08 15:39:38] ID Transaction associé : 101, Montant payé : 100000.00
+[2025-03-08 15:39:38] Reçu #36 supprimé avec succès
+[2025-03-08 15:39:38] Transaction #101 supprimée avec succès
+[2025-03-08 15:39:38] Nouvelle transaction d'approvisionnement créée: #102, Montant : 100000.00
+[2025-03-08 15:39:38] Transaction validée pour la suppression du reçu #36 et l'ajout de l'approvisionnement.
+[2025-03-08 15:44:38] Données reçues : Array
+(
+    [save_paiement] => 1
+    [id_ticket] => 291
+    [numero_ticket] => svfvff fdr fddf0002
+    [type] => all
+    [status] => all
+    [montant_reste] => 140000
+    [source_paiement] => transactions
+    [montant_affiche] => 100 000
+    [montant] => 100000
+)
+
+[2025-03-08 15:44:38] Montant : 100000
+[2025-03-08 15:44:38] Source : transactions
+[2025-03-08 15:44:38] Type : all
+[2025-03-08 15:44:38] Status : all
+[2025-03-08 15:44:38] Montants avant insertion:
+[2025-03-08 15:44:38] Total: 2400000.00
+[2025-03-08 15:44:38] Payé: 100000.00
+[2025-03-08 15:44:38] Précédent: 2260000.00
+[2025-03-08 15:44:38] Reste: 40000.00
+[2025-03-08 15:44:38] Transaction validée avec succès
+[2025-03-08 15:44:48] Transaction démarrée pour suppression du reçu #37
+[2025-03-08 15:44:48] ID Transaction associé : 103, Montant payé : 100000.00
+[2025-03-08 15:44:48] Reçu #37 supprimé avec succès
+[2025-03-08 15:44:48] Transaction #103 supprimée avec succès
+[2025-03-08 15:44:48] Solde mis à jour en restaurant le montant payé de 100000.00
+[2025-03-08 15:44:48] Transaction validée pour la suppression du reçu #37 et restauration du solde.
+[2025-03-08 15:47:23] Données reçues : Array
+(
+    [save_paiement] => 1
+    [id_ticket] => 291
+    [numero_ticket] => svfvff fdr fddf0002
+    [type] => all
+    [status] => all
+    [montant_reste] => 40000
+    [source_paiement] => transactions
+    [montant_affiche] => 100 000
+    [montant] => 100000
+)
+
+[2025-03-08 15:47:23] Montant : 100000
+[2025-03-08 15:47:23] Source : transactions
+[2025-03-08 15:47:23] Type : all
+[2025-03-08 15:47:23] Status : all
+[2025-03-08 15:47:23] Erreur finale : Le montant dépasse le reste à payer
+[2025-03-08 15:47:23] Trace : #0 {main}
+[2025-03-08 15:47:51] Données reçues : Array
+(
+    [save_paiement] => 1
+    [id_ticket] => 291
+    [numero_ticket] => svfvff fdr fddf0002
+    [type] => all
+    [status] => all
+    [montant_reste] => 40000
+    [source_paiement] => transactions
+    [montant_affiche] => 10 000
+    [montant] => 10000
+)
+
+[2025-03-08 15:47:51] Montant : 10000
+[2025-03-08 15:47:51] Source : transactions
+[2025-03-08 15:47:51] Type : all
+[2025-03-08 15:47:51] Status : all
+[2025-03-08 15:47:51] Montants avant insertion:
+[2025-03-08 15:47:51] Total: 2400000.00
+[2025-03-08 15:47:51] Payé: 10000.00
+[2025-03-08 15:47:51] Précédent: 2360000.00
+[2025-03-08 15:47:51] Reste: 30000.00
+[2025-03-08 15:47:51] Transaction validée avec succès
+[2025-03-08 15:48:04] Transaction démarrée pour suppression du reçu #38
+[2025-03-08 15:48:04] ID Transaction associé : 104, Montant payé : 10000.00
+[2025-03-08 15:48:04] Reçu #38 supprimé avec succès
+[2025-03-08 15:48:04] Transaction de paiement #104 supprimée avec succès
+[2025-03-08 15:48:04] Solde mis à jour en restaurant le montant payé de 10000.00 dans le dernier approvisionnement
+[2025-03-08 15:48:04] Transaction validée pour la suppression du reçu #38 et restauration du solde.
+[2025-03-08 16:04:56] Début de l'enregistrement de l'approvisionnement
+[2025-03-08 16:04:56] Montant reçu: 1500000
+[2025-03-08 16:04:56] Solde actuel avant approvisionnement: 0
+[2025-03-08 16:04:56] Nouveau solde calculé: 1500000
+[2025-03-08 16:04:56] Transaction d'approvisionnement créée #108, nouveau solde: 1500000
+[2025-03-08 16:06:40] Début de l'enregistrement de l'approvisionnement
+[2025-03-08 16:06:40] Montant reçu: 2500000
+[2025-03-08 16:06:40] Solde actuel avant approvisionnement: 1500000
+[2025-03-08 16:06:40] Nouveau solde calculé: 4000000
+[2025-03-08 16:06:40] Transaction d'approvisionnement créée #109, nouveau solde: 4000000
+[2025-03-08 16:09:37] Début de l'enregistrement de l'approvisionnement
+[2025-03-08 16:09:37] Montant reçu: 25000000
+[2025-03-08 16:09:37] Solde actuel avant approvisionnement: 4000000
+[2025-03-08 16:09:37] Nouveau solde calculé: 29000000
+[2025-03-08 16:09:37] Transaction d'approvisionnement créée #110, nouveau solde: 29000000
+[2025-03-08 16:11:12] Début de l'enregistrement de l'approvisionnement
+[2025-03-08 16:11:12] Montant reçu: 1000000
+[2025-03-08 16:11:12] Solde actuel avant approvisionnement: 29000000
+[2025-03-08 16:11:12] Nouveau solde calculé: 30000000
+[2025-03-08 16:11:12] Transaction d'approvisionnement créée #111, nouveau solde: 30000000
+[2025-03-08 16:14:00] Début de l'enregistrement du paiement
+[2025-03-08 16:14:00] Transaction de paiement créée #112, nouveau solde: 29500000
+[2025-03-08 16:14:00] Ticket #281 mis à jour
+[2025-03-08 16:14:00] ERREUR: SQLSTATE[23000]: Integrity constraint violation: 1048 Column 'montant_total' cannot be null
+[2025-03-08 16:17:42] Début de l'enregistrement du paiement
+[2025-03-08 16:17:42] Solde actuel avant paiement: 30000000
+[2025-03-08 16:17:42] Nouveau solde calculé: 29900000
+[2025-03-08 16:17:42] Transaction de paiement créée #113, nouveau solde: 29900000
+[2025-03-08 16:17:42] Ticket #281 mis à jour
+[2025-03-08 16:17:42] ERREUR: SQLSTATE[23000]: Integrity constraint violation: 1048 Column 'montant_total' cannot be null
+[2025-03-08 16:17:42] Trace: #0 C:\laragon\www\angenor\pages\save_paiement.php(110): PDOStatement->execute(Array)
+#1 {main}
+[2025-03-08 16:18:02] Début de l'enregistrement du paiement
+[2025-03-08 16:18:02] Solde actuel avant paiement: 30000000
+[2025-03-08 16:18:02] Nouveau solde calculé: 29980000
+[2025-03-08 16:18:02] Transaction de paiement créée #114, nouveau solde: 29980000
+[2025-03-08 16:18:02] Ticket #291 mis à jour
+[2025-03-08 16:18:02] ERREUR: SQLSTATE[23000]: Integrity constraint violation: 1048 Column 'montant_total' cannot be null
+[2025-03-08 16:18:02] Trace: #0 C:\laragon\www\angenor\pages\save_paiement.php(110): PDOStatement->execute(Array)
+#1 {main}
+[2025-03-08 16:22:07] Début de l'enregistrement du paiement
+[2025-03-08 16:22:07] Solde actuel avant paiement: 30000000
+[2025-03-08 16:22:07] Nouveau solde calculé: 29990000
+[2025-03-08 16:22:07] Transaction de paiement créée #115, nouveau solde: 29990000
+[2025-03-08 16:22:07] Ticket #291 mis à jour
+[2025-03-08 16:22:07] ERREUR: SQLSTATE[23000]: Integrity constraint violation: 1048 Column 'montant_total' cannot be null
+[2025-03-08 16:22:07] Trace: #0 C:\laragon\www\angenor\pages\save_paiement.php(110): PDOStatement->execute(Array)
+#1 {main}
+[2025-03-08 16:26:03] Début de l'enregistrement du paiement
+[2025-03-08 16:26:03] Solde actuel avant paiement: 30000000
+[2025-03-08 16:26:03] Nouveau solde calculé: 29990000
+[2025-03-08 16:26:03] Transaction de paiement créée #116, nouveau solde: 29990000
+[2025-03-08 16:26:03] Ticket #291 mis à jour
+[2025-03-08 16:26:03] Paiement enregistré avec succès
+[2025-03-08 16:36:45] Début de l'enregistrement du paiement
+[2025-03-08 16:36:45] ERREUR: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'prenom' in 'field list'
+[2025-03-08 16:36:45] Trace: #0 C:\laragon\www\angenor\pages\save_paiement.php(13): PDOStatement->execute(Array)
+#1 {main}
+[2025-03-08 16:40:43] Début de l'enregistrement du paiement
+[2025-03-08 16:40:43] ERREUR: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'prenom' in 'field list'
+[2025-03-08 16:40:43] Trace: #0 C:\laragon\www\angenor\pages\save_paiement.php(13): PDOStatement->execute(Array)
+#1 {main}
+[2025-03-08 16:41:10] Début de l'enregistrement du paiement
+[2025-03-08 16:41:10] ERREUR: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'prenom' in 'field list'
+[2025-03-08 16:41:10] Trace: #0 C:\laragon\www\angenor\pages\save_paiement.php(13): PDOStatement->execute(Array)
+#1 {main}
+[2025-03-08 16:42:28] Données reçues : Array
+(
+    [save_paiement] => 1
+    [id_ticket] => 281
+    [numero_ticket] => AYG-20775
+    [type] => all
+    [status] => all
+    [montant_reste] => 639360
+    [source_paiement] => transactions
+    [montant_affiche] => 500 000
+    [montant] => 500000
+)
+
+[2025-03-08 16:42:28] Montant : 500000
+[2025-03-08 16:42:28] Source : transactions
+[2025-03-08 16:42:28] Type : all
+[2025-03-08 16:42:28] Status : all
+[2025-03-08 16:42:28] Montants avant insertion:
+[2025-03-08 16:42:28] Total: 639360.00
+[2025-03-08 16:42:28] Payé: 500000.00
+[2025-03-08 16:42:28] Précédent: 0.00
+[2025-03-08 16:42:28] Reste: 139360.00
+[2025-03-08 16:42:28] Transaction validée avec succès
+[2025-03-08 16:43:13] Données reçues : Array
+(
+    [save_paiement] => 1
+    [id_ticket] => 289
+    [numero_ticket] => christian 02
+    [type] => all
+    [status] => all
+    [montant_reste] => 330000
+    [source_paiement] => transactions
+    [montant_affiche] => 200 000
+    [montant] => 200000
+)
+
+[2025-03-08 16:43:13] Montant : 200000
+[2025-03-08 16:43:13] Source : transactions
+[2025-03-08 16:43:13] Type : all
+[2025-03-08 16:43:13] Status : all
+[2025-03-08 16:43:13] Montants avant insertion:
+[2025-03-08 16:43:13] Total: 480000.00
+[2025-03-08 16:43:13] Payé: 200000.00
+[2025-03-08 16:43:13] Précédent: 150000.00
+[2025-03-08 16:43:13] Reste: 130000.00
+[2025-03-08 16:43:13] Transaction validée avec succès
+[2025-03-08 16:43:40] Données reçues : Array
+(
+    [save_paiement] => 1
+    [id_ticket] => 280
+    [numero_ticket] => PABOG3202503000193
+    [type] => all
+    [status] => all
+    [montant_reste] => 1793400
+    [source_paiement] => transactions
+    [montant_affiche] => 290 000
+    [montant] => 290000
+)
+
+[2025-03-08 16:43:40] Montant : 290000
+[2025-03-08 16:43:40] Source : transactions
+[2025-03-08 16:43:40] Type : all
+[2025-03-08 16:43:40] Status : all
+[2025-03-08 16:43:40] Montants avant insertion:
+[2025-03-08 16:43:40] Total: 1793400.00
+[2025-03-08 16:43:40] Payé: 290000.00
+[2025-03-08 16:43:40] Précédent: 0.00
+[2025-03-08 16:43:40] Reste: 1503400.00
+[2025-03-08 16:43:40] Transaction validée avec succès
+[2025-03-08 16:48:32] Début de la suppression du reçu #39
+[2025-03-08 16:48:32] ERREUR: Impossible de supprimer le paiement : le ticket est déjà validé
+[2025-03-08 16:51:38] Transaction démarrée pour suppression du reçu #39
+[2025-03-08 16:51:38] ID Transaction associé : 116, Montant payé : 10000.00
+[2025-03-08 16:51:38] Reçu #39 supprimé avec succès
+[2025-03-08 16:51:38] Transaction #116 supprimée avec succès
+[2025-03-08 16:51:38] Transaction #111 mise à jour avec le nouveau montant (1010000) et le motif d'annulation.
+[2025-03-08 16:51:38] Transaction validée pour la suppression du reçu #39 et mise à jour correcte du solde.
+[2025-03-08 16:54:24] Transaction démarrée pour suppression du reçu #41
+[2025-03-08 16:54:24] ID Transaction associé : , Montant payé : 200000.00
+[2025-03-08 16:54:24] Reçu #41 supprimé avec succès
+[2025-03-08 16:54:24] Transaction #111 mise à jour avec le nouveau montant (1210000) et le motif d'annulation.
+[2025-03-08 16:54:24] Transaction validée pour la suppression du reçu #41 et mise à jour correcte du solde.
+[2025-03-08 16:55:10] Données reçues : Array
+(
+    [save_paiement] => 1
+    [id_ticket] => 284
+    [numero_ticket] => gggggggggggggggggllllhhhhhh000111111
+    [type] => all
+    [status] => all
+    [montant_reste] => 262500
+    [source_paiement] => transactions
+    [montant_affiche] => 220 000
+    [montant] => 220000
+)
+
+[2025-03-08 16:55:10] Montant : 220000
+[2025-03-08 16:55:10] Source : transactions
+[2025-03-08 16:55:10] Type : all
+[2025-03-08 16:55:10] Status : all
+[2025-03-08 16:55:10] Montants avant insertion:
+[2025-03-08 16:55:10] Total: 262500.00
+[2025-03-08 16:55:10] Payé: 220000.00
+[2025-03-08 16:55:10] Précédent: 0.00
+[2025-03-08 16:55:10] Reste: 42500.00
+[2025-03-08 16:55:10] Transaction validée avec succès
+[2025-03-08 16:55:23] Données reçues : Array
+(
+    [save_paiement] => 1
+    [id_ticket] => 288
+    [numero_ticket] => christian 01
+    [type] => all
+    [status] => all
+    [montant_reste] => 384000
+    [source_paiement] => transactions
+    [montant_affiche] => 384
+    [montant] => 384
+)
+
+[2025-03-08 16:55:23] Montant : 384
+[2025-03-08 16:55:23] Source : transactions
+[2025-03-08 16:55:23] Type : all
+[2025-03-08 16:55:23] Status : all
+[2025-03-08 16:55:23] Montants avant insertion:
+[2025-03-08 16:55:23] Total: 384000.00
+[2025-03-08 16:55:23] Payé: 384.00
+[2025-03-08 16:55:23] Précédent: 0.00
+[2025-03-08 16:55:23] Reste: 383616.00
+[2025-03-08 16:55:23] Transaction validée avec succès
+[2025-03-08 16:55:32] Transaction démarrée pour suppression du reçu #44
+[2025-03-08 16:55:32] ID Transaction associé : , Montant payé : 384.00
+[2025-03-08 16:55:32] Reçu #44 supprimé avec succès
+[2025-03-08 16:55:32] Transaction #111 mise à jour avec le nouveau montant (1210384) et le motif d'annulation.
+[2025-03-08 16:55:32] Transaction validée pour la suppression du reçu #44 et mise à jour correcte du solde.
+[2025-03-08 16:55:40] Transaction démarrée pour suppression du reçu #43
+[2025-03-08 16:55:40] ID Transaction associé : , Montant payé : 220000.00
+[2025-03-08 16:55:40] Reçu #43 supprimé avec succès
+[2025-03-08 16:55:40] Transaction #111 mise à jour avec le nouveau montant (1430384) et le motif d'annulation.
+[2025-03-08 16:55:40] Transaction validée pour la suppression du reçu #43 et mise à jour correcte du solde.
+[2025-03-08 16:59:32] Transaction démarrée pour suppression du reçu #42
+[2025-03-08 16:59:32] ID Transaction associé : , Montant payé : 290000.00, Numéro de reçu : 202503084637
+[2025-03-08 16:59:32] Reçu #202503084637 supprimé avec succès
+[2025-03-08 16:59:32] Transaction #111 mise à jour avec le nouveau montant (1720384) et le motif d'annulation.
+[2025-03-08 16:59:32] Transaction validée pour la suppression du reçu #42 et mise à jour correcte du solde.
+[2025-03-08 17:01:25] Transaction démarrée pour suppression du reçu #40
+[2025-03-08 17:01:25] ID Transaction associé : , Montant payé : 500000.00, Numéro de reçu : 202503080284
+[2025-03-08 17:01:25] Reçu #202503080284 supprimé avec succès
+[2025-03-08 17:01:25] Transaction #111 mise à jour avec le nouveau montant (2220384) et le motif d'annulation.
+[2025-03-08 17:01:25] Transaction validée pour la suppression du reçu #40 et mise à jour correcte du solde.
+[2025-03-08 17:05:28] Début de l'enregistrement du paiement
+[2025-03-08 17:05:28] ERREUR: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'prenom' in 'field list'
+[2025-03-08 17:05:28] Trace: #0 C:\laragon\www\angenor\pages\save_paiement.php(13): PDOStatement->execute(Array)
+#1 {main}
+[2025-03-08 17:06:16] Données reçues : Array
+(
+    [save_paiement] => 1
+    [id_ticket] => 279
+    [numero_ticket] => PABOG1202503000379
+    [type] => all
+    [status] => all
+    [montant_reste] => 3049200
+    [source_paiement] => transactions
+    [montant_affiche] => 1 000 000
+    [montant] => 1000000
+)
+
+[2025-03-08 17:06:16] Montant : 1000000
+[2025-03-08 17:06:16] Source : transactions
+[2025-03-08 17:06:16] Type : all
+[2025-03-08 17:06:16] Status : all
+[2025-03-08 17:06:16] Montants avant insertion:
+[2025-03-08 17:06:16] Total: 3049200.00
+[2025-03-08 17:06:16] Payé: 1000000.00
+[2025-03-08 17:06:16] Précédent: 0.00
+[2025-03-08 17:06:16] Reste: 2049200.00
+[2025-03-08 17:06:16] Transaction validée avec succès
+[2025-03-08 17:06:37] Début de la suppression du reçu #45
+[2025-03-08 17:06:37] Solde actuel: 30000000, Nouveau solde après annulation: 31000000
+[2025-03-08 17:06:37] Transaction d'annulation créée, nouveau solde: 31000000
+[2025-03-08 17:06:37] Montant du ticket #279 mis à jour (-1000000.00 FCFA)
+[2025-03-08 17:06:37] Reçu #202503086241 supprimé
+[2025-03-08 17:07:09] Données reçues : Array
+(
+    [save_paiement] => 1
+    [id_ticket] => 286
+    [numero_ticket] => drrrdrfrdfddcsdddd
+    [type] => all
+    [status] => all
+    [montant_reste] => 262500
+    [source_paiement] => transactions
+    [montant_affiche] => 262 500
+    [montant] => 262500
+)
+
+[2025-03-08 17:07:09] Montant : 262500
+[2025-03-08 17:07:09] Source : transactions
+[2025-03-08 17:07:09] Type : all
+[2025-03-08 17:07:09] Status : all
+[2025-03-08 17:07:09] Montants avant insertion:
+[2025-03-08 17:07:09] Total: 262500.00
+[2025-03-08 17:07:09] Payé: 262500.00
+[2025-03-08 17:07:09] Précédent: 0.00
+[2025-03-08 17:07:09] Reste: 0.00
+[2025-03-08 17:07:10] Transaction validée avec succès
+[2025-03-08 17:07:43] Début de la suppression du reçu #46
+[2025-03-08 17:07:43] ERREUR: Impossible de supprimer le paiement : le ticket est déjà validé
+[2025-03-08 17:07:49] Début de la suppression du reçu #46
+[2025-03-08 17:07:49] ERREUR: Impossible de supprimer le paiement : le ticket est déjà validé
+[2025-03-08 17:08:00] Début de la suppression du reçu #46
+[2025-03-08 17:08:00] ERREUR: Impossible de supprimer le paiement : le ticket est déjà validé
+[2025-03-08 17:08:18] Début de la suppression du reçu #46
+[2025-03-08 17:08:18] ERREUR: Impossible de supprimer le paiement : le ticket est déjà validé
+[2025-03-08 17:08:28] Début de la suppression du reçu #46
+[2025-03-08 17:08:28] ERREUR: Impossible de supprimer le paiement : le ticket est déjà validé
+[2025-03-08 17:09:02] Transaction démarrée pour suppression du reçu #46
+[2025-03-08 17:09:02] ID Transaction associé : , Montant payé : 262500.00, Numéro de reçu : 202503080659
+[2025-03-08 17:09:02] Reçu #202503080659 supprimé avec succès
+[2025-03-08 17:09:02] Transaction #123 mise à jour avec le nouveau montant (1262500) et le motif d'annulation.
+[2025-03-08 17:09:02] Transaction validée pour la suppression du reçu #46 et mise à jour correcte du solde.
+[2025-03-08 17:28:06] Début de l'enregistrement de l'approvisionnement
+[2025-03-08 17:28:06] Montant reçu: 2000000
+[2025-03-08 17:28:06] Solde actuel avant approvisionnement: 31000000
+[2025-03-08 17:28:06] Nouveau solde calculé: 33000000
+[2025-03-08 17:28:06] Transaction d'approvisionnement créée #125, nouveau solde: 33000000
+[2025-03-08 17:34:08] Début de l'enregistrement de l'approvisionnement
+[2025-03-08 17:34:08] Montant reçu: 250000
+[2025-03-08 17:34:08] Solde actuel avant approvisionnement: 33000000
+[2025-03-08 17:34:08] Nouveau solde calculé: 33250000
+[2025-03-08 17:34:08] Transaction d'approvisionnement créée #126, nouveau solde: 33250000
+[2025-03-08 17:38:40] Début de l'enregistrement de l'approvisionnement
+[2025-03-08 17:38:40] ERREUR: Le motif est requis
+[2025-03-08 17:38:40] Trace: #0 {main}
+[2025-03-08 17:40:41] Début de l'enregistrement de l'approvisionnement
+[2025-03-08 17:40:41] ERREUR: Le motif est requis
+[2025-03-08 17:40:41] Trace: #0 {main}
+[2025-03-08 17:42:34] Début de l'enregistrement de l'approvisionnement
+[2025-03-08 17:42:34] ERREUR: Le motif est requis
+[2025-03-08 17:42:34] Trace: #0 {main}
+[2025-03-08 17:45:22] Début de l'enregistrement de l'approvisionnement
+[2025-03-08 17:45:22] Montant reçu: 250000
+[2025-03-08 17:45:22] Solde actuel avant approvisionnement: 33250000
+[2025-03-08 17:45:22] Nouveau solde calculé: 33500000
+[2025-03-08 17:45:22] Transaction d'approvisionnement créée #127, nouveau solde: 33500000
+[2025-03-08 17:45:37] Début de l'enregistrement du paiement
+[2025-03-08 17:45:37] Solde actuel avant paiement: 33500000
+[2025-03-08 17:45:37] Nouveau solde calculé: 33480000
+[2025-03-08 17:45:37] Ticket #291 mis à jour avec montant_payer=2400000, montant_reste=0
+[2025-03-08 17:45:37] Transaction de paiement créée #128, nouveau solde: 33480000
+[2025-03-08 17:45:37] Paiement enregistré avec succès
+[2025-03-09 10:27:49] Début de l'enregistrement du paiement
+[2025-03-09 10:27:49] Solde actuel avant paiement: 33500000
+[2025-03-09 10:27:49] Nouveau solde calculé: 33480000
+[2025-03-09 10:27:49] Ticket #290 mis à jour avec montant_payer=220000, montant_reste=20000
+[2025-03-09 10:27:49] Transaction de paiement créée #129, nouveau solde: 33480000
+[2025-03-09 10:27:49] Paiement enregistré avec succès
+[2025-03-09 10:34:38] Début de l'enregistrement du paiement
+[2025-03-09 10:34:38] Solde actuel avant transaction: 33500000
+[2025-03-09 10:34:38] Nouveau solde calculé: 33500000
+[2025-03-09 10:34:38] Ticket #287 mis à jour avec montant_payer=10000, montant_reste=147500
+[2025-03-09 10:34:38] ERREUR: SQLSTATE[23000]: Integrity constraint violation: 1048 Column 'type_transaction' cannot be null
+[2025-03-09 10:34:38] Trace: #0 C:\laragon\www\angenor\pages\save_paiement.php(186): PDOStatement->execute()
+#1 {main}
+[2025-03-09 11:04:46] Début de l'enregistrement du paiement
+[2025-03-09 11:04:46] Solde actuel avant transaction: 33500000
+[2025-03-09 11:04:46] Sortie: Débit de 10000 FCFA
+[2025-03-09 11:04:46] Nouveau solde calculé: 33490000
+[2025-03-09 11:04:47] Ticket #288 mis à jour avec montant_payer=10384, montant_reste=373616
+[2025-03-09 11:04:47] ERREUR: SQLSTATE[01000]: Warning: 1265 Data truncated for column 'type_transaction' at row 1
+[2025-03-09 11:04:47] Trace: #0 C:\laragon\www\angenor\pages\save_paiement.php(181): PDOStatement->execute()
+#1 {main}
+[2025-03-09 11:05:17] Début de l'enregistrement de l'approvisionnement
+[2025-03-09 11:05:17] Montant reçu: 1000000
+[2025-03-09 11:05:17] Solde actuel avant approvisionnement: 33500000
+[2025-03-09 11:05:17] Nouveau solde calculé: 34500000
+[2025-03-09 11:05:17] Transaction d'approvisionnement créée #130, nouveau solde: 34500000
+[2025-03-09 11:12:40] Début de l'enregistrement du paiement
+[2025-03-09 11:12:40] Solde actuel avant paiement: 34500000
+[2025-03-09 11:12:40] Nouveau solde calculé: 34400000
+[2025-03-09 11:12:40] Ticket #288 mis à jour avec montant_payer=100384, montant_reste=283616
+[2025-03-09 11:12:40] ERREUR: SQLSTATE[01000]: Warning: 1265 Data truncated for column 'type_transaction' at row 1
+[2025-03-09 11:12:40] Trace: #0 C:\laragon\www\angenor\pages\save_paiement.php(178): PDOStatement->execute()
+#1 {main}
+[2025-03-09 11:18:40] Début de l'enregistrement du paiement
+[2025-03-09 11:18:40] Erreur Paiement: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'id' in 'order clause'
+[2025-03-09 11:22:56] Début de l'enregistrement du paiement
+[2025-03-09 11:22:56] Solde actuel avant paiement: 34500000
+[2025-03-09 11:22:56] Nouveau solde calculé: 34400000
+[2025-03-09 11:22:56] Ticket #277 mis à jour avec montant_payer=100000, montant_reste=910100
+[2025-03-09 11:22:56] Transaction de paiement créée #131, nouveau solde: 34400000
+[2025-03-09 11:22:56] Paiement enregistré avec succès
+[2025-03-09 11:27:04] Début de l'enregistrement du paiement
+[2025-03-09 11:27:04] Erreur Paiement: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'id' in 'order clause'
+[2025-03-09 11:28:08] Début de l'enregistrement du paiement
+[2025-03-09 11:28:08] Solde actuel avant paiement: 34500000
+[2025-03-09 11:28:08] Nouveau solde calculé: 34400000
+[2025-03-09 11:28:08] Ticket #278 mis à jour avec montant_payer=100000, montant_reste=1384700
+[2025-03-09 11:28:08] Transaction de paiement créée #132, nouveau solde: 34400000
+[2025-03-09 11:28:08] Paiement enregistré avec succès
+[2025-03-09 11:31:22] Début de l'enregistrement du paiement
+[2025-03-09 11:31:22] Solde actuel avant paiement: 34500000
+[2025-03-09 11:31:22] Nouveau solde calculé: 34400000
+[2025-03-09 11:31:22] Ticket #281 mis à jour avec montant_payer=600000, montant_reste=39360
+[2025-03-09 11:31:22] ERREUR: SQLSTATE[01000]: Warning: 1265 Data truncated for column 'type_transaction' at row 1
+[2025-03-09 11:31:22] Trace: #0 C:\laragon\www\angenor\pages\save_paiement.php(178): PDOStatement->execute()
+#1 {main}
+[2025-03-09 11:36:25] Début de l'enregistrement du paiement
+[2025-03-09 11:36:25] Solde actuel avant paiement: 34500000
+[2025-03-09 11:36:25] Nouveau solde calculé: 34300000
+[2025-03-09 11:36:25] ERREUR: SQLSTATE[01000]: Warning: 1265 Data truncated for column 'type_transaction' at row 1
+[2025-03-09 11:36:25] Trace: #0 C:\laragon\www\angenor\pages\save_paiement.php(74): PDOStatement->execute()
+#1 {main}
+[2025-03-09 11:37:46] Début de l'enregistrement du paiement
+[2025-03-09 11:37:46] Solde actuel avant paiement: 34500000
+[2025-03-09 11:37:46] Nouveau solde calculé: 34400000
+[2025-03-09 11:37:46] ERREUR: SQLSTATE[01000]: Warning: 1265 Data truncated for column 'type_transaction' at row 1
+[2025-03-09 11:37:46] Trace: #0 C:\laragon\www\angenor\pages\save_paiement.php(74): PDOStatement->execute()
+#1 {main}
+[2025-03-09 11:51:31] Début de l'enregistrement du paiement
+[2025-03-09 11:51:31] Solde actuel avant paiement: 34500000
+[2025-03-09 11:51:31] Nouveau solde calculé: 34450000
+[2025-03-09 11:51:31] Ticket #285 mis à jour avec montant_payer=50000, montant_reste=212500
+[2025-03-09 11:51:31] Transaction de paiement créée #133, nouveau solde: 34450000
+[2025-03-09 11:51:31] Paiement enregistré avec succès
+[2025-03-09 11:55:32] Début de l'enregistrement du paiement
+[2025-03-09 11:55:32] Solde actuel avant paiement: 34500000
+[2025-03-09 11:55:32] Nouveau solde calculé: 34465000
+[2025-03-09 11:55:32] Ticket #281 mis à jour avec montant_payer=535000, montant_reste=104360
+[2025-03-09 11:55:32] ERREUR: SQLSTATE[01000]: Warning: 1265 Data truncated for column 'type_transaction' at row 1
+[2025-03-09 11:55:32] Trace: #0 C:\laragon\www\angenor\pages\save_paiement.php(178): PDOStatement->execute()
+#1 {main}
+[2025-03-09 11:57:42] Début de l'enregistrement du paiement
+[2025-03-09 11:58:19] Début de l'enregistrement du paiement
+[2025-03-09 11:58:33] Début de l'enregistrement du paiement
+[2025-03-09 12:00:20] Début de l'enregistrement du paiement
+[2025-03-09 12:00:20] Solde actuel avant paiement: 34500000
+[2025-03-09 12:00:20] Nouveau solde calculé: 34475000
+[2025-03-09 12:01:42] Début de l'enregistrement du paiement
+[2025-03-09 12:01:42] Solde actuel avant paiement: 34500000
+[2025-03-09 12:01:42] Nouveau solde calculé: 34400000
+[2025-03-09 12:02:12] Début de l'enregistrement du paiement
+[2025-03-09 12:02:12] Solde actuel avant paiement: 34500000
+[2025-03-09 12:02:12] Nouveau solde calculé: 34300000
+[2025-03-09 12:05:07] Début de l'enregistrement du paiement
+[2025-03-09 12:05:07] Solde actuel avant paiement: 34500000
+[2025-03-09 12:05:07] Nouveau solde calculé: 34300000
+[2025-03-09 12:08:13] Début de l'enregistrement du paiement
+[2025-03-09 12:08:13] Solde actuel avant paiement: 34500000
+[2025-03-09 12:08:13] Nouveau solde calculé: 34300000
+[2025-03-09 12:08:27] Début de l'enregistrement du paiement
+[2025-03-09 12:08:27] Solde actuel avant paiement: 34500000
+[2025-03-09 12:08:27] Nouveau solde calculé: 34300000
+[2025-03-09 12:13:17] Début de l'enregistrement du paiement
+[2025-03-09 12:13:17] Solde actuel avant paiement: 34500000
+[2025-03-09 12:13:17] Nouveau solde calculé: 34300000
+[2025-03-09 12:13:18] Ticket #280 mis à jour avec montant_payer=490000, montant_reste=1303400
+[2025-03-09 12:13:18] ERREUR: SQLSTATE[01000]: Warning: 1265 Data truncated for column 'type_transaction' at row 1
+[2025-03-09 12:13:18] Trace: #0 C:\laragon\www\angenor\pages\save_paiement.php(177): PDOStatement->execute()
+#1 {main}
+[2025-03-09 12:13:28] Début de l'enregistrement du paiement
+[2025-03-09 12:13:28] Solde actuel avant paiement: 34500000
+[2025-03-09 12:13:28] Nouveau solde calculé: 34300000
+[2025-03-09 12:13:28] Ticket #279 mis à jour avec montant_payer=200000, montant_reste=2849200
+[2025-03-09 12:13:28] ERREUR: SQLSTATE[01000]: Warning: 1265 Data truncated for column 'type_transaction' at row 1
+[2025-03-09 12:13:28] Trace: #0 C:\laragon\www\angenor\pages\save_paiement.php(177): PDOStatement->execute()
+#1 {main}
+[2025-03-09 12:14:54] Début de l'enregistrement du paiement
+[2025-03-09 12:14:54] Solde actuel avant paiement: 34500000
+[2025-03-09 12:14:54] Nouveau solde calculé: 34300000
+[2025-03-09 12:14:54] Ticket #280 mis à jour avec montant_payer=490000, montant_reste=1303400
+[2025-03-09 12:14:54] ERREUR: SQLSTATE[01000]: Warning: 1265 Data truncated for column 'type_transaction' at row 1
+[2025-03-09 12:14:54] Trace: #0 C:\laragon\www\angenor\pages\save_paiement.php(177): PDOStatement->execute()
+#1 {main}
+[2025-03-09 12:19:01] Début de l'enregistrement du paiement
+[2025-03-09 12:19:01] Solde actuel avant paiement: 34500000
+[2025-03-09 12:19:01] Nouveau solde calculé: 34350000
+[2025-03-09 12:19:01] Ticket #279 mis à jour avec montant_payer=150000, montant_reste=2899200
+[2025-03-09 12:19:01] Transaction de paiement créée #134, nouveau solde: 34350000
+[2025-03-09 12:19:01] Paiement enregistré avec succès
+[2025-03-09 12:21:22] Début de l'enregistrement du paiement
+[2025-03-09 12:21:22] Solde actuel avant paiement: 34500000
+[2025-03-09 12:21:22] Nouveau solde calculé: 34400000
+[2025-03-09 12:21:22] Ticket #279 mis à jour avec montant_payer=250000, montant_reste=2799200
+[2025-03-09 12:21:22] Transaction de paiement créée #135, nouveau solde: 34400000
+[2025-03-09 12:21:22] Paiement enregistré avec succès
+[2025-03-09 12:23:25] Début de l'enregistrement du paiement
+[2025-03-09 12:23:25] Solde actuel avant paiement: 34500000
+[2025-03-09 12:23:25] Nouveau solde calculé: 34300000
+[2025-03-09 12:23:25] Ticket #280 mis à jour avec montant_payer=490000, montant_reste=1303400
+[2025-03-09 12:23:25] Transaction de paiement créée #136, nouveau solde: 34300000
+[2025-03-09 12:23:25] Paiement enregistré avec succès
+[2025-03-09 12:26:51] Début de l'enregistrement du paiement
+[2025-03-09 12:26:51] Erreur: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'id' in 'order clause'
+[2025-03-09 12:29:34] Début de l'enregistrement du paiement
+[2025-03-09 12:29:34] Erreur: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'id' in 'order clause'
+[2025-03-09 12:31:58] 🔹 Début du paiement.
+[2025-03-09 12:31:58] 🔹 Vérification du solde...
+[2025-03-09 12:31:58] ❌ Erreur: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'id' in 'order clause'
+[2025-03-09 12:54:21] Début de la suppression du reçu #47
+[2025-03-09 12:54:21] ERREUR: SQLSTATE[42S22]: Column not found: 1054 Unknown column 't.id_transaction' in 'field list'
+[2025-03-09 12:54:25] Début de la suppression du reçu #47
+[2025-03-09 12:54:25] ERREUR: SQLSTATE[42S22]: Column not found: 1054 Unknown column 't.id_transaction' in 'field list'
+[2025-03-09 12:54:27] Début de la suppression du reçu #54
+[2025-03-09 12:54:27] ERREUR: SQLSTATE[42S22]: Column not found: 1054 Unknown column 't.id_transaction' in 'field list'
+[2025-03-09 12:54:29] Début de la suppression du reçu #54
+[2025-03-09 12:54:29] ERREUR: SQLSTATE[42S22]: Column not found: 1054 Unknown column 't.id_transaction' in 'field list'
+[2025-03-09 12:54:33] Début de la suppression du reçu #54
+[2025-03-09 12:54:33] ERREUR: SQLSTATE[42S22]: Column not found: 1054 Unknown column 't.id_transaction' in 'field list'
+[2025-03-09 12:54:36] Début de la suppression du reçu #54
+[2025-03-09 12:54:36] ERREUR: SQLSTATE[42S22]: Column not found: 1054 Unknown column 't.id_transaction' in 'field list'
+[2025-03-09 12:54:42] Début de la suppression du reçu #54
+[2025-03-09 12:54:42] ERREUR: SQLSTATE[42S22]: Column not found: 1054 Unknown column 't.id_transaction' in 'field list'
+[2025-03-09 12:55:19] Début de la suppression du reçu #54
+[2025-03-09 12:55:20] ERREUR: SQLSTATE[42S22]: Column not found: 1054 Unknown column 't.id_transaction' in 'field list'
+[2025-03-09 13:33:11] Erreur lors de la mise à jour du prix unitaire: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'date_modification' in 'field list'
+[2025-03-10 14:02:44] Début de l'enregistrement du paiement
+[2025-03-10 14:02:44] Solde actuel avant paiement: 34500000
+[2025-03-10 14:02:44] Nouveau solde calculé: 34400000
+[2025-03-10 14:02:44] Ticket #288 mis à jour avec montant_payer=100384, montant_reste=283616
+[2025-03-10 14:02:44] Transaction de paiement créée #137, nouveau solde: 34400000
+[2025-03-10 14:02:44] Paiement enregistré avec succès
+[2025-03-10 14:15:46] Début de l'enregistrement du paiement
+[2025-03-10 14:15:46] Solde actuel avant paiement: 34500000
+[2025-03-10 14:15:46] Nouveau solde calculé: 33500000
+[2025-03-10 14:15:46] Ticket #280 mis à jour avec montant_payer=1490000, montant_reste=303400
+[2025-03-10 14:15:46] Transaction de paiement créée #138, nouveau solde: 33500000
+[2025-03-10 14:15:46] Paiement enregistré avec succès
+[2025-03-10 14:16:04] Début de la suppression du reçu #56
+[2025-03-10 14:16:04] ERREUR: SQLSTATE[42S22]: Column not found: 1054 Unknown column 't.id_transaction' in 'field list'
+[2025-03-10 14:19:57] Début de la suppression du reçu #56
+[2025-03-10 14:19:57] ERREUR: SQLSTATE[42S22]: Column not found: 1054 Unknown column 't.id_transaction' in 'field list'
+[2025-03-10 14:20:05] Début de la suppression du reçu #56
+[2025-03-10 14:20:05] ERREUR: SQLSTATE[42S22]: Column not found: 1054 Unknown column 't.id_transaction' in 'field list'
+[2025-03-10 14:20:14] Début de la suppression du reçu #56
+[2025-03-10 14:20:14] ERREUR: SQLSTATE[42S22]: Column not found: 1054 Unknown column 't.id_transaction' in 'field list'
+[2025-03-10 14:22:19] Début de la suppression du reçu #56
+[2025-03-10 14:22:19] ERREUR: SQLSTATE[42S22]: Column not found: 1054 Unknown column 't.id_transaction' in 'field list'
+[2025-03-10 14:22:34] Début de la suppression du reçu #56
+[2025-03-10 14:22:34] ERREUR: SQLSTATE[42S22]: Column not found: 1054 Unknown column 't.id_transaction' in 'field list'
+[2025-03-10 14:22:42] Début de la suppression du reçu #56
+[2025-03-10 14:22:42] ERREUR: SQLSTATE[42S22]: Column not found: 1054 Unknown column 't.id_transaction' in 'field list'
+[2025-03-10 14:23:32] Début de la suppression du reçu #56
+[2025-03-10 14:23:32] ERREUR: SQLSTATE[42S22]: Column not found: 1054 Unknown column 't.id_transaction' in 'field list'
+[2025-03-10 14:24:09] Début de la suppression du reçu #56
+[2025-03-10 14:24:09] ERREUR: SQLSTATE[42S22]: Column not found: 1054 Unknown column 't.id_transaction' in 'field list'
+[2025-03-10 14:24:15] Début de la suppression du reçu #56
+[2025-03-10 14:24:15] ERREUR: SQLSTATE[42S22]: Column not found: 1054 Unknown column 't.id_transaction' in 'field list'
+[2025-03-10 14:24:22] Début de la suppression du reçu #55
+[2025-03-10 14:24:22] ERREUR: SQLSTATE[42S22]: Column not found: 1054 Unknown column 't.id_transaction' in 'field list'
+[2025-03-10 14:26:11] Début de la suppression du reçu #56
+[2025-03-10 14:26:35] Début de la suppression du reçu #56
+[2025-03-10 14:26:38] Début de la suppression du reçu #56
+[2025-03-10 14:26:51] Début de la suppression du reçu #56
+[2025-03-10 14:27:13] Début de la suppression du reçu #56
+[2025-03-10 14:27:13] ERREUR: SQLSTATE[42S22]: Column not found: 1054 Unknown column 't.id_transaction' in 'field list'
+[2025-03-10 14:27:19] Début de la suppression du reçu #56
+[2025-03-10 14:27:19] ERREUR: SQLSTATE[42S22]: Column not found: 1054 Unknown column 't.id_transaction' in 'field list'
+[2025-03-10 14:27:44] Début de la suppression du reçu #56
+[2025-03-10 14:29:21] Début de la suppression du reçu #56
+[2025-03-10 14:29:35] Début de la suppression du reçu #56
+[2025-03-10 14:29:35] Solde actuel: 34500000, Nouveau solde après annulation: 35500000
+[2025-03-10 14:31:56] Début de la suppression du reçu #56
+[2025-03-10 14:31:56] Solde actuel: 34500000, Nouveau solde après annulation: 35500000
+[2025-03-10 14:31:56] Transaction d'annulation créée, nouveau solde: 35500000
+[2025-03-10 14:31:56] Montant du ticket #280 mis à jour (-1000000.00 FCFA)
+[2025-03-10 14:31:56] Reçu #202503104878 supprimé
+[2025-03-10 14:32:01] Début de la suppression du reçu #55
+[2025-03-10 14:32:25] Début de la suppression du reçu #55
+[2025-03-10 14:32:25] ERREUR: Impossible de supprimer le paiement : le ticket est déjà validé
+[2025-03-10 14:32:29] Début de la suppression du reçu #55
+[2025-03-10 14:32:29] ERREUR: Impossible de supprimer le paiement : le ticket est déjà validé
+[2025-03-10 14:32:49] Début de la suppression du reçu #55
+[2025-03-10 14:32:49] ERREUR: Impossible de supprimer le paiement : le ticket est déjà validé
+[2025-03-10 14:32:52] Début de la suppression du reçu #55
+[2025-03-10 14:32:52] ERREUR: Impossible de supprimer le paiement : le ticket est déjà validé
+[2025-03-10 14:32:58] Début de la suppression du reçu #55
+[2025-03-10 14:32:58] ERREUR: Impossible de supprimer le paiement : le ticket est déjà validé
+[2025-03-10 14:33:18] Début de la suppression du reçu #55
+[2025-03-10 14:33:52] Début de la suppression du reçu #55
+[2025-03-10 14:33:52] Solde actuel: 35500000, Nouveau solde après annulation: 35600000
+[2025-03-10 14:33:52] Transaction d'annulation créée, nouveau solde: 35600000
+[2025-03-10 14:33:52] Montant du ticket #288 mis à jour (-100000.00 FCFA)
+[2025-03-10 14:33:52] Reçu #202503102651 supprimé
+[2025-03-10 14:33:59] Début de la suppression du reçu #54
+[2025-03-10 14:33:59] Solde actuel: 35600000, Nouveau solde après annulation: 35800000
+[2025-03-10 14:33:59] Transaction d'annulation créée, nouveau solde: 35800000
+[2025-03-10 14:33:59] Montant du ticket #280 mis à jour (-200000.00 FCFA)
+[2025-03-10 14:33:59] Reçu #202503097476 supprimé
+[2025-03-10 15:14:33] Début de l'enregistrement du paiement
+[2025-03-10 15:14:33] ERREUR: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'solde' in 'field list'
+[2025-03-10 15:14:33] Trace: #0 C:\laragon\www\angenor\pages\save_paiement.php(35): PDOStatement->execute()
+#1 {main}
+[2025-03-10 15:22:22] Début de l'enregistrement du paiement
+[2025-03-10 15:22:22] Solde actuel avant paiement: 32000000
+[2025-03-10 15:22:22] Nouveau solde calculé: 31800000
+[2025-03-10 15:22:22] Ticket #288 mis à jour avec montant_payer=200384, montant_reste=183616
+[2025-03-10 15:22:22] Transaction de paiement créée #142, nouveau solde: 31800000
+[2025-03-10 15:22:22] Paiement enregistré avec succès
+[2025-03-10 15:24:11] Début de la suppression du reçu #57
+[2025-03-10 15:24:11] Solde actuel: 32000000, Nouveau solde après annulation: 32200000
+[2025-03-10 15:24:11] Transaction d'annulation créée, nouveau solde: 32200000
+[2025-03-10 15:24:11] Montant du ticket #288 mis à jour (-200000.00 FCFA)
+[2025-03-10 15:24:11] Reçu #202503109798 supprimé

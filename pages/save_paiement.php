@@ -1,15 +1,19 @@
 <?php
 require_once '../inc/functions/connexion.php';
 require_once '../inc/functions/log_functions.php';
+session_start();
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['save_paiement'])) {
     try {
         $conn->beginTransaction();
+        writeLog("Début de l'enregistrement du paiement");
 
-        // Log des données reçues
-        writeLog("Données reçues : " . print_r($_POST, true));
+        // Récupérer les informations du caissier
+        $stmt = $conn->prepare("SELECT CONCAT(nom, ' ', prenoms) as nom_caissier FROM utilisateurs WHERE id = ?");
+        $stmt->execute([$_SESSION['user_id']]);
+        $caissier = $stmt->fetch(PDO::FETCH_ASSOC);
 
-        // Vérification des données requises
+        // Validation des données
         if (!isset($_POST['montant']) || empty($_POST['montant'])) {
             throw new Exception("Le montant est requis");
         }
@@ -18,22 +22,30 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['save_paiement'])) {
         }
 
         $montant = floatval($_POST['montant']);
-        if ($montant <= 0) {
-            throw new Exception("Le montant doit être supérieur à 0");
-        }
-
         $source_paiement = $_POST['source_paiement'];
         $type = $_POST['type'];
         $status = $_POST['status'];
 
-        // Log des variables
-        writeLog("Montant : " . $montant);
-        writeLog("Source : " . $source_paiement);
-        writeLog("Type : " . $type);
-        writeLog("Status : " . $status);
+        if ($montant <= 0) {
+            throw new Exception("Le montant doit être supérieur à 0");
+        }
 
-        // Générer un numéro de reçu unique
-        $numero_recu = date('Ymd') . sprintf("%04d", rand(1, 9999));
+        // Récupérer le solde actuel
+        $stmt = $conn->prepare("SELECT COALESCE(MAX(solde), 0) as solde FROM transactions");
+        $stmt->execute();
+        $result = $stmt->fetch(PDO::FETCH_ASSOC);
+        $solde_actuel = floatval($result['solde']);
+        
+        writeLog("Solde actuel avant paiement: " . $solde_actuel);
+
+        // Vérifier si le solde est suffisant
+        if ($solde_actuel < $montant) {
+            throw new Exception("Solde insuffisant pour effectuer ce paiement. Solde actuel : " . number_format($solde_actuel, 0, ',', ' ') . " FCFA");
+        }
+
+        // Calculer le nouveau solde
+        $nouveau_solde = $solde_actuel - $montant;
+        writeLog("Nouveau solde calculé: " . $nouveau_solde);
 
         // Variables pour le reçu
         $id_document = null;
@@ -45,6 +57,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['save_paiement'])) {
         $matricule_vehicule = null;
         $montant_total = 0;
         $montant_precedent = 0;
+        $type_document = '';
 
         // Vérifier si c'est un ticket ou un bordereau
         if (isset($_POST['id_ticket'])) {
@@ -58,7 +71,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['save_paiement'])) {
                     a.contact as agent_contact,
                     a.id_agent,
                     us.nom_usine,
-                    v.matricule_vehicule
+                    v.matricule_vehicule,
+                    COALESCE(t.montant_payer, 0) as montant_payer
                 FROM tickets t
                 LEFT JOIN agents a ON t.id_agent = a.id_agent
                 LEFT JOIN usines us ON t.id_usine = us.id_usine
@@ -79,15 +93,21 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['save_paiement'])) {
             $montant_precedent = $ticket_info['montant_payer'];
             $type_document = 'ticket';
 
-            // Mettre à jour le ticket
-            $stmt = $conn->prepare("UPDATE tickets SET montant_payer = COALESCE(montant_payer, 0) + ?, date_paie = NOW() WHERE id_ticket = ?");
-            $stmt->execute([$montant, $id_ticket]);
+            // Calculer les nouveaux montants
+            $nouveau_montant_payer = $montant_precedent + $montant;
+            $nouveau_montant_reste = $montant_total - $nouveau_montant_payer;
 
-            if ($source_paiement === 'transactions') {
-                $motifs = "Paiement du ticket " . $numero_ticket;
-                $stmt = $conn->prepare("INSERT INTO transactions (type_transaction, montant, date_transaction, motifs, id_utilisateur) VALUES ('paiement', ?, NOW(), ?, ?)");
-                $stmt->execute([$montant, $motifs, $_SESSION['user_id']]);
-            }
+            // Mettre à jour le ticket
+            $stmt = $conn->prepare("
+                UPDATE tickets 
+                SET montant_payer = ?,
+                    montant_reste = ?,
+                    date_paie = NOW() 
+                WHERE id_ticket = ?
+            ");
+            $stmt->execute([$nouveau_montant_payer, $nouveau_montant_reste, $id_ticket]);
+            writeLog("Ticket #$id_ticket mis à jour avec montant_payer=$nouveau_montant_payer, montant_reste=$nouveau_montant_reste");
+
         } else {
             $id_bordereau = $_POST['id_bordereau'];
             $numero_bordereau = $_POST['numero_bordereau'];
@@ -97,7 +117,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['save_paiement'])) {
                 SELECT b.*, 
                     CONCAT(a.nom, ' ', a.prenom) as agent_nom,
                     a.contact as agent_contact,
-                    a.id_agent
+                    a.id_agent,
+                    COALESCE(b.montant_payer, 0) as montant_payer
                 FROM bordereau b
                 LEFT JOIN agents a ON b.id_agent = a.id_agent
                 WHERE b.id_bordereau = ?
@@ -114,90 +135,93 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['save_paiement'])) {
             $montant_precedent = $bordereau_info['montant_payer'];
             $type_document = 'bordereau';
 
-            // Mettre à jour le bordereau
-            $stmt = $conn->prepare("UPDATE bordereau SET montant_payer = COALESCE(montant_payer, 0) + ?, date_paie = NOW() WHERE id_bordereau = ?");
-            $stmt->execute([$montant, $id_bordereau]);
+            // Calculer les nouveaux montants
+            $nouveau_montant_payer = $montant_precedent + $montant;
+            $nouveau_montant_reste = $montant_total - $nouveau_montant_payer;
 
-            if ($source_paiement === 'transactions') {
-                $motifs = "Paiement du bordereau " . $numero_bordereau;
-                $stmt = $conn->prepare("INSERT INTO transactions (type_transaction, montant, date_transaction, motifs, id_utilisateur) VALUES ('paiement', ?, NOW(), ?, ?)");
-                $stmt->execute([$montant, $motifs, $_SESSION['user_id']]);
-            }
+            // Mettre à jour le bordereau
+            $stmt = $conn->prepare("
+                UPDATE bordereau 
+                SET montant_payer = ?,
+                    montant_reste = ?,
+                    date_paie = NOW() 
+                WHERE id_bordereau = ?
+            ");
+            $stmt->execute([$nouveau_montant_payer, $nouveau_montant_reste, $id_bordereau]);
+            writeLog("Bordereau #$id_bordereau mis à jour avec montant_payer=$nouveau_montant_payer, montant_reste=$nouveau_montant_reste");
         }
 
-        // Récupérer le nom du caissier
-        $stmt = $conn->prepare("SELECT CONCAT(nom, ' ', prenoms) as nom_caissier FROM utilisateurs WHERE id = ?");
-        $stmt->execute([$_SESSION['user_id']]);
-        $caissier = $stmt->fetch(PDO::FETCH_ASSOC);
+        // Créer la transaction
+        $motifs = "Paiement du " . $type_document . " " . $numero_document;
+        $stmt = $conn->prepare("
+            INSERT INTO transactions (
+                type_transaction, 
+                montant, 
+                date_transaction, 
+                motifs, 
+                id_utilisateur,
+                solde
+            ) VALUES (
+                'paiement',
+                :montant,
+                NOW(),
+                :motifs,
+                :id_utilisateur,
+                :solde
+            )
+        ");
+        
+        $stmt->bindValue(':montant', $montant, PDO::PARAM_STR);
+        $stmt->bindValue(':motifs', $motifs, PDO::PARAM_STR);
+        $stmt->bindValue(':id_utilisateur', $_SESSION['user_id'], PDO::PARAM_INT);
+        $stmt->bindValue(':solde', $nouveau_solde, PDO::PARAM_STR);
+        $stmt->execute();
+        $id_transaction = $conn->lastInsertId();
+        writeLog("Transaction de paiement créée #$id_transaction, nouveau solde: $nouveau_solde");
 
-        // Enregistrer le reçu
+        // Générer un numéro de reçu unique
+        $numero_recu = date('Ymd') . sprintf("%04d", rand(1, 9999));
+
+        // Créer le reçu
         $stmt = $conn->prepare("
             INSERT INTO recus_paiements (
                 numero_recu, type_document, id_document, numero_document,
                 montant_total, montant_paye, montant_precedent, reste_a_payer,
                 id_agent, nom_agent, contact_agent, nom_usine, matricule_vehicule,
-                id_caissier, nom_caissier, source_paiement, date_creation
+                id_caissier, nom_caissier, source_paiement, id_transaction
             ) VALUES (
                 ?, ?, ?, ?, 
                 ?, ?, ?, ?,
                 ?, ?, ?, ?, ?,
-                ?, ?, ?, NOW()
+                ?, ?, ?, ?
             )
         ");
         
-        // S'assurer que montant_precedent n'est pas null
-        $montant_precedent = $montant_precedent ?? 0;
-        $reste_a_payer = $montant_total - ($montant_precedent + $montant);
-        
-        // Convertir les montants en décimal pour éviter les problèmes de dépassement
-        $montant_total = number_format($montant_total, 2, '.', '');
-        $montant = number_format($montant, 2, '.', '');
-        $montant_precedent = number_format($montant_precedent, 2, '.', '');
-        $reste_a_payer = number_format($reste_a_payer, 2, '.', '');
-        
-        // Log des montants avant insertion
-        writeLog("Montants avant insertion:");
-        writeLog("Total: " . $montant_total);
-        writeLog("Payé: " . $montant);
-        writeLog("Précédent: " . $montant_precedent);
-        writeLog("Reste: " . $reste_a_payer);
-        
         $stmt->execute([
             $numero_recu, $type_document, $id_document, $numero_document,
-            $montant_total, $montant, $montant_precedent, $reste_a_payer,
+            $montant_total, $montant, $montant_precedent, $nouveau_montant_reste,
             $id_agent, $nom_agent, $contact_agent, $nom_usine, $matricule_vehicule,
-            $_SESSION['user_id'], $caissier['nom_caissier'], $source_paiement
+            $_SESSION['user_id'], $caissier['nom_caissier'], $source_paiement, $id_transaction
         ]);
 
-        // Si tout est OK, on valide la transaction
         $conn->commit();
-        writeLog("Transaction validée avec succès");
-        $_SESSION['success_message'] = "Paiement effectué avec succès";
+        writeLog("Paiement enregistré avec succès");
+        $_SESSION['success_message'] = "Paiement effectué avec succès. Nouveau solde : " . number_format($nouveau_solde, 0, ',', ' ') . " FCFA";
         
-        // Stocker le montant et le numéro de reçu dans la session
-        $_SESSION['montant_paiement'] = $montant;
-        $_SESSION['numero_recu'] = $numero_recu;
-        
-        // Rediriger vers le reçu de paiement en PDF
-        if (isset($_POST['id_ticket'])) {
-            header("Location: recu_paiement_pdf.php?id_ticket=" . $_POST['id_ticket']);
-        } else {
-            header("Location: recu_paiement_pdf.php?id_bordereau=" . $_POST['id_bordereau']);
-        }
+        // Redirection vers le reçu
+        header("Location: recu_paiement_pdf.php?id_recu=" . $conn->lastInsertId());
         exit;
+
     } catch (Exception $e) {
         $conn->rollBack();
-        writeLog("Erreur finale : " . $e->getMessage());
-        writeLog("Trace : " . $e->getTraceAsString());
+        writeLog("ERREUR: " . $e->getMessage());
+        writeLog("Trace: " . $e->getTraceAsString());
         $_SESSION['error_message'] = "Erreur lors du paiement : " . $e->getMessage();
+        header("Location: paiements.php?type=" . urlencode($type) . "&status=" . urlencode($status));
+        exit;
     }
-    
-    // Rediriger vers la page des paiements avec les mêmes filtres
-    header("Location: paiements.php?type=" . urlencode($type) . "&status=" . urlencode($status));
-    exit;
 }
 
-// Si on arrive ici, c'est qu'il y a eu une erreur
 $_SESSION['error_message'] = "Erreur : requête invalide";
 header("Location: paiements.php");
 exit;
