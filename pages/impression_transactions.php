@@ -142,7 +142,7 @@ if (isset($_POST['date_debut_transactions']) && isset($_POST['date_fin_transacti
         $total_entrees = 0;
         $total_sorties = 0;
         foreach ($transactions as $transaction) {
-            if ($transaction['type_transaction'] == 'Approvisionnement') {
+            if ($transaction['type_transaction'] == 'approvisionnement') {
                 $nb_approvisionnements++;
                 $total_entrees += $transaction['montant'];
             } else {
