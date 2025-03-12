@@ -124,6 +124,7 @@ $recus = $stmt->fetchAll(PDO::FETCH_ASSOC);
 <script>
 $(document).ready(function() {
     // Vérification lors de la saisie
+    /*
     $('input[name="numero_ticket"]').on('change', function() {
         var numero_ticket = $(this).val().trim();
         if (numero_ticket) {
@@ -142,7 +143,7 @@ $(document).ready(function() {
             });
         }
     });
-
+    */
     // Focus sur le champ après fermeture du modal
     $('#ticketExistModal').on('hidden.bs.modal', function() {
         $('input[name="numero_ticket"]').focus();
@@ -334,16 +335,24 @@ label {
                                                 <td><?= number_format($recu['reste_a_payer'], 0, ',', ' ') ?> FCFA</td>
                                                 <td><?= htmlspecialchars($recu['nom_caissier']) ?></td>
                                                 <td>
-                                                    <?php if ($recu['type_document'] === 'ticket') : ?>
-                                                        <a href="recu_paiement_pdf.php?id_ticket=<?= $recu['id_document'] ?>&reimprimer=1" class="btn btn-info btn-sm" target="_blank">
-                                                            <i class="fas fa-print"></i> Imprimer
-                                                        </a>
-                                                    <?php else : ?>
-                                                        <a href="recu_paiement_pdf.php?id_bordereau=<?= $recu['id_document'] ?>&reimprimer=1" class="btn btn-info btn-sm" target="_blank">
-                                                            <i class="fas fa-print"></i> Imprimer
-                                                        </a>
-                                                    <?php endif; ?>
-                                                </td>
+    <?php if ($recu['type_document'] === 'ticket') : ?>
+        <a href="recu_paiement_pdf.php?id_ticket=<?= htmlspecialchars($recu['id_document']) ?>&reimprimer=1" 
+           class="btn btn-info btn-sm" target="_blank">
+            <i class="fas fa-print"></i> Imprimer
+        </a>
+    <?php else : ?>
+        <a href="recu_paiement_pdf.php?id_bordereau=<?= htmlspecialchars($recu['id_document']) ?>&reimprimer=1" 
+           class="btn btn-info btn-sm" target="_blank">
+            <i class="fas fa-print"></i> Imprimer
+        </a>
+    <?php endif; ?>
+
+    <!-- Bouton de suppression -->
+    <button type="button" class="btn btn-danger btn-sm" data-toggle="modal" 
+        data-target="#supprimer_paiement_<?= htmlspecialchars($recu['id_recu']) ?>">
+        <i class="fas fa-trash"></i> Supprimer le paiement
+    </button>
+</td>
                                             </tr>
                                         <?php endforeach; ?>
                                     <?php else : ?>
@@ -469,6 +478,8 @@ function showSearchModal(modalId) {
 <?php endif; ?>
 
 // Validation du formulaire
+
+/*
 $(document).ready(function() {
     $('form').on('submit', function(e) {
         var numeroTicket = $('#numero_ticket').val();
@@ -488,6 +499,7 @@ $(document).ready(function() {
         });
     });
 });
+*/
 </script>
 
 <!-- Modal pour ticket existant -->
@@ -512,3 +524,44 @@ $(document).ready(function() {
         </div>
     </div>
 </div>
+
+<!-- Modals de suppression -->
+<?php foreach ($recus as $recu) : ?>
+    <div class="modal fade" id="supprimer_paiement_<?= htmlspecialchars($recu['id_recu']) ?>">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header bg-danger">
+                    <h4 class="modal-title">Confirmer l'annulation</h4>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <p>Êtes-vous sûr de vouloir annuler ce paiement ?</p>
+                    <p><strong>N° Reçu :</strong> <?= htmlspecialchars($recu['numero_recu']) ?></p>
+                    <p><strong>Montant du paiement :</strong> <?= number_format($recu['montant_paye'], 0, ',', ' ') ?> FCFA</p>
+                    <p>Cette action va :</p>
+                    <ul>
+                        <li>Supprimer le reçu de paiement</li>
+                        <li>Créer une transaction d'annulation</li>
+                        <li>Mettre à jour le montant payé du <?= htmlspecialchars($recu['type_document']) ?></li>
+                    </ul>
+                    <div class="alert alert-warning">
+                        <i class="fas fa-exclamation-triangle"></i> Cette action est irréversible !
+                    </div>
+                </div>
+                <div class="modal-footer justify-content-between">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">
+                        <i class="fas fa-times"></i> Fermer
+                    </button>
+                    <form action="delete_recus_paiement.php" method="POST" style="display: inline;">
+                        <input type="hidden" name="id_recu" value="<?= htmlspecialchars($recu['id_recu']) ?>">
+                        <button type="submit" class="btn btn-danger">
+                            <i class="fas fa-check"></i> Confirmer l'annulation
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+<?php endforeach; ?>

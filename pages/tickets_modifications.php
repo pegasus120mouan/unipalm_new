@@ -278,7 +278,7 @@ label {
                   <td><?= $ticket['montant_paie'] ?></td>
                   <td>
                     <button 
-                        class="btn btn-info btn-block" 
+                        class="btn btn-dark btn-block" 
                         data-toggle="modal" 
                         data-target="#editModalUsine<?= $ticket['id_ticket'] ?>" 
                         <?= $ticket['date_paie'] !== null ? 'disabled' : '' ?>>
@@ -358,7 +358,7 @@ label {
                     <!-- Fin Modal pour modifier le chef de mission -->
                     <td>
                         <button 
-                            class="btn btn-info btn-block" 
+                            class="btn btn-secondary btn-block" 
                             data-toggle="modal" 
                             data-target="#editModalVehicule<?= $ticket['id_ticket'] ?>" 
                             <?= $ticket['date_paie'] !== null ? 'disabled' : '' ?>>
@@ -398,7 +398,7 @@ label {
 
                     <td>
                         <button 
-                            class="btn btn-info btn-block" 
+                            class="btn btn-success btn-block" 
                             data-toggle="modal" 
                             data-target="#editModalPrixUnitaire<?= $ticket['id_ticket'] ?>">
                             Changer le prix unitaire

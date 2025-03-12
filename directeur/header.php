@@ -4,6 +4,7 @@ header('Content-Type: text/html; charset=UTF-8');
 setlocale(LC_TIME, 'fr_FR.utf8', 'fra');  // Force la configuration en français
 
 require_once '../inc/functions/connexion.php';
+require_once '../inc/functions/get_solde.php';
 
 // Nombre de ticket Total
 $sql_ticket_total = "SELECT COUNT(id_ticket) AS nb_ticket_tt FROM tickets";
@@ -11,13 +12,11 @@ $requete_tt = $conn->prepare($sql_ticket_total);
 $requete_tt->execute();
 $ticket_total = $requete_tt->fetch(PDO::FETCH_ASSOC);
 
-
 // Nombre de ticket en attente
 $sql_ticket_nv = "SELECT COUNT(id_ticket) AS nb_ticket_nv FROM tickets WHERE  date_validation_boss IS NULL";
 $requete_tnv = $conn->prepare($sql_ticket_nv);
 $requete_tnv->execute();
 $ticket_non_valide = $requete_tnv->fetch(PDO::FETCH_ASSOC);
-
 
 // Nombre de tickets validés
 $sql_ticket_v = "SELECT COUNT(id_ticket) AS nb_ticket_nv FROM tickets
@@ -26,28 +25,20 @@ $requete_tv = $conn->prepare($sql_ticket_v);
 $requete_tv->execute();
 $ticket_valide = $requete_tv->fetch(PDO::FETCH_ASSOC);
 
-
 // Nombre de colis tickés payes
 $sql_ticket_paye = "SELECT COUNT(id_ticket) AS nb_ticket_paye FROM tickets WHERE date_paie IS NULL AND date_validation_boss IS NOT NULL";
 $requete_tpaye = $conn->prepare($sql_ticket_paye);
 $requete_tpaye->execute();
 $ticket_paye = $requete_tpaye->fetch(PDO::FETCH_ASSOC);
 
-
-
-
+$solde_caisse = getSoldeCaisse();
 
 if (!isset($_SESSION['user_id'])) {
     // Redirigez vers la page de connexion si l'utilisateur n'est pas connecté
     header("Location: ../index.php");
     exit();
-  }
+}
 
-
-//$stmt = $conn->prepare("SELECT * FROM users");
-//$stmt->execute();
-//$users = $stmt->fetchAll();
-//foreach($users as $user)
 ?>
 
 <!DOCTYPE html>

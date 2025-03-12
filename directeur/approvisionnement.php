@@ -87,7 +87,7 @@ label {
                 </div>
                 <span class="progress-description">
                     <h1 style="text-align: center; font-size: 70px;">
-                        <strong><?php echo number_format($somme_caisse['solde_caisse'], 0, ',', ' '); ?> FCFA</strong>
+                    <strong><?php echo number_format($somme_caisse['solde_caisse']?? 0, 0, ',', ' '); ?> FCFA</strong>
                     </h1>
                 </span>
             </div>
@@ -191,32 +191,51 @@ label {
                     </div>
                 <?php endif; ?>
                 
-                <form class="forms-sample" method="post" action="save_transaction.php">
+                <form class="forms-sample" method="post" action="save_approvisionnement.php">
+                    <input type="hidden" name="save_approvisionnement" value="1">
                     <div class="form-group">
                         <label>Type de Transaction</label>
-                        <select class="form-control" name="type_transaction" required>
+                        <select class="form-control" name="type_transaction" required disabled>
                             <option value="approvisionnement">Entrée de caisse</option>
                         </select>
                     </div>
                     <div class="form-group">
-    <label>Montant</label>
-    <input 
-        type="text" 
-        class="form-control montant-input" 
-        placeholder="Montant (ex: 10 000)" 
-        required
-    >
-    <input type="hidden" name="montant" value="">
-</div>
-
-
-                    <button type="submit" class="btn btn-primary" name="save_transaction">Enregistrer</button>
-                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Annuler</button>
+                        <label for="montant">Montant (FCFA) <span class="text-danger">*</span></label>
+                        <input type="text" class="form-control" id="montant" name="montant" placeholder="Saisir le montant" required>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Fermer</button>
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-save"></i> Enregistrer
+                        </button>
+                    </div>
                 </form>
             </div>
         </div>
     </div>
 </div>
+
+<script>
+// Formatage des nombres avec séparateurs de milliers
+document.getElementById('montant').addEventListener('input', function(e) {
+    // Enlever tous les espaces et caractères non numériques
+    let value = this.value.replace(/\s/g, '').replace(/[^\d]/g, '');
+    
+    // Formatter le nombre avec des espaces comme séparateurs de milliers
+    if (value) {
+        value = parseInt(value, 10).toLocaleString('fr-FR').replace(/,/g, ' ');
+    }
+    
+    // Mettre à jour la valeur affichée
+    this.value = value;
+});
+
+// Avant la soumission du formulaire, nettoyer le format pour n'envoyer que les chiffres
+document.querySelector('form').addEventListener('submit', function(e) {
+    let montantInput = document.getElementById('montant');
+    montantInput.value = montantInput.value.replace(/\s/g, '');
+});
+</script>
 
 <!-- Required scripts -->
 <script src="../../plugins/jquery/jquery.min.js"></script>
@@ -261,22 +280,6 @@ $(function () {
         "info": true,
         "autoWidth": false,
         "responsive": true,
-    });
-});
-</script>
-
-<script>
-// Fonction de formatage : insère un espace tous les 3 chiffres
-function formatNumberWithSpaces(number) {
-    return number.replace(/\B(?=(\d{3})+(?!\d))/g, ' ');
-}
-
-// Appliquer la fonction sur chaque input avec la classe montant-input
-document.querySelectorAll('.montant-input').forEach(function(input) {
-    input.addEventListener('input', function() {
-        let rawValue = input.value.replace(/\s+/g, '').replace(/[^0-9]/g, '');  // Nettoyage
-        input.nextElementSibling.value = rawValue;  // Met à jour l'input caché (hidden)
-        input.value = formatNumberWithSpaces(rawValue);  // Affiche formaté
     });
 });
 </script>

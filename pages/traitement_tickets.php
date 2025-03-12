@@ -1,4 +1,5 @@
 <?php
+
 require_once '../inc/functions/connexion.php';
 require_once '../inc/functions/requete/requete_tickets.php';
 require_once '../inc/functions/requete/requete_prix_unitaires.php';
@@ -8,7 +9,7 @@ require_once '../inc/functions/requete/requete_chef_equipes.php';
 require_once '../inc/functions/requete/requete_vehicules.php';
 require_once '../inc/functions/requete/requete_agents.php';
 
-session_start();
+//session_start();
 
 // Traitement de la suppression
 if (isset($_GET['action']) && $_GET['action'] === 'delete' && isset($_GET['id'])) {
@@ -58,13 +59,13 @@ if (isset($_GET['action']) && $_GET['action'] === 'delete' && isset($_GET['id'])
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
     // Vérifiez si l'action concerne l'insertion ou autre chose
-    if (isset($_POST["usine"]) && isset($_POST["date_ticket"])) {
+    if (isset($_POST["id_usine"]) && isset($_POST["date_ticket"])) {
         // Traitement de l'insertion du ticket
-        $id_usine = $_POST["usine"] ?? null;
+        $id_usine = $_POST["id_usine"] ?? null;
         $date_ticket = $_POST["date_ticket"] ?? null;
         $id_agent = $_POST["id_agent"] ?? null;
         $numero_ticket = $_POST["numero_ticket"] ?? null;
-        $vehicule_id = $_POST["vehicule"] ?? null;
+        $vehicule_id = $_POST["vehicule_id"] ?? null;
         $poids = $_POST["poids"] ?? null;
         $id_utilisateur = $_SESSION['user_id'] ?? null;
 
@@ -162,8 +163,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     }
 
     // Modification de l'usine
-    if (isset($_POST["usine"]) && isset($_POST["id_ticket"]) && !isset($_POST["date_ticket"])) {
-        $id_usine = $_POST["usine"];
+    if (isset($_POST["id_usine"]) && isset($_POST["id_ticket"]) && !isset($_POST["date_ticket"])) {
+        $id_usine = $_POST["id_usine"];
         $id_ticket = $_POST["id_ticket"];
 
         try {
@@ -194,8 +195,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     }
 
     // Modification du véhicule
-    if (isset($_POST["vehicule"]) && isset($_POST["id_ticket"])) {
-        $id_vehicule = $_POST["vehicule"];
+    if (isset($_POST["vehicule_id"]) && isset($_POST["id_ticket"])) {
+        $id_vehicule = $_POST["vehicule_id"];
         $id_ticket = $_POST["id_ticket"];
 
         try {

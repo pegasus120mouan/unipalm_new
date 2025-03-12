@@ -36,6 +36,8 @@ $sql_vehicules = "SELECT vehicules_id, matricule_vehicule FROM vehicules ORDER B
 $stmt_vehicules = $conn->query($sql_vehicules);
 $vehicules = $stmt_vehicules->fetchAll(PDO::FETCH_ASSOC);
 
+$solde_caisse = getSoldeCaisse();
+
 // Construction des conditions WHERE pour les bordereaux
 $where_bordereaux = [];
 $params_bordereaux = [];
@@ -310,7 +312,7 @@ label {
                 </div>
                 <span class="progress-description">
                     <h1 style="text-align: center; font-size: 70px;">
-                        <strong><?php echo number_format($somme_caisse['solde_caisse'] ?? 0, 0, ',', ' '); ?> FCFA</strong>
+                    <strong><?php echo number_format($somme_caisse['solde_caisse']?? 0, 0, ',', ' '); ?> FCFA</strong>
                     </h1>
                 </span>
             </div>

@@ -100,6 +100,10 @@ label {
         <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#add-transaction">
             <i class="fas fa-plus"></i> Effectuer un approvisionnement
         </button>
+
+        <button type="button" class="btn btn-danger" data-toggle="modal" data-target="#print-transaction">   
+            <i class="fas fa-print"></i> Imprimer la liste des transactions
+        </button>
     </div>
 </div>
 
@@ -201,11 +205,7 @@ label {
                     </div>
                     <div class="form-group">
                         <label for="montant">Montant (FCFA) <span class="text-danger">*</span></label>
-                        <input type="number" class="form-control" id="montant" name="montant" required min="1" step="1">
-                    </div>
-                    <div class="form-group">
-                        <label for="motifs">Motif <span class="text-danger">*</span></label>
-                        <textarea class="form-control" id="motifs" name="motifs" rows="3" required></textarea>
+                        <input type="text" class="form-control" id="montant" name="montant" placeholder="Saisir le montant" required>
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-dismiss="modal">Fermer</button>
@@ -218,6 +218,161 @@ label {
         </div>
     </div>
 </div>
+
+<div class="modal fade" id="print-transaction">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header bg-danger text-white">
+                <h4 class="modal-title">
+                    <i class="fas fa-print"></i> Imprimer la liste des transactions
+                </h4>
+                <button type="button" class="close text-white" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <?php if (isset($_SESSION['error_message'])): ?>
+                    <div class="alert alert-danger">
+                        <i class="fas fa-exclamation-circle"></i>
+                        <?= $_SESSION['error_message'] ?>
+                        <?php unset($_SESSION['error_message']); ?>
+                    </div>
+                <?php endif; ?>
+                
+                <form class="forms-sample" method="post" action="impression_transactions.php">
+                    <div class="form-group">
+                        <label for="date_debut" class="font-weight-bold mb-2">Sélectionner la date de début</label>
+                        <div class="position-relative">
+                            <input type="date" 
+                                   class="form-control shadow-sm" 
+                                   id="date_debut" 
+                                   name="date_debut_transactions"
+                                   placeholder="Date de début"
+                                   required>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="date_fin" class="font-weight-bold mb-2">Sélectionner la date de fin</label>
+                        <div class="position-relative">
+                            <input type="date" 
+                                   class="form-control shadow-sm" 
+                                   id="date_fin" 
+                                   name="date_fin_transactions"
+                                   placeholder="Date de fin"
+                                   required>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">
+                            <i class="fas fa-times"></i> Fermer
+                        </button>
+                        <button type="submit" class="btn btn-danger">
+                            <i class="fas fa-print"></i> Imprimer
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+/* Styles pour les champs de saisie */
+.form-control {
+    padding: 0.375rem 0.75rem;
+    font-size: 1rem;
+    line-height: 1.5;
+    color: #495057;
+    background-color: #fff;
+    border: 1px solid #ced4da;
+    border-radius: 0.25rem;
+    transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+}
+
+.form-control:focus {
+    color: #495057;
+    background-color: #fff;
+    border-color: #80bdff;
+    outline: 0;
+    box-shadow: 0 0 0 0.2rem rgba(0,123,255,.25);
+}
+
+.form-control::placeholder {
+    color: #6c757d;
+    opacity: 1;
+}
+
+/* Styles pour les labels */
+.form-group label {
+    font-weight: bold;
+    margin-bottom: 0.5rem;
+    display: block;
+}
+
+/* Effets d'ombre */
+.shadow-sm {
+    box-shadow: 0 .125rem .25rem rgba(0,0,0,.075)!important;
+}
+
+/* Espacement */
+.form-group {
+    margin-bottom: 1rem;
+}
+
+.mb-2 {
+    margin-bottom: 0.5rem;
+}
+</style>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Validation des dates pour l'impression
+    document.querySelector('form[action="impression_transactions.php"]').addEventListener('submit', function(e) {
+        const dateDebut = document.getElementById('date_debut').value;
+        const dateFin = document.getElementById('date_fin').value;
+
+        if (!dateDebut || !dateFin) {
+            e.preventDefault();
+            alert('Veuillez sélectionner les dates de début et de fin');
+            return;
+        }
+
+        if (dateDebut > dateFin) {
+            e.preventDefault();
+            alert('La date de début doit être antérieure à la date de fin');
+            return;
+        }
+    });
+
+    // Réinitialisation du formulaire à la fermeture du modal
+    $('#print-transaction').on('hidden.bs.modal', function () {
+        document.getElementById('date_debut').value = '';
+        document.getElementById('date_fin').value = '';
+    });
+});
+</script>
+
+<script>
+// Formatage des nombres avec séparateurs de milliers
+document.getElementById('montant').addEventListener('input', function(e) {
+    // Enlever tous les espaces et caractères non numériques
+    let value = this.value.replace(/\s/g, '').replace(/[^\d]/g, '');
+    
+    // Formatter le nombre avec des espaces comme séparateurs de milliers
+    if (value) {
+        value = parseInt(value, 10).toLocaleString('fr-FR').replace(/,/g, ' ');
+    }
+    
+    // Mettre à jour la valeur affichée
+    this.value = value;
+});
+
+// Avant la soumission du formulaire, nettoyer le format pour n'envoyer que les chiffres
+document.querySelector('form').addEventListener('submit', function(e) {
+    let montantInput = document.getElementById('montant');
+    montantInput.value = montantInput.value.replace(/\s/g, '');
+});
+</script>
 
 <!-- Required scripts -->
 <script src="../../plugins/jquery/jquery.min.js"></script>
@@ -262,22 +417,6 @@ $(function () {
         "info": true,
         "autoWidth": false,
         "responsive": true,
-    });
-});
-</script>
-
-<script>
-// Fonction de formatage : insère un espace tous les 3 chiffres
-function formatNumberWithSpaces(number) {
-    return number.replace(/\B(?=(\d{3})+(?!\d))/g, ' ');
-}
-
-// Appliquer la fonction sur chaque input avec la classe montant-input
-document.querySelectorAll('.montant-input').forEach(function(input) {
-    input.addEventListener('input', function() {
-        let rawValue = input.value.replace(/\s+/g, '').replace(/[^0-9]/g, '');  // Nettoyage
-        input.nextElementSibling.value = rawValue;  // Met à jour l'input caché (hidden)
-        input.value = formatNumberWithSpaces(rawValue);  // Affiche formaté
     });
 });
 </script>

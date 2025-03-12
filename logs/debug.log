@@ -3468,3 +3468,64 @@
 [2025-03-10 15:24:11] Transaction d'annulation créée, nouveau solde: 32200000
 [2025-03-10 15:24:11] Montant du ticket #288 mis à jour (-200000.00 FCFA)
 [2025-03-10 15:24:11] Reçu #202503109798 supprimé
+[2025-03-12 10:20:32] Début de l'enregistrement de l'approvisionnement
+[2025-03-12 10:20:32] ERREUR: Le motif est requis
+[2025-03-12 10:20:32] Trace: #0 {main}
+[2025-03-12 10:21:07] Début de l'enregistrement de l'approvisionnement
+[2025-03-12 10:21:07] Montant reçu: 10000000
+[2025-03-12 10:21:07] Solde actuel avant approvisionnement: 192459160
+[2025-03-12 10:21:07] Nouveau solde calculé: 202459160
+[2025-03-12 10:21:07] ERREUR: SQLSTATE[HY093]: Invalid parameter number: number of bound variables does not match number of tokens
+[2025-03-12 10:21:07] Trace: #0 C:\laragon\www\angenor\pages\save_approvisionnement.php(59): PDOStatement->execute()
+#1 {main}
+[2025-03-12 10:21:20] Début de l'enregistrement de l'approvisionnement
+[2025-03-12 10:21:20] Montant reçu: 10000000
+[2025-03-12 10:21:20] Solde actuel avant approvisionnement: 192459160
+[2025-03-12 10:21:20] Nouveau solde calculé: 202459160
+[2025-03-12 10:21:20] ERREUR: SQLSTATE[HY093]: Invalid parameter number: number of bound variables does not match number of tokens
+[2025-03-12 10:21:20] Trace: #0 C:\laragon\www\angenor\pages\save_approvisionnement.php(59): PDOStatement->execute()
+#1 {main}
+[2025-03-12 10:21:31] Début de l'enregistrement de l'approvisionnement
+[2025-03-12 10:21:31] Montant reçu: 100000000
+[2025-03-12 10:21:31] Solde actuel avant approvisionnement: 192459160
+[2025-03-12 10:21:31] Nouveau solde calculé: 292459160
+[2025-03-12 10:21:31] ERREUR: SQLSTATE[HY093]: Invalid parameter number: number of bound variables does not match number of tokens
+[2025-03-12 10:21:31] Trace: #0 C:\laragon\www\angenor\pages\save_approvisionnement.php(59): PDOStatement->execute()
+#1 {main}
+[2025-03-12 10:22:59] Début de l'enregistrement de l'approvisionnement
+[2025-03-12 10:22:59] Montant reçu: 100
+[2025-03-12 10:22:59] Solde actuel avant approvisionnement: 192459160
+[2025-03-12 10:22:59] Nouveau solde calculé: 192459260
+[2025-03-12 10:22:59] ERREUR: SQLSTATE[HY093]: Invalid parameter number: number of bound variables does not match number of tokens
+[2025-03-12 10:22:59] Trace: #0 C:\laragon\www\angenor\pages\save_approvisionnement.php(59): PDOStatement->execute()
+#1 {main}
+[2025-03-12 10:24:05] Début de l'enregistrement de l'approvisionnement
+[2025-03-12 10:24:05] Montant reçu: 100000000
+[2025-03-12 10:24:05] Solde actuel avant approvisionnement: 192459160
+[2025-03-12 10:24:05] Nouveau solde calculé: 292459160
+[2025-03-12 10:24:05] Transaction d'approvisionnement créée #90, nouveau solde: 292459160
+[2025-03-12 10:24:46] Début de l'enregistrement de l'approvisionnement
+[2025-03-12 10:24:46] Montant reçu: 300000000
+[2025-03-12 10:24:46] Solde actuel avant approvisionnement: 292459160
+[2025-03-12 10:24:46] Nouveau solde calculé: 592459160
+[2025-03-12 10:24:46] Transaction d'approvisionnement créée #91, nouveau solde: 592459160
+[2025-03-12 12:33:19] Début de l'enregistrement de l'approvisionnement
+[2025-03-12 12:33:19] Montant reçu: 100000000
+[2025-03-12 12:33:19] Solde actuel avant approvisionnement: 592459160
+[2025-03-12 12:33:19] Nouveau solde calculé: 692459160
+[2025-03-12 12:33:19] Transaction d'approvisionnement créée #93, nouveau solde: 692459160
+[2025-03-12 13:25:19] Début de l'enregistrement de l'approvisionnement
+[2025-03-12 13:25:19] Montant reçu: 100000000
+[2025-03-12 13:25:19] Solde actuel avant approvisionnement: 692459160
+[2025-03-12 13:25:19] Nouveau solde calculé: 792459160
+[2025-03-12 13:25:19] Transaction d'approvisionnement créée #94, nouveau solde: 792459160
+[2025-03-12 14:35:34] Début de l'enregistrement de l'approvisionnement
+[2025-03-12 14:35:34] Montant reçu: 100000000
+[2025-03-12 14:35:34] Solde actuel avant approvisionnement: 792459160
+[2025-03-12 14:35:34] Nouveau solde calculé: 892459160
+[2025-03-12 14:35:34] Transaction d'approvisionnement créée #95, nouveau solde: 892459160
+[2025-03-12 15:55:47] Début de l'enregistrement de l'approvisionnement
+[2025-03-12 15:55:47] Montant reçu: 250000000
+[2025-03-12 15:55:47] Solde actuel avant approvisionnement: 892459160
+[2025-03-12 15:55:47] Nouveau solde calculé: 1142459160
+[2025-03-12 15:55:47] Transaction d'approvisionnement créée #96, nouveau solde: 1142459160

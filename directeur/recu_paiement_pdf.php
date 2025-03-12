@@ -9,22 +9,22 @@ if (headers_sent()) {
 }
 
 // Vider tout tampon de sortie existant
-while (ob_get_level()) {
+ob_start();
+while (ob_get_level() > 1) {
     ob_end_clean();
 }
 
 // Définition du chemin racine
 $root_path = dirname(dirname(__FILE__));
 
-// En-têtes pour forcer l'affichage du PDF
-header('Cache-Control: public');
-header('Content-Type: application/pdf');
-header('Content-Transfer-Encoding: binary');
-header('Accept-Ranges: bytes');
-header('Content-Disposition: inline; filename="Recu_' . date('Ymd') . sprintf("%04d", rand(1, 9999)) . '.pdf"');
-
 require($root_path . '/fpdf/fpdf.php');
 require_once $root_path . '/inc/functions/connexion.php';
+
+// En-têtes pour forcer l'affichage du PDF
+header('Cache-Control: private');
+header('Content-Type: application/pdf');
+header('Content-Transfer-Encoding: binary');
+header('Content-Disposition: inline; filename="Recu_' . date('Ymd') . sprintf("%04d", rand(1, 9999)) . '.pdf"');
 
 // Fonction pour formater les montants
 function formatMontant($montant) {
@@ -54,18 +54,18 @@ class PDF extends FPDF {
         // Titre
         $this->SetFont('Arial', 'B', 16);
         $this->SetXY(0, $y_start + 5);
-        $this->Cell(210, 10, utf8_decode('Reçu de Paiement'), 0, 1, 'C');
-    
+        $this->Cell(210, 10, utf8_decode('Récu de Paiement'), 0, 1, 'C');
+
         // Numéro de reçu à droite
         $this->SetFont('Arial', '', 9);
         $this->SetXY(160, $y_start + 5);
-        $this->Cell(50, 6, utf8_decode('N° ' . $numero_recu), 0, 1, 'R');
+        $this->Cell(50, 6, utf8_decode('N° ') . $numero_recu, 0, 1, 'R');
 
-    
+
         // Informations générales
         $this->SetFont('Arial', '', 10);
         $this->SetXY(60, $y_start + 18);
-        $this->Cell(90, 6, utf8_decode('N° ' . $type_document) . ': ' . $numero_document, 0, 1, 'C');
+        $this->Cell(90, 6, utf8_decode('N° ') . $type_document . ': ' . $numero_document, 0, 1, 'C');
     
         $this->SetXY(60, $y_start + 24);
         $this->Cell(90, 6, 'Date: ' . date('d/m/Y H:i'), 0, 1, 'C');
@@ -74,24 +74,24 @@ class PDF extends FPDF {
         $y = $y_start + 40;
         $this->SetFont('Arial', 'B', 12);
         $this->SetXY(10, $y);
-        $this->Cell(190, 6, utf8_decode('Informations Agent'), 0, 1, 'L');
+        $this->Cell(190, 6, 'Informations Agent', 0, 1, 'L');
     
         $this->SetFont('Arial', '', 10);
         $y += 8;
         $this->SetXY(10, $y);
-        $this->Cell(40, 6, utf8_decode('Nom de l\'agent:'), 0, 0, 'L');
+        $this->Cell(40, 6, 'Nom de l\'agent:', 0, 0, 'L');
         $this->SetFont('Arial', 'B', 10);
-        $this->Cell(150, 6, utf8_decode($paiement['agent_nom']), 0, 1, 'L');
+        $this->Cell(150, 6, $paiement['nom_agent'], 0, 1, 'L');
     
         $this->SetFont('Arial', '', 10);
         $y += 6;
         $this->SetXY(10, $y);
         $this->Cell(40, 6, 'Contact:', 0, 0, 'L');
         $this->SetFont('Arial', 'B', 10);
-        $this->Cell(150, 6, $paiement['agent_contact'], 0, 1, 'L');
+        $this->Cell(150, 6, $paiement['contact_agent'], 0, 1, 'L');
     
         // Informations Transport
-        if (isset($paiement['nom_usine'])) {
+        if (!empty($paiement['nom_usine'])) {
             $y += 12;
             $this->SetFont('Arial', 'B', 12);
             $this->SetXY(10, $y);
@@ -102,14 +102,16 @@ class PDF extends FPDF {
             $this->SetXY(10, $y);
             $this->Cell(40, 6, 'Usine:', 0, 0, 'L');
             $this->SetFont('Arial', 'B', 10);
-            $this->Cell(150, 6, utf8_decode($paiement['nom_usine']), 0, 1, 'L');
+            $this->Cell(150, 6, $paiement['nom_usine'], 0, 1, 'L');
     
-            $this->SetFont('Arial', '', 10);
-            $y += 6;
-            $this->SetXY(10, $y);
-            $this->Cell(40, 6, utf8_decode('Véhicule:'), 0, 0, 'L');
-            $this->SetFont('Arial', 'B', 10);
-            $this->Cell(150, 6, $paiement['matricule_vehicule'], 0, 1, 'L');
+            if (!empty($paiement['matricule_vehicule'])) {
+                $this->SetFont('Arial', '', 10);
+                $y += 6;
+                $this->SetXY(10, $y);
+                $this->Cell(40, 6, 'Vehicule:', 0, 0, 'L');
+                $this->SetFont('Arial', 'B', 10);
+                $this->Cell(150, 6, $paiement['matricule_vehicule'], 0, 1, 'L');
+            }
         }
     
         // Ligne de séparation
@@ -127,31 +129,29 @@ class PDF extends FPDF {
         $y += 6;
         $this->SetFont('Arial', '', 10);
         $this->SetXY(10, $y);
-        $this->Cell(40, 6, utf8_decode('Montant payé:'), 0, 0, 'L');
+        $this->Cell(40, 6, 'Montant paye:', 0, 0, 'L');
         $this->SetFont('Arial', 'B', 10);
         $this->Cell(150, 6, $montant_actuel_format . ' FCFA', 0, 1, 'L');
     
         $y += 6;
         $this->SetFont('Arial', '', 10);
         $this->SetXY(10, $y);
-        $this->Cell(40, 6, utf8_decode('Reste à payer:'), 0, 0, 'L');
-
+        $this->Cell(40, 6, 'Reste a payer:', 0, 0, 'L');
         $this->SetFont('Arial', 'B', 10);
-        $this->SetTextColor(0, 0, 0);
         $this->Cell(150, 6, $reste_a_payer_format . ' FCFA', 0, 1, 'L');
     
         // Caissier
         $y += 15;
         $this->SetFont('Arial', '', 10);
         $this->SetXY(10, $y);
-        $this->Cell(190, 6, 'Caissier: ' . utf8_decode($paiement['caissier_nom']), 0, 1, 'C');
+        $this->Cell(190, 6, 'Caissier: ' . utf8_decode($paiement['nom_caissier']), 0, 1, 'C');
+
     
         $y += 6;
         $this->SetFont('Arial', 'I', 8);
         $this->SetXY(10, $y);
-        $this->Cell(190, 6, utf8_decode('Ce reçu est généré électroniquement et ne nécessite pas de signature.'), 0, 1, 'C');
+        $this->Cell(190, 6, 'Ce recu est genere electroniquement et ne necessite pas de signature.', 0, 1, 'C');
     }
-    
     
     function RotatedText($x, $y, $txt, $angle) {
         $this->Rotate($angle, $x, $y);
@@ -219,11 +219,11 @@ if ($reimprimer) {
     $numero_recu = $recu['numero_recu'];
     
     $paiement = [
-        'agent_nom' => $recu['nom_agent'],
-        'agent_contact' => $recu['contact_agent'],
+        'nom_agent' => $recu['nom_agent'],
+        'contact_agent' => $recu['contact_agent'],
         'nom_usine' => $recu['nom_usine'],
         'matricule_vehicule' => $recu['matricule_vehicule'],
-        'caissier_nom' => $recu['nom_caissier']
+        'nom_caissier' => $recu['nom_caissier']
     ];
     
     $numero_document = $recu['numero_document'];
@@ -245,11 +245,11 @@ if ($reimprimer) {
         $stmt = $conn->prepare("
             SELECT 
                 t.*,
-                CONCAT(a.nom, ' ', a.prenom) as agent_nom,
-                a.contact as agent_contact,
+                CONCAT(a.nom, ' ', a.prenom) as nom_agent,
+                a.contact as contact_agent,
                 us.nom_usine,
                 v.matricule_vehicule,
-                CONCAT(u.nom, ' ', u.prenoms) as caissier_nom
+                CONCAT(u.nom, ' ', u.prenoms) as nom_caissier
             FROM tickets t
             LEFT JOIN agents a ON t.id_agent = a.id_agent
             LEFT JOIN usines us ON t.id_usine = us.id_usine
@@ -271,9 +271,9 @@ if ($reimprimer) {
         $stmt = $conn->prepare("
             SELECT 
                 b.*,
-                CONCAT(a.nom, ' ', a.prenom) as agent_nom,
-                a.contact as agent_contact,
-                CONCAT(u.nom, ' ', u.prenoms) as caissier_nom
+                CONCAT(a.nom, ' ', a.prenom) as nom_agent,
+                a.contact as contact_agent,
+                CONCAT(u.nom, ' ', u.prenoms) as nom_caissier
             FROM bordereau b
             LEFT JOIN agents a ON b.id_agent = a.id_agent
             LEFT JOIN utilisateurs u ON b.id_utilisateur = u.id
@@ -318,7 +318,7 @@ $pdf = new PDF();
 $pdf->AddPage();
 $pdf->SetAutoPageBreak(false);
 
-// Chemin vers le logo
+// Chemin du logo
 $logo_path = $root_path . '/dist/img/logo.png';
 
 // Générer deux exemplaires
@@ -326,6 +326,6 @@ $pdf->genererRecu(10, $logo_path, $paiement, $numero_recu, $numero_document, $ty
 $pdf->genererRecu(150, $logo_path, $paiement, $numero_recu, $numero_document, $type_document, $montant_total_format, $montant_actuel_format, $montant_deja_paye_format, $reste_a_payer_format);
 
 // Sortie du PDF
-$pdf->Output('I', 'Recu_' . $numero_recu . '.pdf');
-
+ob_end_clean();
+$pdf->Output('I', 'Recu_' . date('Ymd') . sprintf("%04d", rand(1, 9999)) . '.pdf');
 ?>

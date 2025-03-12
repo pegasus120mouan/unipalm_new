@@ -328,7 +328,7 @@ label {
         <th>Montant</th>
         <th>Date Paie</th>
        <!-- <th>Actions</th>-->
-        <th>Validation Prix</th>
+      <!--  <th>Validation Prix</th>-->
       </tr>
     </thead>
     <tbody>
@@ -435,7 +435,7 @@ label {
     </div>
 </div>
 
-          <td>
+        <!--  <td>
             <button 
             type="button" 
             class="btn btn-success" 
@@ -445,7 +445,7 @@ label {
             Valider un ticket
            </button>
 
-        </td>
+        </td>-->
           
 
 
