@@ -20,8 +20,8 @@ ini_set('display_errors', 1);
 // Définition du chemin racine
 $root_path = dirname(dirname(__FILE__));
 
-require($root_path . '/fpdf/fpdf.php');
-require_once $root_path . '/connexion.php';
+require('../fpdf/fpdf.php');
+require_once '../inc/functions/connexion.php';
 
 if (isset($_POST['date_debut_transactions']) && isset($_POST['date_fin_transactions'])) {
     $date_debut = $_POST['date_debut_transactions'] . ' 00:00:00';
