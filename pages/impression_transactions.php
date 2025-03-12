@@ -1,4 +1,5 @@
 <?php
+session_start();
 // Désactiver la compression zlib
 if (ini_get('zlib.output_compression')) {
     ini_set('zlib.output_compression', 'Off');
