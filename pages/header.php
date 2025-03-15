@@ -92,6 +92,64 @@ if (!isset($_SESSION['user_id'])) {
   <!-- Theme style -->
   <link rel="stylesheet" href="../../dist/css/adminlte.min.css">
   <link href="https://gitcdn.github.io/bootstrap-toggle/2.2.2/css/bootstrap-toggle.min.css" rel="stylesheet">
+  <!-- Select2 -->
+  <link href="../../plugins/select2/css/select2.min.css" rel="stylesheet" />
+  <link href="../../plugins/select2-bootstrap4-theme/select2-bootstrap4.min.css" rel="stylesheet" />
+  
+  <!-- Scripts nécessaires -->
+  <script src="../../plugins/jquery/jquery.min.js"></script>
+  <script src="../../plugins/select2/js/select2.full.min.js"></script>
+
+  <style>
+    .select2-container .select2-selection--single {
+        height: 38px !important;
+        background-color: #fff !important;
+        border: 1px solid #ced4da !important;
+        border-radius: 4px !important;
+        box-shadow: 0 1px 3px rgba(0,0,0,0.1) !important;
+    }
+
+    .select2-container .select2-selection--single .select2-selection__rendered {
+        line-height: 36px !important;
+        padding-left: 12px !important;
+        color: #495057 !important;
+    }
+
+    .select2-container .select2-selection--single .select2-selection__placeholder {
+        color: #6c757d !important;
+    }
+
+    .select2-container .select2-selection--single .select2-selection__arrow {
+        height: 36px !important;
+        width: 30px !important;
+        right: 3px !important;
+    }
+
+    .select2-container .select2-dropdown {
+        border: 1px solid #ced4da !important;
+        border-radius: 4px !important;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.1) !important;
+    }
+
+    .select2-container .select2-results__option {
+        padding: 8px 12px !important;
+        font-size: 1rem !important;
+    }
+
+    .select2-container .select2-results__option--highlighted[aria-selected] {
+        background-color: #f8f9fa !important;
+        color: #16181b !important;
+    }
+
+    .select2-container .select2-results__option[aria-selected=true] {
+        background-color: #e9ecef !important;
+    }
+
+    .select2-container--open {
+        z-index: 9999 !important;
+    }
+  </style>
+
   <script src="https://gitcdn.github.io/bootstrap-toggle/2.2.2/js/bootstrap-toggle.min.js"></script>
 
     <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
@@ -462,15 +520,31 @@ if (!isset($_SESSION['user_id'])) {
             <li class="nav-item">
               <a href="paiements.php" class="nav-link <?= basename($_SERVER['PHP_SELF']) == 'paiements.php' ? 'active' : '' ?>">
                 <i class="nav-icon fas fa-money-bill"></i>
-                <p>Paiements</p>
+                <p>Paiements de tickets et bordereaux</p>
               </a>
             </li>
             <li class="nav-item">
-              <a href="recus.php" class="nav-link <?= basename($_SERVER['PHP_SELF']) == 'recus.php' ? 'active' : '' ?>">
-                <i class="nav-icon fas fa-receipt"></i>
-                <p>Historique des Reçus</p>
+              <a href="paiements_demande.php" class="nav-link <?= basename($_SERVER['PHP_SELF']) == 'paiements_demande.php' ? 'active' : '' ?>">
+                <i class="nav-icon fas fa-money-bill"></i>
+                <p>Paiements demandes</p>
               </a>
             </li>
+            
+            <li class="nav-item">
+              <a href="recus.php" class="nav-link <?= basename($_SERVER['PHP_SELF']) == 'recus.php' ? 'active' : '' ?>">
+                <i class="nav-icon fas fa-receipt"></i>
+                <p>Reçus des paiements</p>
+              </a>
+            </li>
+
+            <li class="nav-item">
+              <a href="recus_demandes.php" class="nav-link <?= basename($_SERVER['PHP_SELF']) == 'recus_demandes.php' ? 'active' : '' ?>">
+                <i class="nav-icon fas fa-receipt"></i>
+                <p>Reçus des demandes</p>
+              </a>
+            </li>
+
+            
           </ul>
         </nav>
         <!-- /.sidebar-menu -->

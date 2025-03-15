@@ -13,11 +13,74 @@ function getFinancementAgent($conn, $id_agent) {
     return $stmt->fetch(PDO::FETCH_ASSOC);
 }
 
-// Déterminer le type d'affichage et le statut
+// Récupérer les paramètres de filtrage
 $type = isset($_GET['type']) ? $_GET['type'] : 'all';
 $status = isset($_GET['status']) ? $_GET['status'] : 'all';
+$search_numero = isset($_GET['search_numero']) ? $_GET['search_numero'] : '';
+$search_usine = isset($_GET['search_usine']) ? $_GET['search_usine'] : '';
+$search_agent = isset($_GET['search_agent']) ? $_GET['search_agent'] : '';
+$search_vehicule = isset($_GET['search_vehicule']) ? $_GET['search_vehicule'] : '';
+$date_debut = isset($_GET['date_debut']) ? $_GET['date_debut'] : '';
+$date_fin = isset($_GET['date_fin']) ? $_GET['date_fin'] : '';
 
-// Récupérer les bordereaux
+// Récupérer les listes pour les filtres
+$sql_usines = "SELECT id_usine, nom_usine FROM usines ORDER BY nom_usine";
+$stmt_usines = $conn->query($sql_usines);
+$usines = $stmt_usines->fetchAll(PDO::FETCH_ASSOC);
+
+$sql_agents = "SELECT id_agent, CONCAT(nom, ' ', prenom) as nom_complet FROM agents ORDER BY nom, prenom";
+$stmt_agents = $conn->query($sql_agents);
+$agents = $stmt_agents->fetchAll(PDO::FETCH_ASSOC);
+
+$sql_vehicules = "SELECT vehicules_id, matricule_vehicule FROM vehicules ORDER BY matricule_vehicule";
+$stmt_vehicules = $conn->query($sql_vehicules);
+$vehicules = $stmt_vehicules->fetchAll(PDO::FETCH_ASSOC);
+
+$solde_caisse = getSoldeCaisse();
+
+// Construction des conditions WHERE pour les bordereaux
+$where_bordereaux = [];
+$params_bordereaux = [];
+
+if (!empty($search_numero)) {
+    $where_bordereaux[] = "b.numero_bordereau LIKE :numero_bordereau";
+    $params_bordereaux[':numero_bordereau'] = "%$search_numero%";
+}
+
+if (!empty($search_agent)) {
+    $where_bordereaux[] = "b.id_agent = :id_agent";
+    $params_bordereaux[':id_agent'] = $search_agent;
+}
+
+if (!empty($date_debut)) {
+    $where_bordereaux[] = "DATE(b.created_at) >= :date_debut";
+    $params_bordereaux[':date_debut'] = $date_debut;
+}
+
+if (!empty($date_fin)) {
+    $where_bordereaux[] = "DATE(b.created_at) <= :date_fin";
+    $params_bordereaux[':date_fin'] = $date_fin;
+}
+
+// Condition de statut pour les bordereaux
+if ($status !== 'all') {
+    switch ($status) {
+        case 'en_attente':
+            $where_bordereaux[] = "b.date_validation_boss IS NULL";
+            break;
+        case 'non_soldes':
+            $where_bordereaux[] = "b.date_validation_boss IS NOT NULL AND b.montant_reste > 0";
+            break;
+        case 'soldes':
+            $where_bordereaux[] = "b.date_validation_boss IS NOT NULL AND b.montant_reste = 0";
+            break;
+    }
+}
+
+// Construction de la clause WHERE finale pour les bordereaux
+$where_clause_bordereaux = !empty($where_bordereaux) ? "WHERE " . implode(" AND ", $where_bordereaux) : "";
+
+// Requête pour les bordereaux
 $sql_bordereaux = "
     SELECT 
         b.*,
@@ -28,12 +91,94 @@ $sql_bordereaux = "
         COALESCE(b.montant_reste, b.montant_total - COALESCE(b.montant_payer, 0)) as montant_reste
     FROM bordereau b
     LEFT JOIN agents a ON b.id_agent = a.id_agent
-    WHERE b.date_validation_boss IS NOT NULL
-    ORDER BY b.date_validation_boss DESC";
+    $where_clause_bordereaux
+    ORDER BY b.created_at DESC";
 
 $stmt_bordereaux = $conn->prepare($sql_bordereaux);
+foreach ($params_bordereaux as $key => $value) {
+    $stmt_bordereaux->bindValue($key, $value);
+}
 $stmt_bordereaux->execute();
 $all_bordereaux = $stmt_bordereaux->fetchAll(PDO::FETCH_ASSOC);
+
+// Construction des conditions WHERE pour les tickets
+$where_tickets = [];
+$params_tickets = [];
+
+if (!empty($search_numero)) {
+    $where_tickets[] = "t.numero_ticket LIKE :numero_ticket";
+    $params_tickets[':numero_ticket'] = "%$search_numero%";
+}
+
+if (!empty($search_usine)) {
+    $where_tickets[] = "t.id_usine = :id_usine";
+    $params_tickets[':id_usine'] = $search_usine;
+}
+
+if (!empty($search_agent)) {
+    $where_tickets[] = "t.id_agent = :id_agent";
+    $params_tickets[':id_agent'] = $search_agent;
+}
+
+if (!empty($search_vehicule)) {
+    $where_tickets[] = "t.vehicule_id = :vehicule_id";
+    $params_tickets[':vehicule_id'] = $search_vehicule;
+}
+
+if (!empty($date_debut)) {
+    $where_tickets[] = "DATE(t.created_at) >= :date_debut";
+    $params_tickets[':date_debut'] = $date_debut;
+}
+
+if (!empty($date_fin)) {
+    $where_tickets[] = "DATE(t.created_at) <= :date_fin";
+    $params_tickets[':date_fin'] = $date_fin;
+}
+
+// Condition de statut pour les tickets
+if ($status !== 'all') {
+    switch ($status) {
+        case 'en_attente':
+            $where_tickets[] = "t.date_validation_boss IS NULL";
+            break;
+        case 'non_soldes':
+            $where_tickets[] = "t.date_validation_boss IS NOT NULL AND t.montant_reste > 0";
+            break;
+        case 'soldes':
+            $where_tickets[] = "t.date_validation_boss IS NOT NULL AND t.montant_reste = 0";
+            break;
+    }
+}
+
+// Condition pour les tickets non inclus dans un bordereau
+$where_tickets[] = "t.numero_bordereau IS NULL";
+
+// Construction de la clause WHERE finale pour les tickets
+$where_clause_tickets = !empty($where_tickets) ? "WHERE " . implode(" AND ", $where_tickets) : "";
+
+// Requête pour les tickets
+$sql_tickets = "
+    SELECT 
+        t.*,
+        CONCAT(a.nom, ' ', a.prenom) AS agent_nom_complet,
+        a.contact AS agent_contact,
+        us.nom_usine,
+        v.matricule_vehicule,
+        COALESCE(t.montant_payer, 0) as montant_payer,
+        COALESCE(t.montant_reste, t.montant_paie - COALESCE(t.montant_payer, 0)) as montant_reste
+    FROM tickets t
+    INNER JOIN agents a ON t.id_agent = a.id_agent
+    INNER JOIN usines us ON t.id_usine = us.id_usine
+    INNER JOIN vehicules v ON t.vehicule_id = v.vehicules_id
+    $where_clause_tickets
+    ORDER BY t.created_at DESC";
+
+$stmt_tickets = $conn->prepare($sql_tickets);
+foreach ($params_tickets as $key => $value) {
+    $stmt_tickets->bindValue($key, $value);
+}
+$stmt_tickets->execute();
+$all_tickets = $stmt_tickets->fetchAll(PDO::FETCH_ASSOC);
 
 // Filtrer les bordereaux selon le statut
 if ($status === 'en_attente') {
@@ -51,28 +196,6 @@ if ($status === 'en_attente') {
 } else {
     $bordereaux = $all_bordereaux;
 }
-
-// Récupérer les tickets
-$sql_tickets = "
-    SELECT 
-        t.*,
-        CONCAT(a.nom, ' ', a.prenom) AS agent_nom_complet,
-        a.contact AS agent_contact,
-        us.nom_usine,
-        v.matricule_vehicule,
-        COALESCE(t.montant_payer, 0) as montant_payer,
-        COALESCE(t.montant_reste, t.montant_paie - COALESCE(t.montant_payer, 0)) as montant_reste
-    FROM tickets t
-    INNER JOIN agents a ON t.id_agent = a.id_agent
-    INNER JOIN usines us ON t.id_usine = us.id_usine
-    INNER JOIN vehicules v ON t.vehicule_id = v.vehicules_id
-    WHERE t.date_validation_boss IS NOT NULL
-    AND t.numero_bordereau IS NULL
-    ORDER BY t.date_validation_boss DESC";
-
-$stmt_tickets = $conn->prepare($sql_tickets);
-$stmt_tickets->execute();
-$all_tickets = $stmt_tickets->fetchAll(PDO::FETCH_ASSOC);
 
 // Filtrer les tickets selon le statut
 if ($status === 'en_attente') {
@@ -189,9 +312,102 @@ label {
                 </div>
                 <span class="progress-description">
                     <h1 style="text-align: center; font-size: 70px;">
-                        <strong><?php echo number_format($somme_caisse['solde_caisse'], 0, ',', ' '); ?> FCFA</strong>
+                    <strong><?php echo number_format($somme_caisse['solde_caisse']?? 0, 0, ',', ' '); ?> FCFA</strong>
                     </h1>
                 </span>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Formulaire de filtres -->
+<div class="row mb-3">
+    <div class="col-md-12">
+        <div class="card">
+            <div class="card-header">
+                <h3 class="card-title">Filtres de recherche</h3>
+            </div>
+            <div class="card-body">
+                <form method="GET" class="row">
+                    <div class="col-md-3 mb-3">
+                        <label for="search_numero">N° Ticket/Bordereau</label>
+                        <input type="text" class="form-control" id="search_numero" name="search_numero" value="<?= htmlspecialchars($search_numero) ?>">
+                    </div>
+                    
+                    <div class="col-md-3 mb-3">
+                        <label for="search_usine">Usine</label>
+                        <select class="form-control select2" id="search_usine" name="search_usine">
+                            <option value="">Toutes les usines</option>
+                            <?php foreach ($usines as $usine): ?>
+                                <option value="<?= $usine['id_usine'] ?>" <?= $search_usine == $usine['id_usine'] ? 'selected' : '' ?>>
+                                    <?= htmlspecialchars($usine['nom_usine']) ?>
+                                </option>
+                            <?php endforeach; ?>
+                        </select>
+                    </div>
+
+                    <div class="col-md-3 mb-3">
+                        <label for="search_agent">Chargé de Mission</label>
+                        <select class="form-control select2" id="search_agent" name="search_agent">
+                            <option value="">Tous les agents</option>
+                            <?php foreach ($agents as $agent): ?>
+                                <option value="<?= $agent['id_agent'] ?>" <?= $search_agent == $agent['id_agent'] ? 'selected' : '' ?>>
+                                    <?= htmlspecialchars($agent['nom_complet']) ?>
+                                </option>
+                            <?php endforeach; ?>
+                        </select>
+                    </div>
+
+                    <div class="col-md-3 mb-3">
+                        <label for="search_vehicule">Véhicule</label>
+                        <select class="form-control select2" id="search_vehicule" name="search_vehicule">
+                            <option value="">Tous les véhicules</option>
+                            <?php foreach ($vehicules as $vehicule): ?>
+                                <option value="<?= $vehicule['vehicules_id'] ?>" <?= $search_vehicule == $vehicule['vehicules_id'] ? 'selected' : '' ?>>
+                                    <?= htmlspecialchars($vehicule['matricule_vehicule']) ?>
+                                </option>
+                            <?php endforeach; ?>
+                        </select>
+                    </div>
+
+                    <div class="col-md-3 mb-3">
+                        <label for="date_debut">Date début</label>
+                        <input type="date" class="form-control" id="date_debut" name="date_debut" value="<?= htmlspecialchars($date_debut) ?>">
+                    </div>
+
+                    <div class="col-md-3 mb-3">
+                        <label for="date_fin">Date fin</label>
+                        <input type="date" class="form-control" id="date_fin" name="date_fin" value="<?= htmlspecialchars($date_fin) ?>">
+                    </div>
+
+                    <div class="col-md-3 mb-3">
+                        <label for="type">Type</label>
+                        <select class="form-control" id="type" name="type">
+                            <option value="all" <?= $type == 'all' ? 'selected' : '' ?>>Tous</option>
+                            <option value="bordereaux" <?= $type == 'bordereaux' ? 'selected' : '' ?>>Bordereaux</option>
+                            <option value="tickets" <?= $type == 'tickets' ? 'selected' : '' ?>>Tickets</option>
+                        </select>
+                    </div>
+
+                    <div class="col-md-3 mb-3">
+                        <label for="status">Statut</label>
+                        <select class="form-control" id="status" name="status">
+                            <option value="all" <?= $status == 'all' ? 'selected' : '' ?>>Tous</option>
+                            <option value="en_attente" <?= $status == 'en_attente' ? 'selected' : '' ?>>En attente</option>
+                            <option value="non_soldes" <?= $status == 'non_soldes' ? 'selected' : '' ?>>Non soldés</option>
+                            <option value="soldes" <?= $status == 'soldes' ? 'selected' : '' ?>>Soldés</option>
+                        </select>
+                    </div>
+
+                    <div class="col-md-12">
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-search"></i> Rechercher
+                        </button>
+                        <a href="paiements.php" class="btn btn-secondary">
+                            <i class="fas fa-undo"></i> Réinitialiser
+                        </a>
+                    </div>
+                </form>
             </div>
         </div>
     </div>
@@ -374,6 +590,7 @@ label {
                     </div>
                     <div class="modal-body">
                         <form class="forms-sample" method="post" action="save_paiement.php">
+                            <input type="hidden" name="save_paiement" value="1">
                             <input type="hidden" name="id_bordereau" value="<?= $item['id_bordereau'] ?>">
                             <input type="hidden" name="numero_bordereau" value="<?= $item['numero_bordereau'] ?>">
                             <input type="hidden" name="type" value="<?= htmlspecialchars($type) ?>">
@@ -406,15 +623,21 @@ label {
                             </div>
 
                             <div class="form-group">
-                                <label>Montant à payer</label>
-                                <input type="number" step="0.01" class="form-control" name="montant" required 
-                                       max="<?= $item['montant_reste'] ?>"
-                                       placeholder="Entrez le montant à payer">
+                                <label>Montant à payer (Max: <?= number_format($item['montant_reste'], 0, ',', ' ') ?> FCFA)</label>
+                                <input 
+                                    type="text" 
+                                    class="form-control montant-input" 
+                                    name="montant_affiche" 
+                                    required 
+                                    data-max="<?= $item['montant_reste'] ?>" 
+                                    placeholder="Entrez le montant à payer"
+                                    onkeyup="updateMontant(this, <?= $item['id_bordereau'] ?>);">
+                                <input type="hidden" name="montant" id="montant_<?= $item['id_bordereau'] ?>" value="">
                             </div>
 
                             <div class="modal-footer">
                                 <button type="button" class="btn btn-secondary" data-dismiss="modal">Fermer</button>
-                                <button type="submit" name="save_paiement" class="btn btn-primary">Effectuer le paiement</button>
+                                <button type="submit" class="btn btn-primary">Enregistrer le paiement</button>
                             </div>
                         </form>
                     </div>
@@ -434,6 +657,7 @@ label {
                     </div>
                     <div class="modal-body">
                         <form class="forms-sample" method="post" action="save_paiement.php">
+                            <input type="hidden" name="save_paiement" value="1">
                             <input type="hidden" name="id_ticket" value="<?= $item['id_ticket'] ?>">
                             <input type="hidden" name="numero_ticket" value="<?= $item['numero_ticket'] ?>">
                             <input type="hidden" name="type" value="<?= htmlspecialchars($type) ?>">
@@ -466,15 +690,21 @@ label {
                             </div>
 
                             <div class="form-group">
-                                <label>Montant à payer</label>
-                                <input type="number" step="0.01" class="form-control" name="montant" required 
-                                       max="<?= $item['montant_paie'] - (!isset($item['montant_payer']) || $item['montant_payer'] === null ? 0 : $item['montant_payer']) ?>"
-                                       placeholder="Entrez le montant à payer">
+                                <label>Montant à payer (Max: <?= number_format($item['montant_reste'], 0, ',', ' ') ?> FCFA)</label>
+                                <input 
+                                    type="text" 
+                                    class="form-control montant-input" 
+                                    name="montant_affiche" 
+                                    required 
+                                    data-max="<?= $item['montant_reste'] ?>" 
+                                    placeholder="Entrez le montant à payer"
+                                    onkeyup="updateMontant(this, <?= $item['id_ticket'] ?>);">
+                                <input type="hidden" name="montant" id="montant_<?= $item['id_ticket'] ?>" value="">
                             </div>
 
                             <div class="modal-footer">
                                 <button type="button" class="btn btn-secondary" data-dismiss="modal">Fermer</button>
-                                <button type="submit" name="save_paiement" class="btn btn-primary">Effectuer le paiement</button>
+                                <button type="submit" class="btn btn-primary">Enregistrer le paiement</button>
                             </div>
                         </form>
                     </div>
@@ -487,20 +717,113 @@ label {
 <!-- Required scripts -->
 <script src="../../plugins/jquery/jquery.min.js"></script>
 <script src="../../plugins/bootstrap/js/bootstrap.bundle.min.js"></script>
-<script src="../../plugins/datatables/jquery.dataTables.min.js"></script>
-<script src="../../plugins/datatables-bs4/js/dataTables.bootstrap4.min.js"></script>
-<script src="../../dist/js/adminlte.min.js"></script>
+<script src="../../plugins/jquery/jquery.min.js"></script>
+<!-- jQuery UI 1.11.4 -->
+<script src="../../plugins/jquery-ui/jquery-ui.min.js"></script>
+<!-- Resolve conflict in jQuery UI tooltip with Bootstrap tooltip -->
+<!-- <script>
+  $.widget.bridge('uibutton', $.ui.button)
+</script>-->
+<!-- Bootstrap 4 -->
+<script src="../../plugins/bootstrap/js/bootstrap.bundle.min.js"></script>
+<!-- ChartJS -->
+<script src="../../plugins/chart.js/Chart.min.js"></script>
+<!-- Sparkline -->
+<script src="../../plugins/sparklines/sparkline.js"></script>
+<!-- JQVMap -->
+<script src="../../plugins/jqvmap/jquery.vmap.min.js"></script>
+<script src="../../plugins/jqvmap/maps/jquery.vmap.usa.js"></script>
+<!-- jQuery Knob Chart -->
+<script src="../../plugins/jquery-knob/jquery.knob.min.js"></script>
+<!-- daterangepicker -->
+<script src="../../plugins/moment/moment.min.js"></script>
+<script src="../../plugins/daterangepicker/daterangepicker.js"></script>
+<!-- Tempusdominus Bootstrap 4 -->
+<script src="../../plugins/tempusdominus-bootstrap-4/js/tempusdominus-bootstrap-4.min.js"></script>
+<!-- Summernote -->
+<script src="../../plugins/summernote/summernote-bs4.min.js"></script>
+<!-- overlayScrollbars -->
+<script src="../../plugins/overlayScrollbars/js/jquery.overlayScrollbars.min.js"></script>
+<!-- AdminLTE App -->
+<script src="../../dist/js/adminlte.js"></script>
+<script>
+    $(function () {
+        $("#example1").DataTable({
+            "responsive": true,
+        });
+    });
+</script>
 
 <script>
-$(function () {
-    $('#example1').DataTable({
-        "paging": false,
-        "lengthChange": false,
-        "searching": true,
-        "ordering": true,
-        "info": true,
-        "autoWidth": false,
-        "responsive": true,
+function formatNumber(number) {
+    // Enlever tous les caractères non numériques
+    number = number.replace(/[^\d]/g, '');
+    // Convertir en nombre
+    let value = parseInt(number);
+    if (isNaN(value)) return '';
+    // Formater avec des espaces comme séparateurs de milliers
+    return value.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ' ');
+}
+
+function unformatNumber(formattedNumber) {
+    // Enlever tous les espaces et convertir en nombre
+    return formattedNumber.replace(/\s/g, '');
+}
+
+function updateMontant(input, id) {
+    // Formater l'affichage
+    input.value = formatNumber(input.value);
+    // Mettre à jour le champ caché avec la valeur non formatée
+    document.getElementById('montant_' + id).value = unformatNumber(input.value);
+}
+
+$(document).ready(function() {
+    // Initialisation des select2
+    $('.select2').select2({
+        theme: 'bootstrap4',
+        width: '100%'
     });
+
+    // Validation du montant maximum
+    $('.montant-input').on('change', function() {
+        var montant = parseInt(unformatNumber($(this).val()));
+        var max = parseInt($(this).data('max'));
+        
+        if (montant > max) {
+            alert('Le montant ne peut pas dépasser ' + formatNumber(max.toString()) + ' FCFA');
+            $(this).val('');
+            $(this).focus();
+            // Réinitialiser aussi le champ caché
+            var id = $(this).closest('form').find('input[name="id_bordereau"]').val();
+            document.getElementById('montant_' + id).value = '';
+        }
+    });
+
+    // Initialiser les datepickers
+    $('#date_debut, #date_fin').datepicker({
+        format: 'yyyy-mm-dd',
+        autoclose: true,
+        todayHighlight: true,
+        language: 'fr'
+    });
+
+    // Gérer le type d'affichage (tickets/bordereaux)
+    $('#type').change(function() {
+        var type = $(this).val();
+        if (type === 'tickets') {
+            $('.tickets-section').show();
+            $('.bordereaux-section').hide();
+        } else if (type === 'bordereaux') {
+            $('.tickets-section').hide();
+            $('.bordereaux-section').show();
+        } else {
+            $('.tickets-section').show();
+            $('.bordereaux-section').show();
+        }
+    }).trigger('change');
 });
 </script>
+
+<?php include('footer.php'); ?>
+</body>
+</html>

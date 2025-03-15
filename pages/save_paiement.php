@@ -59,7 +59,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['save_paiement'])) {
         $montant_precedent = 0;
         $type_document = '';
 
-        // Vérifier si c'est un ticket ou un bordereau
+        // Vérifier si c'est un ticket, un bordereau ou une demande
         if (isset($_POST['id_ticket'])) {
             $id_ticket = $_POST['id_ticket'];
             $numero_ticket = $_POST['numero_ticket'];
@@ -108,7 +108,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['save_paiement'])) {
             $stmt->execute([$nouveau_montant_payer, $nouveau_montant_reste, $id_ticket]);
             writeLog("Ticket #$id_ticket mis à jour avec montant_payer=$nouveau_montant_payer, montant_reste=$nouveau_montant_reste");
 
-        } else {
+        } elseif (isset($_POST['id_bordereau'])) {
             $id_bordereau = $_POST['id_bordereau'];
             $numero_bordereau = $_POST['numero_bordereau'];
             
@@ -149,10 +149,71 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['save_paiement'])) {
             ");
             $stmt->execute([$nouveau_montant_payer, $nouveau_montant_reste, $id_bordereau]);
             writeLog("Bordereau #$id_bordereau mis à jour avec montant_payer=$nouveau_montant_payer, montant_reste=$nouveau_montant_reste");
+        } else {
+            // C'est une demande
+            $id_demande = $_POST['id_demande'];
+            $numero_demande = $_POST['numero_demande'];
+            
+            // Récupérer les informations de la demande
+            $stmt = $conn->prepare("
+                SELECT 
+                    d.montant,
+                    d.statut,
+                    d.numero_demande,
+                    COALESCE(d.montant_payer, 0) as montant_payer,
+                    d.montant - COALESCE(d.montant_payer, 0) as montant_reste,
+                    CONCAT(u.nom, ' ', u.prenoms) as demandeur_nom,
+                    u.id as id_demandeur
+                FROM demande_sortie d
+                LEFT JOIN utilisateurs u ON d.id_utilisateur = u.id
+                WHERE d.id_demande = ?
+            ");
+            $stmt->execute([$id_demande]);
+            $demande_info = $stmt->fetch(PDO::FETCH_ASSOC);
+
+            if (!$demande_info) {
+                throw new Exception("Demande non trouvée");
+            }
+
+            if ($demande_info['statut'] !== 'approuve' && $demande_info['statut'] !== 'paye') {
+                throw new Exception("Cette demande n'est pas approuvée");
+            }
+
+            $id_document = $id_demande;
+            $numero_document = $numero_demande;
+            $id_agent = $demande_info['id_demandeur'];
+            $nom_agent = $demande_info['demandeur_nom'];
+            $montant_total = $demande_info['montant'];
+            $montant_precedent = $demande_info['montant_payer'];
+            $type_document = 'demande';
+
+            // Calculer les nouveaux montants
+            $nouveau_montant_paye = $montant_precedent + $montant;
+            $nouveau_montant_reste = $montant_total - $nouveau_montant_paye;
+            $nouveau_statut = $nouveau_montant_reste <= 0 ? 'paye' : 'approuve';
+
+            // Mettre à jour la demande
+            $stmt = $conn->prepare("
+                UPDATE demande_sortie 
+                SET montant_payer = :montant_payer,
+                    montant_reste = :montant_reste,
+                    statut = :statut,
+                    date_paiement = NOW(),
+                    paye_par = :paye_par
+                WHERE id_demande = :id_demande
+            ");
+
+            $stmt->bindValue(':montant_payer', $nouveau_montant_paye, PDO::PARAM_STR);
+            $stmt->bindValue(':montant_reste', $nouveau_montant_reste, PDO::PARAM_STR);
+            $stmt->bindValue(':statut', $nouveau_statut, PDO::PARAM_STR);
+            $stmt->bindValue(':paye_par', $_SESSION['user_id'], PDO::PARAM_INT);
+            $stmt->bindValue(':id_demande', $id_demande, PDO::PARAM_INT);
+            $stmt->execute();
+            writeLog("Demande #$id_demande mise à jour avec montant_payer=$nouveau_montant_paye, montant_reste=$nouveau_montant_reste, statut=$nouveau_statut");
         }
 
         // Créer la transaction
-        $motifs = "Paiement du " . $type_document . " " . $numero_document;
+        $motifs = "Paiement " . ($type_document === 'demande' ? "de la" : "du") . " " . $type_document . " " . $numero_document;
         $stmt = $conn->prepare("
             INSERT INTO transactions (
                 type_transaction, 

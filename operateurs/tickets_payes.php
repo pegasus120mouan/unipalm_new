@@ -4,40 +4,68 @@ require_once '../inc/functions/requete/requete_tickets.php';
 require_once '../inc/functions/requete/requete_usines.php';
 require_once '../inc/functions/requete/requete_chef_equipes.php';
 require_once '../inc/functions/requete/requete_vehicules.php';
-//require_once '../inc/functions/requete/requetes_selection_boutique.php';
+require_once '../inc/functions/requete/requete_agents.php';
 include('header.php');
 
-//$_SESSION['user_id'] = $user['id'];
- $id_user=$_SESSION['user_id'];
- //echo $id_user;
+$id_user=$_SESSION['user_id'];
 
-////$stmt = $conn->prepare("SELECT * FROM users");
-//$stmt->execute();
-//$users = $stmt->fetchAll();
-//foreach($users as $user)
+$limit = $_GET['limit'] ?? 15;
+$page = isset($_GET['page']) ? (int)$_GET['page'] : 1;
 
-$limit = $_GET['limit'] ?? 15; // Nombre de tickets par page
-$page = isset($_GET['page']) ? (int)$_GET['page'] : 1; // Page actuelle
+// Récupérer les paramètres de filtrage
+$agent_id = $_GET['agent_id'] ?? null;
+$usine_id = $_GET['usine_id'] ?? null;
+$date_debut = $_GET['date_debut'] ?? '';
+$date_fin = $_GET['date_fin'] ?? '';
+$search_agent = $_GET['search_agent'] ?? '';
+$search_usine = $_GET['search_usine'] ?? '';
+$statut = $_GET['statut'] ?? ''; // Nouveau paramètre pour le statut
 
-// Récupérer les données (functions)
-$tickets = getTicketsPayes($conn); 
+// Récupérer les données
+$tickets = getTicketsPayes($conn, $agent_id, $usine_id, $date_debut, $date_fin);
 $usines = getUsines($conn);
-$chefs_equipes=getChefEquipes($conn);
-$vehicules=getVehicules($conn);
+$chefs_equipes = getChefEquipes($conn);
+$vehicules = getVehicules($conn);
+$agents = getAgents($conn);
 
-
-// Vérifiez si des tickets existent avant de procéder
-if (!empty($tickets)) {
-    $ticket_pages = array_chunk($tickets, $limit); // Divise les tickets en pages
-    $tickets_list = $ticket_pages[$page - 1] ?? []; // Tickets pour la page actuelle
-} else {
-    $tickets_list = []; // Aucun ticket à afficher
+// Filtrer les tickets si un terme de recherche est présent
+if (!empty($search_agent) || !empty($search_usine)) {
+    $tickets = array_filter($tickets, function($ticket) use ($search_agent, $search_usine) {
+        $match = true;
+        if (!empty($search_agent)) {
+            $match = $match && stripos($ticket['agent_nom_complet'], $search_agent) !== false;
+        }
+        if (!empty($search_usine)) {
+            $match = $match && stripos($ticket['nom_usine'], $search_usine) !== false;
+        }
+        return $match;
+    });
 }
 
+// Filtrer par statut si sélectionné
+if (!empty($statut)) {
+    $tickets = array_filter($tickets, function($ticket) use ($statut) {
+        $montant_reste = isset($ticket['montant_reste']) ? (float)$ticket['montant_reste'] : 0;
+        
+        if ($statut === 'solde') {
+            return $montant_reste <= 0;
+        } else if ($statut === 'en_cours') {
+            return $montant_reste > 0;
+        }
+        return true;
+    });
+}
+
+// Calculer la pagination
+$total_tickets = count($tickets);
+$total_pages = ceil($total_tickets / $limit);
+$page = max(1, min($page, $total_pages));
+$offset = ($page - 1) * $limit;
+
+// Extraire les tickets pour la page courante
+$tickets_list = array_slice($tickets, $offset, $limit);
 ?>
 
-
-<!-- Main row -->
 <style>
   .pagination-container {
     display: flex;
@@ -117,52 +145,161 @@ label {
       margin-bottom: 20px;
     }
     </style>
-
-
+    
 <div class="row">
-
-    <div class="block-container">
-    <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#add-ticket">
-      <i class="fa fa-edit"></i>Enregistrer un ticket
-    </button>
-
-    <button type="button" class="btn btn-danger" data-toggle="modal" data-target="#add-point">
-      <i class="fa fa-print"></i> Imprimer un ticket
-    </button>
-
-    <button type="button" class="btn btn-success" data-toggle="modal" data-target="#search-commande">
-      <i class="fa fa-search"></i> Recherche un ticket
-    </button>
-
-    <button type="button" class="btn btn-dark" onclick="window.location.href='export_commandes.php'">
-              <i class="fa fa-print"></i> Exporter la liste les tickets
-             </button>
+    <div class="col-12">
+        <h4 class="mb-4">Liste des tickets Soldés ou en cours de paiement</h4>
+        <div class="text-muted mb-3">
+            Total: <?php echo count($tickets); ?> ticket(s)
+        </div>
+    </div>
 </div>
 
+<!-- Barre de recherche en haut -->
+<div class="search-container mb-4">
+    <div class="row justify-content-center">
+        <div class="col-md-10">
+            <form id="filterForm" method="GET">
+                <div class="row">
+                    <!-- Statut du ticket -->
+                    <div class="col-md-3 mb-3">
+                        <select class="form-control" name="statut" id="statut_select">
+                            <option value="">Tous les statuts</option>
+                            <option value="solde" <?= ($statut === 'solde') ? 'selected' : '' ?>>Soldés</option>
+                            <option value="en_cours" <?= ($statut === 'en_cours') ? 'selected' : '' ?>>En cours de paiement</option>
+                        </select>
+                    </div>
 
- <!-- <button type="button" class="btn btn-primary spacing" data-toggle="modal" data-target="#add-commande">
-    Enregistrer une commande
-  </button>
+                    <!-- Recherche par agent -->
+                    <div class="col-md-3 mb-3">
+                        <select class="form-control" name="agent_id" id="agent_select">
+                            <option value="">Sélectionner un agent</option>
+                            <?php foreach($agents as $agent): ?>
+                                <option value="<?= $agent['id_agent'] ?>" <?= ($agent_id == $agent['id_agent']) ? 'selected' : '' ?>>
+                                    <?= htmlspecialchars($agent['nom_complet_agent']) ?>
+                                </option>
+                            <?php endforeach; ?>
+                        </select>
+                    </div>
+                    
+                    <!-- Recherche par usine -->
+                    <div class="col-md-3 mb-3">
+                        <select class="form-control" name="usine_id" id="usine_select">
+                            <option value="">Sélectionner une usine</option>
+                            <?php foreach($usines as $usine): ?>
+                                <option value="<?= $usine['id_usine'] ?>" <?= ($usine_id == $usine['id_usine']) ? 'selected' : '' ?>>
+                                    <?= htmlspecialchars($usine['nom_usine']) ?>
+                                </option>
+                            <?php endforeach; ?>
+                        </select>
+                    </div>
 
+                    <!-- Date de début -->
+                    <div class="col-md-3 mb-3">
+                        <input type="date" 
+                               class="form-control" 
+                               name="date_debut" 
+                               id="date_debut"
+                               placeholder="Date de début" 
+                               value="<?= htmlspecialchars($date_debut) ?>">
+                    </div>
 
-    <button type="button" class="btn btn-outline-secondary spacing" data-toggle="modal" data-target="#recherche-commande1">
-        <i class="fas fa-print custom-icon"></i>
-    </button>
+                    <!-- Date de fin -->
+                    <div class="col-md-3 mb-3">
+                        <input type="date" 
+                               class="form-control" 
+                               name="date_fin" 
+                               id="date_fin"
+                               placeholder="Date de fin" 
+                               value="<?= htmlspecialchars($date_fin) ?>">
+                    </div>
 
-
-  <a class="btn btn-outline-secondary" href="commandes_print.php"><i class="fa fa-print" style="font-size:24px;color:green"></i></a>
-
-
-     Utilisation du formulaire Bootstrap avec ms-auto pour aligner à droite
-<form action="page_recherche.php" method="GET" class="d-flex ml-auto">
-    <input class="form-control me-2" type="search" name="recherche" style="width: 400px;" placeholder="Recherche..." aria-label="Search">
-    <button class="btn btn-outline-primary spacing" style="margin-left: 15px;" type="submit">Rechercher</button>
-</form>
-
--->
-
-
-
+                    <!-- Boutons -->
+                    <div class="col-12 text-center">
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fa fa-search"></i> Rechercher
+                        </button>
+                        <a href="tickets_payes.php" class="btn btn-outline-danger">
+                            <i class="fa fa-times"></i> Réinitialiser les filtres
+                        </a>
+                    </div>
+                </div>
+            </form>
+            
+            <!-- Filtres actifs -->
+            <?php if($agent_id || $usine_id || $date_debut || $date_fin || $statut): ?>
+            <div class="active-filters mt-3">
+                <div class="d-flex align-items-center flex-wrap">
+                    <strong class="text-muted mr-2">Filtres actifs :</strong>
+                    <?php if($statut): ?>
+                        <span class="badge badge-info mr-2 p-2">
+                            <i class="fa fa-filter"></i>
+                            Statut: <?= $statut === 'solde' ? 'Soldés' : 'En cours de paiement' ?>
+                            <a href="?<?= http_build_query(array_merge($_GET, ['statut' => null])) ?>" class="text-white ml-2">
+                                <i class="fa fa-times"></i>
+                            </a>
+                        </span>
+                    <?php endif; ?>
+                    <?php if($agent_id): ?>
+                        <?php 
+                        $agent_name = '';
+                        foreach($agents as $agent) {
+                            if($agent['id_agent'] == $agent_id) {
+                                $agent_name = $agent['nom_complet_agent'];
+                                break;
+                            }
+                        }
+                        ?>
+                        <span class="badge badge-info mr-2 p-2">
+                            <i class="fa fa-user"></i> 
+                            Agent: <?= htmlspecialchars($agent_name) ?>
+                            <a href="?<?= http_build_query(array_merge($_GET, ['agent_id' => null])) ?>" class="text-white ml-2">
+                                <i class="fa fa-times"></i>
+                            </a>
+                        </span>
+                    <?php endif; ?>
+                    <?php if($usine_id): ?>
+                        <?php 
+                        $usine_name = '';
+                        foreach($usines as $usine) {
+                            if($usine['id_usine'] == $usine_id) {
+                                $usine_name = $usine['nom_usine'];
+                                break;
+                            }
+                        }
+                        ?>
+                        <span class="badge badge-info mr-2 p-2">
+                            <i class="fa fa-building"></i>
+                            Usine: <?= htmlspecialchars($usine_name) ?>
+                            <a href="?<?= http_build_query(array_merge($_GET, ['usine_id' => null])) ?>" class="text-white ml-2">
+                                <i class="fa fa-times"></i>
+                            </a>
+                        </span>
+                    <?php endif; ?>
+                    <?php if($date_debut): ?>
+                        <span class="badge badge-info mr-2 p-2">
+                            <i class="fa fa-calendar"></i>
+                            Depuis: <?= htmlspecialchars($date_debut) ?>
+                            <a href="?<?= http_build_query(array_merge($_GET, ['date_debut' => null])) ?>" class="text-white ml-2">
+                                <i class="fa fa-times"></i>
+                            </a>
+                        </span>
+                    <?php endif; ?>
+                    <?php if($date_fin): ?>
+                        <span class="badge badge-info mr-2 p-2">
+                            <i class="fa fa-calendar"></i>
+                            Jusqu'au: <?= htmlspecialchars($date_fin) ?>
+                            <a href="?<?= http_build_query(array_merge($_GET, ['date_fin' => null])) ?>" class="text-white ml-2">
+                                <i class="fa fa-times"></i>
+                            </a>
+                        </span>
+                    <?php endif; ?>
+                </div>
+            </div>
+            <?php endif; ?>
+        </div>
+    </div>
+</div>
 
 <div class="table-responsive">
     <table id="example1" class="table table-bordered table-striped">
@@ -183,7 +320,6 @@ label {
         <th>Montant</th>
         <th>Date Paie</th>
       <!--  <th>Actions</th>-->
-        <th>Validation Prix</th>
       </tr>
     </thead>
     <tbody>
@@ -290,19 +426,7 @@ label {
     </div>
 </div>
 
-          <td>
-            <button 
-            type="button" 
-            class="btn btn-success" 
-            data-toggle="modal" 
-            data-target="#valider_ticket<?= $ticket['id_ticket'] ?>" 
-            <?= $ticket['prix_unitaire'] == 0.00 ? '' : 'disabled title="Le prix est déjà validé"' ?>>
-            Valider un ticket
-           </button>
-
-        </td>
           
-
 
          <div class="modal" id="valider_ticket<?= $ticket['id_ticket'] ?>">
           <div class="modal-dialog">
@@ -337,26 +461,34 @@ label {
 </div>
 
   <div class="pagination-container bg-secondary d-flex justify-content-center w-100 text-white p-3">
-    <?php if($page > 1 ): ?>
-        <a href="?page=<?= $page - 1 ?>" class="btn btn-primary"><</a>
+    <?php if($page > 1): ?>
+        <a href="?<?= http_build_query(array_merge($_GET, ['page' => $page - 1])) ?>" class="btn btn-primary"><</a>
     <?php endif; ?>
-    <span><?= $page . '/' . count($ticket_pages) ?></span>
+    
+    <span class="mx-3"><?= $page . '/' . $total_pages ?></span>
 
-    <?php if($page < count($ticket_pages)): ?>
-        <a href="?page=<?= $page + 1 ?>" class="btn btn-primary">></a>
+    <?php if($page < $total_pages): ?>
+        <a href="?<?= http_build_query(array_merge($_GET, ['page' => $page + 1])) ?>" class="btn btn-primary">></a>
     <?php endif; ?>
+    
     <form action="" method="get" class="items-per-page-form">
+        <?php
+        // Preserve existing GET parameters
+        foreach ($_GET as $key => $value) {
+            if ($key !== 'limit') {
+                echo '<input type="hidden" name="' . htmlspecialchars($key) . '" value="' . htmlspecialchars($value) . '">';
+            }
+        }
+        ?>
         <label for="limit">Afficher :</label>
         <select name="limit" id="limit" class="items-per-page-select">
-            <option value="5" <?php if ($limit == 5) { echo 'selected'; } ?> >5</option>
-            <option value="10" <?php if ($limit == 10) { echo 'selected'; } ?>>10</option>
-            <option value="15" <?php if ($limit == 15) { echo 'selected'; } ?>>15</option>
+            <option value="5" <?= $limit == 5 ? 'selected' : '' ?>>5</option>
+            <option value="10" <?= $limit == 10 ? 'selected' : '' ?>>10</option>
+            <option value="15" <?= $limit == 15 ? 'selected' : '' ?>>15</option>
         </select>
         <button type="submit" class="submit-button">Valider</button>
     </form>
 </div>
-
-
 
   <div class="modal fade" id="add-ticket">
     <div class="modal-dialog">
@@ -468,4 +600,41 @@ label {
 </aside>
 <!-- /.control-sidebar -->
 </div>
-<!-- ./wrapper
+<!-- ./wrapper -->
+
+<script>
+function appliquerFiltres() {
+    const agent_id = document.getElementById('agent_select').value;
+    const usine_id = document.getElementById('usine_select').value;
+    const date_debut = document.getElementById('date_debut').value;
+    const date_fin = document.getElementById('date_fin').value;
+    const statut = document.getElementById('statut_select').value;
+    
+    let params = new URLSearchParams(window.location.search);
+    
+    if (statut) params.set('statut', statut);
+    else params.delete('statut');
+    
+    if (agent_id) params.set('agent_id', agent_id);
+    else params.delete('agent_id');
+    
+    if (usine_id) params.set('usine_id', usine_id);
+    else params.delete('usine_id');
+    
+    if (date_debut) params.set('date_debut', date_debut);
+    else params.delete('date_debut');
+    
+    if (date_fin) params.set('date_fin', date_fin);
+    else params.delete('date_fin');
+    
+    window.location.href = '?' + params.toString();
+}
+
+$(document).ready(function() {
+    // Initialiser les sélecteurs
+    $('#agent_select, #usine_select, #statut_select').select2({
+        placeholder: 'Sélectionner...',
+        allowClear: true
+    });
+});
+</script>

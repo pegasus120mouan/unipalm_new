@@ -1,25 +1,69 @@
 <?php
+//session_start();
 require_once '../inc/functions/connexion.php';
-require_once '../inc/functions/requete/requete_tickets.php';
 
 header('Content-Type: application/json');
 
-// Récupérer les données JSON envoyées
-$data = json_decode(file_get_contents('php://input'), true);
-
-if (!isset($data['tickets']) || empty($data['tickets'])) {
-    echo json_encode(['success' => false, 'error' => 'Aucun ticket sélectionné']);
-    exit;
-}
-
 try {
-    $success = validerTickets($conn, $data['tickets']);
+    if (!isset($_POST['id_ticket'])) {
+        echo json_encode(['success' => false, 'message' => 'Aucun ticket sélectionné']);
+        exit;
+    }
 
-    if ($success) {
-        echo json_encode(['success' => true]);
+    $date_validation = date('Y-m-d H:i:s', time());
+
+   
+    $prix_unitaire = isset($_POST['prix_unitaire']) ? floatval($_POST['prix_unitaire']) : null;
+
+    if (isset($_POST['id_ticket'])) {
+        // Cas d'un seul ticket
+        $ticket_ids = [$_POST['id_ticket']];
     } else {
-        echo json_encode(['success' => false, 'error' => 'Erreur lors de la validation des tickets']);
+        // Cas de plusieurs tickets
+        $ticket_ids = $_POST['id_tickets'];
+    }
+
+    $successCount = 0;
+    $failedCount = 0;
+
+    foreach ($ticket_ids as $ticket_id) {
+        if (!is_numeric($ticket_id)) {
+            $failedCount++;
+            continue;
+        }
+
+        if ($prix_unitaire !== null) {
+            $stmt = $conn->prepare("
+                UPDATE tickets 
+                SET prix_unitaire = ?, 
+                    date_validation_boss = ?, 
+                    montant_paie = ? * poids 
+                WHERE id_ticket = ? AND (date_validation_boss IS NULL )
+            ");
+            $result = $stmt->execute([$prix_unitaire, $date_validation, $prix_unitaire, $ticket_id]);
+        } else {
+            $stmt = $conn->prepare("
+                UPDATE tickets 
+                SET date_validation_boss = ?
+                WHERE id_ticket = ? AND (date_validation_boss IS NULL )
+            ");
+            $result = $stmt->execute([$date_validation, $ticket_id ]);
+        }
+
+        if ($result && $stmt->rowCount() > 0) {
+            $successCount++;
+        } else {
+            $failedCount++;
+        }
+    }
+
+    if ($successCount > 0) {
+        $_SESSION['popup'] = true; // Pour afficher la popup après validation
+        echo json_encode(['success' => true, 'message' => "$successCount ticket(s) validé(s) avec succès"]);
+    } else {
+        echo json_encode(['success' => false, 'message' => "Aucun ticket n'a été validé"]);
     }
 } catch (Exception $e) {
-    echo json_encode(['success' => false, 'error' => $e->getMessage()]);
+    error_log('Erreur valider_tickets.php: ' . $e->getMessage());
+    echo json_encode(['success' => false, 'message' => 'Erreur: ' . $e->getMessage()]);
 }

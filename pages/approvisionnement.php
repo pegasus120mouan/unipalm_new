@@ -2,10 +2,8 @@
 require_once '../inc/functions/connexion.php';
 include('header.php');
 
+$id_user = $_SESSION['user_id'];
 
-$id_user=$_SESSION['user_id'];
-
-//echo $id_user;
 // Get total cash balance
 $getSommeCaisseQuery = "SELECT
     SUM(CASE WHEN type_transaction = 'approvisionnement' THEN montant
@@ -187,34 +185,50 @@ label {
                     <span aria-hidden="true">&times;</span>
                 </button>
             </div>
-            <div class="modal-body">
-                <?php if (isset($_SESSION['error_message'])): ?>
-                    <div class="alert alert-danger">
-                        <?= $_SESSION['error_message'] ?>
-                        <?php unset($_SESSION['error_message']); ?>
-                    </div>
-                <?php endif; ?>
-                
-                <form class="forms-sample" method="post" action="save_approvisionnement.php">
+            <form class="needs-validation" method="post" action="save_approvisionnement.php" novalidate>
+                <div class="modal-body">
                     <input type="hidden" name="save_approvisionnement" value="1">
+                    
                     <div class="form-group">
-                        <label>Type de Transaction</label>
-                        <select class="form-control" name="type_transaction" required disabled>
-                            <option value="approvisionnement">Entrée de caisse</option>
-                        </select>
+                        <label for="montant">Montant <span class="text-danger">*</span></label>
+                        <div class="input-group">
+                            <input type="number" 
+                                class="form-control" 
+                                id="montant" 
+                                name="montant"
+                                min="1" 
+                                placeholder="Entrez le montant"
+                                required>
+                            <div class="input-group-append">
+                                <span class="input-group-text">FCFA</span>
+                            </div>
+                            <div class="invalid-feedback">
+                                Le montant est requis et doit être supérieur à 0
+                            </div>
+                        </div>
                     </div>
+
                     <div class="form-group">
-                        <label for="montant">Montant (FCFA) <span class="text-danger">*</span></label>
-                        <input type="text" class="form-control" id="montant" name="montant" placeholder="Saisir le montant" required>
+                        <label for="motifs">Motif de l'approvisionnement <span class="text-danger">*</span></label>
+                        <textarea 
+                            class="form-control" 
+                            id="motifs" 
+                            name="motifs" 
+                            rows="3"
+                            placeholder="Entrez le motif de l'approvisionnement"
+                            required></textarea>
+                        <div class="invalid-feedback">
+                            Le motif de l'approvisionnement est requis
+                        </div>
                     </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Fermer</button>
-                        <button type="submit" class="btn btn-primary">
-                            <i class="fas fa-save"></i> Enregistrer
-                        </button>
-                    </div>
-                </form>
-            </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Fermer</button>
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-save"></i> Effectuer l'approvisionnement
+                    </button>
+                </div>
+            </form>
         </div>
     </div>
 </div>
@@ -420,3 +434,209 @@ $(function () {
     });
 });
 </script>
+
+<style>
+.modal-content {
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    border: none;
+    border-radius: 8px;
+}
+
+.modal-header {
+    border-bottom: 1px solid #dee2e6;
+    background-color: #f8f9fa;
+    border-top-left-radius: 8px;
+    border-top-right-radius: 8px;
+}
+
+.modal-footer {
+    border-top: 1px solid #dee2e6;
+    background-color: #f8f9fa;
+    border-bottom-left-radius: 8px;
+    border-bottom-right-radius: 8px;
+}
+
+.form-group {
+    margin-bottom: 1rem;
+}
+
+.form-group label {
+    font-weight: 500;
+    color: #212529;
+}
+
+.input-group-text {
+    background-color: #f8f9fa;
+    border: 1px solid #ced4da;
+    color: #495057;
+}
+
+.btn {
+    font-weight: 500;
+    letter-spacing: 0.5px;
+    transition: all 0.2s;
+}
+
+.btn-primary {
+    background-color: #007bff;
+    border-color: #007bff;
+}
+
+.btn-primary:hover {
+    background-color: #0069d9;
+    border-color: #0062cc;
+}
+
+.btn-secondary {
+    background-color: #6c757d;
+    border-color: #6c757d;
+}
+
+.btn-secondary:hover {
+    background-color: #5a6268;
+    border-color: #545b62;
+}
+
+.invalid-feedback {
+    font-size: 80%;
+    color: #dc3545;
+}
+
+.form-control.is-invalid,
+.was-validated .form-control:invalid {
+    border-color: #dc3545;
+    padding-right: calc(1.5em + .75rem);
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' fill='none' stroke='%23dc3545' viewBox='0 0 12 12'%3e%3ccircle cx='6' cy='6' r='4.5'/%3e%3cpath stroke-linejoin='round' d='M5.8 3.6h.4L6 6.5z'/%3e%3ccircle cx='6' cy='8.2' r='.6' fill='%23dc3545' stroke='none'/%3e%3c/svg%3e");
+    background-repeat: no-repeat;
+    background-position: right calc(.375em + .1875rem) center;
+    background-size: calc(.75em + .375rem) calc(.75em + .375rem);
+}
+
+.form-control.is-valid,
+.was-validated .form-control:valid {
+    border-color: #28a745;
+    padding-right: calc(1.5em + .75rem);
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' width='8' height='8' viewBox='0 0 8 8'%3e%3cpath fill='%2328a745' d='M2.3 6.73L.6 4.53c-.4-1.04.46-1.4 1.1-.8l1.1 1.4 3.4-3.8c.6-.63 1.6-.27 1.2.7l-4 4.6c-.43.5-.8.4-1.1.1z'/%3e%3c/svg%3e");
+    background-repeat: no-repeat;
+    background-position: right calc(.375em + .1875rem) center;
+    background-size: calc(.75em + .375rem) calc(.75em + .375rem);
+}
+
+/* Toast notifications styling */
+.toast-top-right {
+    top: 12px;
+    right: 12px;
+}
+
+#toast-container > div {
+    opacity: 1;
+    -ms-filter: progid:DXImageTransform.Microsoft.Alpha(Opacity=100);
+    filter: alpha(opacity=100);
+}
+
+.toast {
+    background-color: #fff;
+    border-radius: 4px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+}
+
+.toast-success {
+    background-color: #51A351;
+}
+
+.toast-error {
+    background-color: #BD362F;
+}
+
+.toast-info {
+    background-color: #2F96B4;
+}
+
+.toast-warning {
+    background-color: #F89406;
+}
+
+.badge {
+    padding: 0.5em 0.75em;
+    font-weight: 500;
+}
+
+.badge-success {
+    background-color: #28a745;
+}
+
+.badge-danger {
+    background-color: #dc3545;
+}
+</style>
+
+<script>
+$(document).ready(function() {
+    // Initialize DataTable with French localization
+    $("#example1").DataTable({
+        "responsive": true,
+        "language": {
+            "url": "//cdn.datatables.net/plug-ins/1.10.24/i18n/French.json"
+        },
+        "order": [[0, "desc"]] // Sort by date descending
+    });
+
+    // Form validation
+    (function() {
+        'use strict';
+        window.addEventListener('load', function() {
+            var forms = document.getElementsByClassName('needs-validation');
+            Array.prototype.filter.call(forms, function(form) {
+                form.addEventListener('submit', function(event) {
+                    if (form.checkValidity() === false) {
+                        event.preventDefault();
+                        event.stopPropagation();
+                    }
+                    form.classList.add('was-validated');
+                }, false);
+            });
+        }, false);
+    })();
+
+    // Reset form on modal close
+    $('.modal').on('hidden.bs.modal', function() {
+        $(this).find('form').trigger('reset');
+        $(this).find('.was-validated').removeClass('was-validated');
+    });
+
+    // Add subtle transitions
+    $('.modal').on('show.bs.modal', function() {
+        $(this).find('.modal-content')
+               .css('opacity', 0)
+               .animate({ opacity: 1 }, 200);
+    });
+
+    // Success message handling with toastr
+    <?php if (isset($_SESSION['success_message'])): ?>
+        toastr.options = {
+            "closeButton": true,
+            "progressBar": true,
+            "positionClass": "toast-top-right",
+            "timeOut": "5000"
+        };
+        toastr.success('<?= $_SESSION['success_message'] ?>');
+        <?php unset($_SESSION['success_message']); ?>
+    <?php endif; ?>
+
+    // Error message handling with toastr
+    <?php if (isset($_SESSION['error_message'])): ?>
+        toastr.options = {
+            "closeButton": true,
+            "progressBar": true,
+            "positionClass": "toast-top-right",
+            "timeOut": "7000"
+        };
+        toastr.error('<?= $_SESSION['error_message'] ?>');
+        <?php unset($_SESSION['error_message']); ?>
+    <?php endif; ?>
+});
+</script>
+
+<?php include('footer.php'); ?>
+</body>
+</html>

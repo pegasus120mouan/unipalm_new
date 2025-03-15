@@ -44,31 +44,6 @@ $agents = getAgents($conn);
 include('header.php');
 ?>
 
-<!-- Modal pour ticket en doublon -->
-<div class="modal fade" id="ticketExistModal" tabindex="-1" role="dialog">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header bg-danger text-white">
-                <h5 class="modal-title">
-                    <i class="fas fa-exclamation-triangle"></i> Attention !
-                </h5>
-                <button type="button" class="close text-white" data-dismiss="modal">
-                    <span aria-hidden="true">&times;</span>
-                </button>
-            </div>
-            <div class="modal-body text-center">
-                <i class="fas fa-times-circle text-danger fa-4x mb-3"></i>
-                <h4 class="text-danger">Numéro de ticket en double</h4>
-                <p class="mb-0">Le ticket numéro <strong id="duplicateTicketNumber"></strong> existe déjà.</p>
-                <p>Veuillez utiliser un autre numéro.</p>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-dismiss="modal">Fermer</button>
-            </div>
-        </div>
-    </div>
-</div>
-
 <!-- Message d'erreur/succès -->
 <?php if (isset($_SESSION['error'])): ?>
 <div class="alert alert-danger alert-dismissible fade show" role="alert">
@@ -92,38 +67,114 @@ include('header.php');
 
 <!-- Reste du code HTML -->
 
-<script>
-$(document).ready(function() {
-    // Vérification lors de la saisie
-    $('input[name="numero_ticket"]').on('change', function() {
-        var numero_ticket = $(this).val().trim();
-        if (numero_ticket) {
-            $.ajax({
-                url: 'check_ticket.php',
-                method: 'POST',
-                data: { numero_ticket: numero_ticket },
-                dataType: 'json',
-                success: function(response) {
-                    if (response.exists) {
-                        $('#duplicateTicketNumber').text(numero_ticket);
-                        $('#ticketExistModal').modal('show');
-                        $('input[name="numero_ticket"]').val('');
-                    }
-                }
-            });
-        }
-    });
-
-    // Focus sur le champ après fermeture du modal
-    $('#ticketExistModal').on('hidden.bs.modal', function() {
-        $('input[name="numero_ticket"]').focus();
-    });
-});
-</script>
-
-<!-- Main row -->
 <style>
-  .pagination-container {
+/* Styles communs pour les formulaires */
+.form-group {
+    margin-bottom: 1rem;
+}
+
+.form-group label {
+    font-weight: bold;
+    margin-bottom: 0.5rem;
+    display: block;
+}
+
+/* Styles pour les champs de saisie */
+#input,
+#input_agent,
+#input_vehicule {
+    padding: 0.375rem 0.75rem;
+    font-size: 1rem;
+    line-height: 1.5;
+    color: #495057;
+    background-color: #fff;
+    border: 1px solid #ced4da;
+    border-radius: 0.25rem;
+    transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+}
+
+#input:focus,
+#input_agent:focus,
+#input_vehicule:focus {
+    color: #495057;
+    background-color: #fff;
+    border-color: #80bdff;
+    outline: 0;
+    box-shadow: 0 0 0 0.2rem rgba(0,123,255,.25);
+}
+
+#input::placeholder,
+#input_agent::placeholder,
+#input_vehicule::placeholder {
+    color: #6c757d;
+    opacity: 1;
+}
+
+/* Styles pour la liste déroulante */
+.list {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    background: white;
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    border: 1px solid #ddd;
+    border-top: none;
+    border-radius: 0 0 4px 4px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    z-index: 1000;
+    max-height: 200px;
+    overflow-y: auto;
+    display: none;
+}
+
+.list li {
+    padding: 8px 12px;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+}
+
+.list li:hover {
+    background-color: #f8f9fa;
+}
+
+.list li strong {
+    color: #007bff;
+}
+
+/* Styles pour le responsive */
+@media only screen and (max-width: 767px) {
+    th {
+        display: none; 
+    }
+    tbody tr {
+        display: block;
+        margin-bottom: 20px;
+        border: 1px solid #ccc;
+        padding: 10px;
+    }
+    tbody tr td::before {
+        font-weight: bold;
+        margin-right: 5px;
+    }
+}
+
+/* Utilitaires */
+.margin-right-15 {
+    margin-right: 15px;
+}
+
+.block-container {
+    background-color: #d7dbdd;
+    padding: 20px;
+    border-radius: 5px;
+    width: 100%;
+    margin-bottom: 20px;
+}
+
+.pagination-container {
     display: flex;
     align-items: center;
     justify-content: center;
@@ -161,12 +212,14 @@ label {
     border-radius: 4px; 
     cursor: pointer;
 }
- .custom-icon {
-            color: green;
-            font-size: 24px;
-            margin-right: 8px;
- }
- .spacing {
+
+.custom-icon {
+    color: green;
+    font-size: 24px;
+    margin-right: 8px;
+}
+
+.spacing {
     margin-right: 10px; 
     margin-bottom: 20px;
 }
@@ -201,7 +254,6 @@ label {
       margin-bottom: 20px;
     }
     </style>
-
 
 <div class="row">
     <?php if (isset($_SESSION['warning'])): ?>
@@ -244,21 +296,25 @@ label {
     <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#add-ticket">
       <i class="fa fa-edit"></i>Enregistrer un ticket
     </button>
-
-    <button type="button" class="btn btn-danger" data-toggle="modal" data-target="#print-bordereau">
-      <i class="fa fa-print"></i> Imprimer un bordereau
+    <button type="button" class="btn btn-danger" data-toggle="modal" data-target="#print-bordereau-agent">
+      <i class="fa fa-print"></i> Imprimer Bordereau
     </button>
-
+    <button type="button" class="btn btn-info" data-toggle="modal" data-target="#print-bordereau">
+      <i class="fas fa-file-pdf"></i> Imprimer ticket par usine
+    </button>
     <button type="button" class="btn btn-success" data-toggle="modal" data-target="#search_ticket">
       <i class="fa fa-search"></i> Rechercher un ticket
     </button>
 
     <button type="button" class="btn btn-dark" onclick="window.location.href='export_tickets.php'">
-              <i class="fa fa-print"></i> Exporter la liste les tickets
-             </button>
+              <i class="fa fa-print"></i> Exporter tous  les tickets
+    </button>
+
+    <button type="button" class="btn btn-outline-dark" data-toggle="modal" data-target="#exportDateModal">
+              <i class="fas fa-file-excel"></i> Exporter  les tickets sur une période
+    </button>
+ 
 </div>
-
-
 
   <div class="table-responsive">
     <table id="example1" class="table table-bordered table-striped">
@@ -279,7 +335,7 @@ label {
         <th>Date validation</th>
         <th>Montant</th>
         <th>Date Paie</th>
-       <!-- <th>Actions</th>-->
+        <th>Actions</th>
       </tr>
     </thead>
     <tbody>
@@ -348,7 +404,7 @@ label {
           </td>
           
   
-        <!--  <td class="actions">
+          <td class="actions">
          <?php if (!isset($ticket['date_paie']) || $ticket['date_paie'] === null): ?>
             <a class="edit" data-toggle="modal" data-target="#editModalTicket<?= $ticket['id_ticket'] ?>">
             <i class="fas fa-pen fa-xs" style="font-size:24px;color:blue"></i>
@@ -360,7 +416,7 @@ label {
             <i class="fas fa-pen fa-xs" style="font-size:24px;color:gray" title="Ticket déjà payé"></i>
             <i class="fas fa-trash fa-xs" style="font-size:24px;color:gray" title="Ticket déjà payé"></i>
             <?php endif; ?>
-          </td>-->
+          </td>
            <!-- Lien pour déclencher la modale -->
 <!--a href="#" class="trash" data-toggle="modal" data-target="#confirmDeleteModal" data-id="<?= $ticket['id_ticket'] ?>">
     <i class="fas fa-trash fa-xs" style="font-size:24px;color:red"></i>
@@ -480,8 +536,6 @@ label {
     </form>
 </div>
 
-
-
   <div class="modal fade" id="add-ticket" tabindex="-1" role="dialog" aria-labelledby="addTicketModalLabel" aria-hidden="true">
     <div class="modal-dialog" role="document">
       <div class="modal-content">
@@ -502,53 +556,31 @@ label {
                 <label for="exampleInputEmail1">Numéro du Ticket</label>
                 <input type="text" class="form-control" id="exampleInputEmail1" placeholder="Numero du ticket" name="numero_ticket">
               </div>
-               <div class="form-group">
-                  <label>Selection Usine</label>
-                  <select id="select" name="usine" class="form-control">
-                      <?php
-                      // Vérifier si des usines existent
-                      if (!empty($usines)) {
-
-                          foreach ($usines as $usine) {
-                              echo '<option value="' . htmlspecialchars($usine['id_usine']) . '">' . htmlspecialchars($usine['nom_usine']) . '</option>';
-                          }
-                      } else {
-                          echo '<option value="">Aucune usine disponible</option>';
-                      }
-                      ?>
-                  </select>
+              <div class="form-group">
+                <label for="input" class="font-weight-bold mb-2">Sélection Usine</label>
+                <div class="position-relative">
+                    <input type="text" class="form-control" id="input" placeholder="Sélectionner une usine" autocomplete="off">
+                    <input type="hidden" name="id_usine" id="usine_id">
+                    <ul class="list shadow-sm"></ul>
+                </div>
               </div>
 
               <div class="form-group">
-                  <label>Chargé de Mission</label>
-                  <select id="select" name="id_agent" class="form-control">
-                      <?php
-                      // Vérifier si des usines existent
-                      if (!empty($agents)) {
-                          foreach ($agents as $agent) {
-                              echo '<option value="' . htmlspecialchars($agent['id_agent']) . '">' . htmlspecialchars($agent['nom_complet_agent']) . '</option>';
-                          }
-                      } else {
-                          echo '<option value="">Aucune chef eéuipe disponible</option>';
-                      }
-                      ?>
-                  </select>
+                <label for="input" class="font-weight-bold mb-2">Sélectionner un chargé de mission</label>
+                <div class="position-relative">
+                    <input type="text" class="form-control" id="input_agent" placeholder="Sélectionner un chargé de mission" autocomplete="off">
+                    <input type="hidden" name="id_agent" id="agent_id">
+                    <ul class="list shadow-sm"></ul>
+                </div>
               </div>
 
               <div class="form-group">
-                  <label>Selection véhicules</label>
-                  <select id="select" name="vehicule" class="form-control">
-                      <?php
-                      // Vérifier si des usines existent
-                      if (!empty($vehicules)) {
-                          foreach ($vehicules as $vehicule) {
-                              echo '<option value="' . htmlspecialchars($vehicule['vehicules_id']) . '">' . htmlspecialchars($vehicule['matricule_vehicule']) . '</option>';
-                          }
-                      } else {
-                          echo '<option value="">Aucun vehicule disponible</option>';
-                      }
-                      ?>
-                  </select>
+                <label for="input" class="font-weight-bold mb-2">Sélection véhicule</label>
+                <div class="position-relative">
+                    <input type="text" class="form-control" id="input_vehicule" placeholder="Sélectionner un véhicule" autocomplete="off">
+                    <input type="hidden" name="vehicule_id" id="vehicule_id">
+                    <ul class="list shadow-sm"></ul>
+                </div>
               </div>
 
               <div class="form-group">
@@ -572,48 +604,86 @@ label {
   <div class="modal fade" id="print-bordereau">
     <div class="modal-dialog">
       <div class="modal-content">
-        <div class="modal-header">
-          <h4 class="modal-title">Impression bordereau</h4>
+        <div class="modal-header bg-success text-white">
+          <h5 class="modal-title">
+            <i class="fas fa-file-pdf"></i> Impression des tickets par usine
+          </h5>
+          <button type="button" class="close text-white" data-dismiss="modal">
+            <span aria-hidden="true">&times;</span>
+          </button>
         </div>
-        <div class="modal-body">
-          <form class="forms-sample" method="post" action="print_bordereau.php" target="_blank">
-            <div class="card-body">
-              <div class="form-group">
-                  <label>Chargé de Mission</label>
-                  <select id="select" name="id_agent" class="form-control">
-                      <?php
-                      // Vérifier si des usines existent
-                      if (!empty($agents)) {
-                          foreach ($agents as $agent) {
-                              echo '<option value="' . htmlspecialchars($agent['id_agent']) . '">' . htmlspecialchars($agent['nom_complet_agent']) . '</option>';
-                          }
-                      } else {
-                          echo '<option value="">Aucune chef eéuipe disponible</option>';
-                      }
-                      ?>
-                  </select>
-              </div>
-              <div class="form-group">
-                <label for="exampleInputPassword1">Date de debut</label>
-                <input type="date" class="form-control" id="exampleInputPassword1" placeholder="Poids" name="date_debut">
-              </div>
-              <div class="form-group">
-                <label for="exampleInputPassword1">Date Fin</label>
-                <input type="date" class="form-control" id="exampleInputPassword1" placeholder="Poids" name="date_fin">
-              </div>
-
-              <button type="submit" class="btn btn-primary mr-2" name="saveCommande">Imprimer</button>
-              <button type="button" class="btn btn-light" data-dismiss="modal">Annuler</button>
+        <form action="print_tickets_usine.php" method="POST" target="_blank">
+          <div class="modal-body">
+            <div class="form-group">
+              <label for="id_usine">Sélectionner une usine</label>
+              <select class="form-control" name="id_usine" id="id_usine" required>
+                <option value="">Choisir une usine</option>
+                <?php foreach($usines as $usine): ?>
+                  <option value="<?= $usine['id_usine'] ?>"><?= htmlspecialchars($usine['nom_usine']) ?></option>
+                <?php endforeach; ?>
+              </select>
             </div>
-          </form>
-        </div>
+            <div class="form-group">
+              <label for="date_debut">Date début</label>
+              <input type="date" class="form-control" name="date_debut" id="date_debut" required>
+            </div>
+            <div class="form-group">
+              <label for="date_fin">Date fin</label>
+              <input type="date" class="form-control" name="date_fin" id="date_fin" required>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-dismiss="modal">Fermer</button>
+            <button type="submit" class="btn btn-success">
+              <i class="fas fa-file-pdf"></i> Générer PDF
+            </button>
+          </div>
+        </form>
       </div>
-      <!-- /.modal-content -->
     </div>
-
-
-    <!-- /.modal-dialog -->
   </div>
+
+  <!-- Modal pour impression bordereau par agent -->
+<div class="modal fade" id="print-bordereau-agent">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title">Impression bordereau</h4>
+            </div>
+            <div class="modal-body">
+                <form class="forms-sample" method="post" action="print_bordereau.php" target="_blank">
+                    <div class="card-body">
+                        <div class="form-group">
+                            <label>Chargé de Mission</label>
+                            <select id="select" name="id_agent" class="form-control">
+                                <?php
+                                if (!empty($agents)) {
+                                    foreach ($agents as $agent) {
+                                        echo '<option value="' . $agent['id_agent'] . '">' . $agent['nom_complet_agent'] . '</option>';
+                                    }
+                                } else {
+                                    echo '<option value="">Aucune chef équipe disponible</option>';
+                                }
+                                ?>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="date_debut">Date de debut</label>
+                            <input type="date" class="form-control" id="date_debut" name="date_debut" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="date_fin">Date Fin</label>
+                            <input type="date" class="form-control" id="date_fin" name="date_fin" required>
+                        </div>
+
+                        <button type="submit" class="btn btn-primary mr-2" name="saveCommande">Imprimer</button>
+                        <button type="button" class="btn btn-light" data-dismiss="modal">Annuler</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
 
 <!-- Recherche par tickets-->
 <div class="modal fade" id="search_ticket">
@@ -755,6 +825,55 @@ label {
     </div>
 </div>
 
+<!-- Modal Recherche par Date -->
+<div class="modal fade" id="exportDateModal" tabindex="-1" role="dialog" aria-labelledby="searchByDateModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header bg-dark text-white">
+                <h5 class="modal-title" id="searchByDateModalLabel">
+                    <i class="fas fa-calendar-alt mr-2"></i>Exporter Tickets sur une période
+                </h5>
+                <button type="button" class="close text-white" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <form id="exportDateForm" method="get" action="export_tickets_periode.php" target="_blank">
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label for="date_debut" class="font-weight-bold mb-2">Date de début</label>
+                        <div class="input-group">
+                            <div class="input-group-prepend">
+                                <span class="input-group-text"><i class="fas fa-calendar"></i></span>
+                            </div>
+                            <input type="date" class="form-control custom-input" id="date_debut" name="date_debut" required 
+                                   style="padding: 0.5rem; border: 1px solid #ced4da; border-radius: 0 0.25rem 0.25rem 0;">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="date_fin" class="font-weight-bold mb-2">Date fin</label>
+                        <div class="input-group">
+                            <div class="input-group-prepend">
+                                <span class="input-group-text"><i class="fas fa-calendar"></i></span>
+                            </div>
+                            <input type="date" class="form-control custom-input" id="date_fin" name="date_fin" required
+                                   style="padding: 0.5rem; border: 1px solid #ced4da; border-radius: 0 0.25rem 0.25rem 0;">
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">
+                        <i class="fas fa-times mr-2"></i>Annuler
+                    </button>
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-file-export mr-2"></i>Exporter
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Modal Recherche par Date -->
 <div class="modal fade" id="searchByBetweendateModal" tabindex="-1" role="dialog" aria-labelledby="searchByDateModalLabel" aria-hidden="true">
     <div class="modal-dialog" role="document">
         <div class="modal-content">
@@ -822,205 +941,8 @@ label {
 </div>
 
 <script>
-// Gestionnaire pour le formulaire de recherche par usine
-document.getElementById('searchByUsineForm').addEventListener('submit', function(e) {
-    e.preventDefault();
-    const usineId = document.getElementById('usine').value;
-    if (usineId) {
-        window.location.href = 'tickets.php?usine=' + usineId;
-    }
-});
-
-// Gestionnaire pour le formulaire de recherche par date
-document.getElementById('searchByDateForm').addEventListener('submit', function(e) {
-    e.preventDefault();
-    const date = document.getElementById('date_creation').value;
-    if (date) {
-        window.location.href = 'tickets.php?date_creation=' + date;
-    }
-});
-
-// Gestionnaire pour le formulaire de recherche par véhicule
-document.getElementById('searchByVehiculeForm').addEventListener('submit', function(e) {
-    e.preventDefault();
-    const vehiculeId = document.getElementById('chauffeur').value;
-    if (vehiculeId) {
-        window.location.href = 'tickets.php?chauffeur=' + vehiculeId;
-    }
-});
-
-// Gestionnaire pour le formulaire de recherche entre deux dates
-document.getElementById('searchByBetweendateForm').addEventListener('submit', function(e) {
-    e.preventDefault();
-    const date_debut = document.getElementById('date_debut').value;
-    const date_fin = document.getElementById('date_fin').value;
-    if (date_debut && date_fin) {
-        window.location.href = 'tickets.php?date_debut=' + date_debut + '&date_fin=' + date_fin;
-    }
-});
-</script>
-
-<?php foreach ($tickets_list as $ticket) : ?>
-  <div class="modal fade" id="ticketModal<?= $ticket['id_ticket'] ?>" tabindex="-1" role="dialog" aria-labelledby="ticketModalLabel<?= $ticket['id_ticket'] ?>" aria-hidden="true">
-    <div class="modal-dialog" role="document">
-      <div class="modal-content">
-        <div class="modal-header bg-primary text-white">
-          <h5 class="modal-title" id="ticketModalLabel<?= $ticket['id_ticket'] ?>">
-            <i class="fas fa-ticket-alt mr-2"></i>Détails du Ticket #<?= $ticket['numero_ticket'] ?>
-          </h5>
-          <button type="button" class="close text-white" data-dismiss="modal" aria-label="Close">
-            <span aria-hidden="true">&times;</span>
-          </button>
-        </div>
-        <div class="modal-body">
-          <div class="row mb-4">
-            <div class="col-md-6">
-              <div class="info-group">
-                <label class="text-muted">Date du ticket:</label>
-                <p class="font-weight-bold"><?= isset($ticket['date_ticket']) ? date('d/m/Y', strtotime($ticket['date_ticket'])) : '-' ?></p>
-              </div>
-              <div class="info-group">
-                <label class="text-muted">Usine:</label>
-                <p class="font-weight-bold"><?= isset($ticket['nom_usine']) ? $ticket['nom_usine'] : '-' ?></p>
-              </div>
-              <div class="info-group">
-                <label class="text-muted">Agent:</label>
-                <p class="font-weight-bold"><?= isset($ticket['agent_nom_complet']) ? $ticket['agent_nom_complet'] : '-' ?></p>
-              </div>
-              <div class="info-group">
-                <label class="text-muted">Véhicule:</label>
-                <p class="font-weight-bold"><?= isset($ticket['matricule_vehicule']) ? $ticket['matricule_vehicule'] : '-' ?></p>
-              </div>
-              <div class="info-group">
-                <label class="text-muted">Poids ticket:</label>
-                <p class="font-weight-bold"><?= isset($ticket['poids']) ? $ticket['poids'] : '-' ?> kg</p>
-              </div>
-            </div>
-            <div class="col-md-6">
-              <div class="info-group">
-                <label class="text-muted">Prix unitaire:</label>
-                <p class="font-weight-bold"><?= isset($ticket['prix_unitaire']) ? $ticket['prix_unitaire'] : '-' ?></p>
-              </div>
-              <div class="info-group">
-                <label class="text-muted">Montant à payer:</label>
-                <p class="font-weight-bold text-primary"><?= isset($ticket['montant_paie']) ? $ticket['montant_paie'] : '-' ?></p>
-              </div>
-              <div class="info-group">
-                <label class="text-muted">Montant payé:</label>
-                <p class="font-weight-bold text-success"><?= isset($ticket['montant_payer']) ? $ticket['montant_payer'] : '-' ?></p>
-              </div>
-              <div class="info-group">
-                <label class="text-muted">Reste à payer:</label>
-                <p class="font-weight-bold <?= (isset($ticket['montant_reste']) && $ticket['montant_reste'] == 0) ? 'text-success' : 'text-danger' ?>">
-                  <?= isset($ticket['montant_reste']) ? $ticket['montant_reste'] : '-' ?>
-                </p>
-              </div>
-            </div>
-          </div>
-          <div class="border-top pt-3">
-            <div class="info-group">
-              <label class="text-muted">Créé par:</label>
-              <p class="font-weight-bold"><?= isset($ticket['utilisateur_nom_complet']) ? $ticket['utilisateur_nom_complet'] : '-' ?></p>
-            </div>
-            <div class="info-group">
-              <label class="text-muted">Date de création:</label>
-              <p class="font-weight-bold"><?= isset($ticket['created_at']) ? date('d/m/Y', strtotime($ticket['created_at'])) : '-' ?></p>
-            </div>
-          </div>
-        </div>
-        <div class="modal-footer bg-light">
-          <button type="button" class="btn btn-secondary" data-dismiss="modal">Fermer</button>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <style>
-  .info-group {
-    margin-bottom: 15px;
-  }
-  .info-group label {
-    display: block;
-    font-size: 0.9em;
-    margin-bottom: 2px;
-  }
-  .info-group p {
-    margin-bottom: 0;
-  }
-  .modal-header .close {
-    padding: 1rem;
-    margin: -1rem -1rem -1rem auto;
-  }
-  </style>
-<?php endforeach; ?>
-
-</body>
-
-</html>
-
-<!-- Success Modal -->
-<div class="modal fade" id="successModal" tabindex="-1" role="dialog" aria-labelledby="successModalLabel" aria-hidden="true">
-    <div class="modal-dialog" role="document">
-        <div class="modal-content" style="border-radius: 15px;">
-            <div class="modal-body text-center p-4">
-                <div class="mb-4">
-                    <div style="width: 70px; height: 70px; background-color: #4CAF50; border-radius: 50%; display: inline-flex; justify-content: center; align-items: center; margin-bottom: 20px;">
-                        <i class="fas fa-check" style="font-size: 35px; color: white;"></i>
-                    </div>
-                    <h4 class="mb-3" style="font-weight: 600;">SUCCESS</h4>
-                    <?php if (isset($_SESSION['message'])): ?>
-                        <p><?= $_SESSION['message'] ?></p>
-                        <?php unset($_SESSION['message']); ?>
-                    <?php else: ?>
-                        <p>Ticket ajouté avec succès!</p>
-                        <p style="color: #666;">Le prix unitaire pour cette période est : <strong><?= isset($_SESSION['prix_unitaire']) ? number_format($_SESSION['prix_unitaire'], 2, ',', ' ') : '0,00' ?> FCFA</strong></p>
-                    <?php endif; ?>
-                </div>
-                <button type="button" class="btn btn-success px-4 py-2" data-dismiss="modal" style="min-width: 120px; border-radius: 25px;">CONTINUE</button>
-            </div>
-        </div>
-    </div>
-</div>
-
-<!-- Warning Modal -->
-<div class="modal fade" id="warningModal" tabindex="-1" role="dialog" aria-labelledby="warningModalLabel" aria-hidden="true">
-    <div class="modal-dialog" role="document">
-        <div class="modal-content" style="border-radius: 15px;">
-            <div class="modal-body text-center p-4">
-                <div class="mb-4">
-                    <div style="width: 70px; height: 70px; background-color: #FFC107; border-radius: 50%; display: inline-flex; justify-content: center; align-items: center; margin-bottom: 20px;">
-                        <i class="fas fa-exclamation" style="font-size: 35px; color: white;"></i>
-                    </div>
-                    <h4 class="mb-3" style="font-weight: 600;">ATTENTION</h4>
-                    <p style="color: #666;"><?= isset($_SESSION['warning']) ? $_SESSION['warning'] : '' ?></p>
-                </div>
-                <button type="button" class="btn btn-warning px-4 py-2" data-dismiss="modal" style="min-width: 120px; border-radius: 25px;">CONTINUE</button>
-            </div>
-        </div>
-    </div>
-</div>
-
-<!-- Error Modal -->
-<div class="modal fade" id="errorModal" tabindex="-1" role="dialog" aria-labelledby="errorModalLabel" aria-hidden="true">
-    <div class="modal-dialog" role="document">
-        <div class="modal-content" style="border-radius: 15px;">
-            <div class="modal-body text-center p-4">
-                <div class="mb-4">
-                    <div style="width: 70px; height: 70px; background-color: #dc3545; border-radius: 50%; display: inline-flex; justify-content: center; align-items: center; margin-bottom: 20px;">
-                        <i class="fas fa-times" style="font-size: 35px; color: white;"></i>
-                    </div>
-                    <h4 class="mb-3" style="font-weight: 600;">ERROR</h4>
-                    <p style="color: #666;">Une erreur s'est produite lors de l'opération.</p>
-                </div>
-                <button type="button" class="btn btn-danger px-4 py-2" data-dismiss="modal" style="min-width: 120px; border-radius: 25px;">AGAIN</button>
-            </div>
-        </div>
-    </div>
-</div>
-
-<script>
 document.addEventListener('DOMContentLoaded', function() {
-    // Initialisation de tous les modals
+    // Initialisation des modals
     $('.modal').modal({
         keyboard: false,
         backdrop: 'static',
@@ -1033,194 +955,194 @@ document.addEventListener('DOMContentLoaded', function() {
         var ticketId = $(this).data('id');
         $('#confirmDeleteBtn').attr('href', 'traitement_tickets.php?action=delete&id=' + ticketId);
     });
+
+    // Configuration pour la sélection d'usine
+    setupAutoComplete({
+        inputId: 'input',
+        hiddenInputId: 'usine_id',
+        listSelector: '#usine-list',
+        apiUrl: '../inc/functions/requete/api_requete_usines.php',
+        nameField: 'nom_usine',
+        idField: 'id_usine'
+    });
+
+    // Configuration pour la sélection d'agent
+    setupAutoComplete({
+        inputId: 'input_agent',
+        hiddenInputId: 'agent_id',
+        listSelector: '#agent-list',
+        apiUrl: '../inc/functions/requete/api_requete_agents.php',
+        nameField: 'nom_complet_agent',
+        idField: 'id_agent'
+    });
+
+    // Configuration pour la sélection de véhicule
+    setupAutoComplete({
+        inputId: 'input_vehicule',
+        hiddenInputId: 'vehicule_id',
+        listSelector: '#vehicule-list',
+        apiUrl: '../inc/functions/requete/api_requete_vehicules.php',
+        nameField: 'matricule_vehicule',
+        idField: 'vehicules_id'
+    });
+
+    function setupAutoComplete(config) {
+        const input = document.getElementById(config.inputId);
+        const hiddenInput = document.getElementById(config.hiddenInputId);
+        const list = input.parentElement.querySelector('.list');
+        let data = [];
+
+        // Récupération des données
+        fetch(config.apiUrl)
+            .then(response => response.json())
+            .then(result => {
+                if (result.success && result.data.length > 0) {
+                    data = result.data;
+                } else {
+                    console.error('Aucune donnée trouvée');
+                }
+            })
+            .catch(error => console.error('Erreur:', error));
+
+        function showSuggestions() {
+            const inputValue = input.value.toLowerCase();
+            list.innerHTML = '';
+            list.style.display = 'none';
+
+            if (!inputValue) {
+                hiddenInput.value = '';
+                return;
+            }
+
+            const matchingItems = data.filter(item => 
+                item[config.nameField].toLowerCase().includes(inputValue)
+            );
+
+            if (matchingItems.length > 0) {
+                list.style.display = 'block';
+                matchingItems.forEach(item => {
+                    const li = document.createElement('li');
+                    const name = item[config.nameField];
+                    const index = name.toLowerCase().indexOf(inputValue);
+                    const avant = name.substring(0, index);
+                    const match = name.substring(index, index + inputValue.length);
+                    const apres = name.substring(index + inputValue.length);
+
+                    li.innerHTML = avant + '<strong>' + match + '</strong>' + apres;
+                    
+                    li.addEventListener('click', () => {
+                        input.value = name;
+                        hiddenInput.value = item[config.idField];
+                        list.style.display = 'none';
+                    });
+
+                    list.appendChild(li);
+                });
+            }
+        }
+
+        input.addEventListener('input', showSuggestions);
+        input.addEventListener('focus', showSuggestions);
+
+        // Fermer la liste si on clique ailleurs
+        document.addEventListener('click', (e) => {
+            if (e.target !== input) {
+                list.style.display = 'none';
+            }
+        });
+
+        // Empêcher la fermeture lors du clic sur la liste
+        list.addEventListener('click', (e) => {
+            e.stopPropagation();
+        });
+
+        // Réinitialiser à la fermeture du modal
+        $('#add-ticket').on('hidden.bs.modal', function () {
+            input.value = '';
+            hiddenInput.value = '';
+            list.style.display = 'none';
+        });
+    }
 });
 </script>
 
-<?php if (isset($_SESSION['success_modal'])): ?>
 <script>
-    $(document).ready(function() {
+document.addEventListener('DOMContentLoaded', function() {
+    // Gestion des notifications
+    <?php if (isset($_SESSION['success_modal'])): ?>
         $('#successModal').modal('show');
         var audio = new Audio("../inc/sons/notification.mp3");
         audio.volume = 1.0;
         audio.play().catch((error) => {
             console.error('Erreur de lecture audio :', error);
         });
-    });
-</script>
-<?php 
-    unset($_SESSION['success_modal']);
-    unset($_SESSION['prix_unitaire']);
-endif; ?>
+        <?php 
+        unset($_SESSION['success_modal']);
+        unset($_SESSION['prix_unitaire']);
+    endif; ?>
 
-<?php if (isset($_SESSION['warning'])): ?>
-<script>
-    $(document).ready(function() {
+    <?php if (isset($_SESSION['warning'])): ?>
         $('#warningModal').modal('show');
-    });
-</script>
-<?php 
-    unset($_SESSION['warning']);
-endif; ?>
+        <?php unset($_SESSION['warning']); ?>
+    <?php endif; ?>
 
-<?php if (isset($_SESSION['delete_pop'])): ?>
-<script>
-    $(document).ready(function() {
+    <?php if (isset($_SESSION['delete_pop'])): ?>
         $('#errorModal').modal('show');
-    });
-</script>
-<?php 
-    unset($_SESSION['delete_pop']);
-endif; ?>
-<script src="../../plugins/jquery/jquery.min.js"></script>
-<!-- jQuery UI 1.11.4 -->
-<script src="../../plugins/jquery-ui/jquery-ui.min.js"></script>
-<!-- Resolve conflict in jQuery UI tooltip with Bootstrap tooltip -->
-<!-- <script>
-  $.widget.bridge('uibutton', $.ui.button)
-</script>-->
-<!-- Bootstrap 4 -->
-<script src="../../plugins/bootstrap/js/bootstrap.bundle.min.js"></script>
-<!-- ChartJS -->
-<script src="../../plugins/chart.js/Chart.min.js"></script>
-<!-- Sparkline -->
-<script src="../../plugins/sparklines/sparkline.js"></script>
-<!-- JQVMap -->
-<script src="../../plugins/jqvmap/jquery.vmap.min.js"></script>
-<script src="../../plugins/jqvmap/maps/jquery.vmap.usa.js"></script>
-<!-- jQuery Knob Chart -->
-<script src="../../plugins/jquery-knob/jquery.knob.min.js"></script>
-<!-- daterangepicker -->
-<script src="../../plugins/moment/moment.min.js"></script>
-<script src="../../plugins/daterangepicker/daterangepicker.js"></script>
-<!-- Tempusdominus Bootstrap 4 -->
-<script src="../../plugins/tempusdominus-bootstrap-4/js/tempusdominus-bootstrap-4.min.js"></script>
-<!-- Summernote -->
-<script src="../../plugins/summernote/summernote-bs4.min.js"></script>
-<!-- overlayScrollbars -->
-<script src="../../plugins/overlayScrollbars/js/jquery.overlayScrollbars.min.js"></script>
-<!-- AdminLTE App -->
-<script src="../../dist/js/adminlte.js"></script>
-<?php
+        <?php unset($_SESSION['delete_pop']); ?>
+    <?php endif; ?>
 
-if (isset($_SESSION['popup']) && $_SESSION['popup'] ==  true) {
-  ?>
-    <script>
-      var audio = new Audio("../inc/sons/notification.mp3");
-      audio.volume = 1.0; // Assurez-vous que le volume n'est pas à zéro
-      audio.play().then(() => {
-        // Lecture réussie
+    <?php if (isset($_SESSION['popup']) && $_SESSION['popup'] == true): ?>
+        var audio = new Audio("../inc/sons/notification.mp3");
+        audio.volume = 1.0;
+        audio.play().then(() => {
+            var Toast = Swal.mixin({
+                toast: true,
+                position: 'top-end',
+                showConfirmButton: false,
+                timer: 3000
+            });
+
+            Toast.fire({
+                icon: 'success',
+                title: 'Action effectuée avec succès.'
+            });
+        }).catch((error) => {
+            console.error('Erreur de lecture audio :', error);
+        });
+        <?php $_SESSION['popup'] = false; ?>
+    <?php endif; ?>
+
+    <?php if (isset($_SESSION['delete_pop']) && $_SESSION['delete_pop'] == true): ?>
         var Toast = Swal.mixin({
-          toast: true,
-          position: 'top-end',
-          showConfirmButton: false,
-          timer: 3000
+            toast: true,
+            position: 'top-end',
+            showConfirmButton: false,
+            timer: 3000
         });
-  
+
         Toast.fire({
-          icon: 'success',
-          title: 'Action effectuée avec succès.'
+            icon: 'error',
+            title: 'Action échouée.'
         });
-      }).catch((error) => {
-        console.error('Erreur de lecture audio :', error);
-      });
-    </script>
-  <?php
-    $_SESSION['popup'] = false;
-  }
-  ?>
-
-
-
-<!------- Delete Pop--->
-<?php
-
-if (isset($_SESSION['delete_pop']) && $_SESSION['delete_pop'] ==  true) {
-?>
-  <script>
-    var Toast = Swal.mixin({
-      toast: true,
-      position: 'top-end',
-      showConfirmButton: false,
-      timer: 3000
-    });
-
-    Toast.fire({
-      icon: 'error',
-      title: 'Action échouée.'
-    })
-  </script>
-
-<?php
-  $_SESSION['delete_pop'] = false;
-}
-?>
-<!-- AdminLTE dashboard demo (This is only for demo purposes) -->
-<!--<script src="dist/js/pages/dashboard.js"></script>-->
-<script>
-function showSearchModal(modalId) {
-  // Hide all modals
-  document.querySelectorAll('.modal').forEach(modal => {
-    $(modal).modal('hide');
-  });
-
-  // Show the selected modal
-  $('#' + modalId).modal('show');
-}
-</script>
-<script>
-// Afficher le modal si le ticket existe
-<?php if (isset($_SESSION['ticket_error']) && $_SESSION['ticket_error']): ?>
-    $(document).ready(function() {
-        $('#existingTicketNumber').text('<?= $_SESSION['numero_ticket'] ?>');
-        $('#ticketExistModal').modal('show');
-    });
-    <?php 
-    unset($_SESSION['ticket_error']);
-    unset($_SESSION['numero_ticket']);
-    ?>
-<?php endif; ?>
-
-// Validation du formulaire
-$(document).ready(function() {
-    $('form').on('submit', function(e) {
-        var numeroTicket = $('#numero_ticket').val();
-        
-        // Vérification AJAX du numéro de ticket
-        $.ajax({
-            url: 'check_ticket.php',
-            method: 'POST',
-            data: { numero_ticket: numeroTicket },
-            success: function(response) {
-                if (response.exists) {
-                    e.preventDefault();
-                    $('#existingTicketNumber').text(numeroTicket);
-                    $('#ticketExistModal').modal('show');
-                }
-            }
-        });
-    });
+        <?php $_SESSION['delete_pop'] = false; ?>
+    <?php endif; ?>
 });
 </script>
 
-<!-- Modal pour ticket existant -->
-<div class="modal fade" id="ticketExistModal" tabindex="-1" role="dialog" aria-labelledby="ticketExistModalLabel" aria-hidden="true">
-    <div class="modal-dialog" role="document">
-        <div class="modal-content">
-            <div class="modal-header bg-warning">
-                <h5 class="modal-title" id="ticketExistModalLabel">
-                    <i class="fas fa-exclamation-triangle"></i> Ticket déjà existant
-                </h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
-            </div>
-            <div class="modal-body">
-                <p>Le ticket numéro <strong id="existingTicketNumber"></strong> existe déjà dans la base de données.</p>
-                <p>Veuillez utiliser un autre numéro de ticket.</p>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-dismiss="modal">Fermer</button>
-            </div>
-        </div>
-    </div>
-</div>
+<!-- Scripts -->
+<script src="../../plugins/jquery/jquery.min.js"></script>
+<script src="../../plugins/jquery-ui/jquery-ui.min.js"></script>
+<script src="../../plugins/bootstrap/js/bootstrap.bundle.min.js"></script>
+<script src="../../plugins/chart.js/Chart.min.js"></script>
+<script src="../../plugins/sparklines/sparkline.js"></script>
+<script src="../../plugins/jqvmap/jquery.vmap.min.js"></script>
+<script src="../../plugins/jqvmap/maps/jquery.vmap.usa.js"></script>
+<script src="../../plugins/jquery-knob/jquery.knob.min.js"></script>
+<script src="../../plugins/moment/moment.min.js"></script>
+<script src="../../plugins/daterangepicker/daterangepicker.js"></script>
+<script src="../../plugins/tempusdominus-bootstrap-4/js/tempusdominus-bootstrap-4.min.js"></script>
+<script src="../../plugins/summernote/summernote-bs4.min.js"></script>
+<script src="../../plugins/overlayScrollbars/js/jquery.overlayScrollbars.min.js"></script>
+<script src="../../dist/js/adminlte.js"></script>
+</body>
+</html>

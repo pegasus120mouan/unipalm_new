@@ -21,7 +21,14 @@ include('header.php');
 $limit = $_GET['limit'] ?? 15; // Nombre d'éléments par page
 $page = isset($_GET['page']) ? (int)$_GET['page'] : 1; // Page actuelle
 
-// Requête SQL pour récupérer les prix unitaires
+// Récupérer les paramètres de filtrage
+$usine_id = $_GET['usine_id'] ?? null;
+$date_debut = $_GET['date_debut'] ?? '';
+$date_fin = $_GET['date_fin'] ?? '';
+$prix_min = $_GET['prix_min'] ?? '';
+$prix_max = $_GET['prix_max'] ?? '';
+
+// Requête SQL pour récupérer les prix unitaires avec filtres
 $sql = "SELECT
     usines.nom_usine,
     prix_unitaires.prix,
@@ -31,9 +38,43 @@ $sql = "SELECT
 FROM
     prix_unitaires
 INNER JOIN
-    usines ON prix_unitaires.id_usine = usines.id_usine";
-    
+    usines ON prix_unitaires.id_usine = usines.id_usine
+WHERE 1=1";
+
+if ($usine_id) {
+    $sql .= " AND prix_unitaires.id_usine = :usine_id";
+}
+if ($date_debut) {
+    $sql .= " AND prix_unitaires.date_debut >= :date_debut";
+}
+if ($date_fin) {
+    $sql .= " AND prix_unitaires.date_fin <= :date_fin";
+}
+if ($prix_min) {
+    $sql .= " AND prix_unitaires.prix >= :prix_min";
+}
+if ($prix_max) {
+    $sql .= " AND prix_unitaires.prix <= :prix_max";
+}
+
 $stmt = $conn->prepare($sql);
+
+if ($usine_id) {
+    $stmt->bindParam(':usine_id', $usine_id);
+}
+if ($date_debut) {
+    $stmt->bindParam(':date_debut', $date_debut);
+}
+if ($date_fin) {
+    $stmt->bindParam(':date_fin', $date_fin);
+}
+if ($prix_min) {
+    $stmt->bindParam(':prix_min', $prix_min);
+}
+if ($prix_max) {
+    $stmt->bindParam(':prix_max', $prix_max);
+}
+
 $stmt->execute();
 $prix_unitaires = $stmt->fetchAll();
 
@@ -181,31 +222,141 @@ label {
     </button>
 </div>
 
+<!-- Barre de recherche et filtres -->
+<div class="search-container mb-4">
+    <div class="row justify-content-center">
+        <div class="col-md-10">
+            <form id="filterForm" method="GET">
+                <div class="row">
+                    <!-- Recherche par usine -->
+                    <div class="col-md-3 mb-3">
+                        <select class="form-control" name="usine_id" id="usine_select">
+                            <option value="">Sélectionner une usine</option>
+                            <?php foreach($usines as $usine): ?>
+                                <option value="<?= $usine['id_usine'] ?>" <?= ($usine_id == $usine['id_usine']) ? 'selected' : '' ?>>
+                                    <?= htmlspecialchars($usine['nom_usine']) ?>
+                                </option>
+                            <?php endforeach; ?>
+                        </select>
+                    </div>
 
+                    <!-- Prix minimum -->
+                    <div class="col-md-3 mb-3">
+                        <input type="number" 
+                               class="form-control" 
+                               name="prix_min" 
+                               id="prix_min"
+                               placeholder="Prix minimum" 
+                               value="<?= htmlspecialchars($prix_min) ?>">
+                    </div>
 
- <!-- <button type="button" class="btn btn-primary spacing" data-toggle="modal" data-target="#add-commande">
-    Enregistrer une commande
-  </button>
+                    <!-- Prix maximum -->
+                    <div class="col-md-3 mb-3">
+                        <input type="number" 
+                               class="form-control" 
+                               name="prix_max" 
+                               id="prix_max"
+                               placeholder="Prix maximum" 
+                               value="<?= htmlspecialchars($prix_max) ?>">
+                    </div>
 
+                    <!-- Date de début -->
+                    <div class="col-md-3 mb-3">
+                        <input type="date" 
+                               class="form-control" 
+                               name="date_debut" 
+                               id="date_debut"
+                               placeholder="Date de début" 
+                               value="<?= htmlspecialchars($date_debut) ?>">
+                    </div>
 
-    <button type="button" class="btn btn-outline-secondary spacing" data-toggle="modal" data-target="#recherche-commande1">
-        <i class="fas fa-print custom-icon"></i>
-    </button>
+                    <!-- Date de fin -->
+                    <div class="col-md-3 mb-3">
+                        <input type="date" 
+                               class="form-control" 
+                               name="date_fin" 
+                               id="date_fin"
+                               placeholder="Date de fin" 
+                               value="<?= htmlspecialchars($date_fin) ?>">
+                    </div>
 
-
-  <a class="btn btn-outline-secondary" href="commandes_print.php"><i class="fa fa-print" style="font-size:24px;color:green"></i></a>
-
-
-     Utilisation du formulaire Bootstrap avec ms-auto pour aligner à droite
-<form action="page_recherche.php" method="GET" class="d-flex ml-auto">
-    <input class="form-control me-2" type="search" name="recherche" style="width: 400px;" placeholder="Recherche..." aria-label="Search">
-    <button class="btn btn-outline-primary spacing" style="margin-left: 15px;" type="submit">Rechercher</button>
-</form>
-
--->
-
-
-
+                    <!-- Boutons -->
+                    <div class="col-12 text-center">
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fa fa-search"></i> Rechercher
+                        </button>
+                        <a href="prix_unitaires.php" class="btn btn-outline-danger">
+                            <i class="fa fa-times"></i> Réinitialiser les filtres
+                        </a>
+                    </div>
+                </div>
+            </form>
+            
+            <!-- Filtres actifs -->
+            <?php if($usine_id || $date_debut || $date_fin || $prix_min || $prix_max): ?>
+            <div class="active-filters mt-3">
+                <div class="d-flex align-items-center flex-wrap">
+                    <strong class="text-muted mr-2">Filtres actifs :</strong>
+                    <?php if($usine_id): ?>
+                        <?php 
+                        $usine_name = '';
+                        foreach($usines as $usine) {
+                            if($usine['id_usine'] == $usine_id) {
+                                $usine_name = $usine['nom_usine'];
+                                break;
+                            }
+                        }
+                        ?>
+                        <span class="badge badge-info mr-2 p-2">
+                            <i class="fa fa-building"></i>
+                            Usine: <?= htmlspecialchars($usine_name) ?>
+                            <a href="?<?= http_build_query(array_merge($_GET, ['usine_id' => null])) ?>" class="text-white ml-2">
+                                <i class="fa fa-times"></i>
+                            </a>
+                        </span>
+                    <?php endif; ?>
+                    <?php if($prix_min): ?>
+                        <span class="badge badge-info mr-2 p-2">
+                            <i class="fa fa-money"></i>
+                            Prix min: <?= htmlspecialchars($prix_min) ?>
+                            <a href="?<?= http_build_query(array_merge($_GET, ['prix_min' => null])) ?>" class="text-white ml-2">
+                                <i class="fa fa-times"></i>
+                            </a>
+                        </span>
+                    <?php endif; ?>
+                    <?php if($prix_max): ?>
+                        <span class="badge badge-info mr-2 p-2">
+                            <i class="fa fa-money"></i>
+                            Prix max: <?= htmlspecialchars($prix_max) ?>
+                            <a href="?<?= http_build_query(array_merge($_GET, ['prix_max' => null])) ?>" class="text-white ml-2">
+                                <i class="fa fa-times"></i>
+                            </a>
+                        </span>
+                    <?php endif; ?>
+                    <?php if($date_debut): ?>
+                        <span class="badge badge-info mr-2 p-2">
+                            <i class="fa fa-calendar"></i>
+                            Depuis: <?= htmlspecialchars($date_debut) ?>
+                            <a href="?<?= http_build_query(array_merge($_GET, ['date_debut' => null])) ?>" class="text-white ml-2">
+                                <i class="fa fa-times"></i>
+                            </a>
+                        </span>
+                    <?php endif; ?>
+                    <?php if($date_fin): ?>
+                        <span class="badge badge-info mr-2 p-2">
+                            <i class="fa fa-calendar"></i>
+                            Jusqu'au: <?= htmlspecialchars($date_fin) ?>
+                            <a href="?<?= http_build_query(array_merge($_GET, ['date_fin' => null])) ?>" class="text-white ml-2">
+                                <i class="fa fa-times"></i>
+                            </a>
+                        </span>
+                    <?php endif; ?>
+                </div>
+            </div>
+            <?php endif; ?>
+        </div>
+    </div>
+</div>
 
 <div class="table-responsive">
     <table id="example1" class="table table-bordered table-striped">

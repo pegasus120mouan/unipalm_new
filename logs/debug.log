@@ -3529,3 +3529,45 @@
 [2025-03-12 15:55:47] Solde actuel avant approvisionnement: 892459160
 [2025-03-12 15:55:47] Nouveau solde calculé: 1142459160
 [2025-03-12 15:55:47] Transaction d'approvisionnement créée #96, nouveau solde: 1142459160
+[2025-03-13 15:36:22] Début de l'enregistrement du paiement
+[2025-03-13 15:36:22] Solde actuel avant paiement: 1142459160
+[2025-03-13 15:36:22] Nouveau solde calculé: 1132459160
+[2025-03-13 15:36:22] Bordereau #43 mis à jour avec montant_payer=10000000, montant_reste=24004580
+[2025-03-13 15:36:22] Transaction de paiement créée #97, nouveau solde: 1132459160
+[2025-03-13 15:36:22] Paiement enregistré avec succès
+[2025-03-14 13:58:50] Début de l'enregistrement du paiement
+[2025-03-14 13:58:50] Solde actuel avant paiement: 1142459160
+[2025-03-14 13:58:50] Nouveau solde calculé: 1142359160
+[2025-03-14 13:58:50] Ticket #742 mis à jour avec montant_payer=100000, montant_reste=15200
+[2025-03-14 13:58:50] Transaction de paiement créée #98, nouveau solde: 1142359160
+[2025-03-14 13:58:50] Paiement enregistré avec succès
+[2025-03-14 13:59:19] Début de l'enregistrement du paiement
+[2025-03-14 13:59:19] Solde actuel avant paiement: 1142459160
+[2025-03-14 13:59:19] Nouveau solde calculé: 1141459160
+[2025-03-14 13:59:19] Ticket #729 mis à jour avec montant_payer=1000000, montant_reste=306200
+[2025-03-14 13:59:19] Transaction de paiement créée #99, nouveau solde: 1141459160
+[2025-03-14 13:59:19] Paiement enregistré avec succès
+[2025-03-14 14:01:02] Début de l'enregistrement du paiement
+[2025-03-14 14:01:02] Solde actuel avant paiement: 1142459160
+[2025-03-14 14:01:02] Nouveau solde calculé: 1141459160
+[2025-03-14 14:01:02] Bordereau #43 mis à jour avec montant_payer=11000000, montant_reste=23004580
+[2025-03-14 14:01:02] Transaction de paiement créée #100, nouveau solde: 1141459160
+[2025-03-14 14:01:02] Paiement enregistré avec succès
+[2025-03-15 17:00:47] Début de l'enregistrement du paiement
+[2025-03-15 17:00:47] ERREUR: La source de paiement est requise
+[2025-03-15 17:00:47] Trace: #0 {main}
+[2025-03-15 17:01:02] Début de l'enregistrement du paiement
+[2025-03-15 17:01:02] ERREUR: La source de paiement est requise
+[2025-03-15 17:01:02] Trace: #0 {main}
+[2025-03-15 17:01:33] Début de l'enregistrement du paiement
+[2025-03-15 17:01:33] ERREUR: La source de paiement est requise
+[2025-03-15 17:01:33] Trace: #0 {main}
+[2025-03-15 17:01:58] Début de l'enregistrement du paiement
+[2025-03-15 17:01:58] Solde actuel avant paiement: 1142459160
+[2025-03-15 17:01:58] Nouveau solde calculé: 1142359160
+[2025-03-15 17:01:58] Ticket #740 mis à jour avec montant_payer=100000, montant_reste=44000
+[2025-03-15 17:01:58] Transaction de paiement créée #118, nouveau solde: 1142359160
+[2025-03-15 17:01:58] Paiement enregistré avec succès
+[2025-03-15 17:05:14] Début de l'enregistrement du paiement
+[2025-03-15 17:05:14] ERREUR: La source de paiement est requise
+[2025-03-15 17:05:14] Trace: #0 {main}
