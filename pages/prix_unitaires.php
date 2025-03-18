@@ -6,17 +6,9 @@ require_once '../inc/functions/requete/requete_chef_equipes.php';
 require_once '../inc/functions/requete/requete_vehicules.php';
 require_once '../inc/functions/requete/requete_agents.php';
 
-//require_once '../inc/functions/requete/requetes_selection_boutique.php';
 include('header.php');
 
-//$_SESSION['user_id'] = $user['id'];
- $id_user=$_SESSION['user_id'];
- //echo $id_user;
-
-////$stmt = $conn->prepare("SELECT * FROM users");
-//$stmt->execute();
-//$users = $stmt->fetchAll();
-//foreach($users as $user)
+$id_user = $_SESSION['user_id'];
 
 $limit = $_GET['limit'] ?? 15; // Nombre d'éléments par page
 $page = isset($_GET['page']) ? (int)$_GET['page'] : 1; // Page actuelle
@@ -28,9 +20,15 @@ $date_fin = $_GET['date_fin'] ?? '';
 $prix_min = $_GET['prix_min'] ?? '';
 $prix_max = $_GET['prix_max'] ?? '';
 
+// Requête SQL pour compter le nombre total d'éléments
+$sql_count = "SELECT COUNT(*) as total FROM prix_unitaires
+              INNER JOIN usines ON prix_unitaires.id_usine = usines.id_usine
+              WHERE 1=1";
+
 // Requête SQL pour récupérer les prix unitaires avec filtres
 $sql = "SELECT
     usines.nom_usine,
+    usines.id_usine,
     prix_unitaires.prix,
     prix_unitaires.date_debut,
     prix_unitaires.date_fin,
@@ -41,62 +39,67 @@ INNER JOIN
     usines ON prix_unitaires.id_usine = usines.id_usine
 WHERE 1=1";
 
+// Ajouter les conditions de filtrage aux deux requêtes
 if ($usine_id) {
-    $sql .= " AND prix_unitaires.id_usine = :usine_id";
+    $condition = " AND prix_unitaires.id_usine = :usine_id";
+    $sql .= $condition;
+    $sql_count .= $condition;
 }
 if ($date_debut) {
-    $sql .= " AND prix_unitaires.date_debut >= :date_debut";
+    $condition = " AND prix_unitaires.date_debut >= :date_debut";
+    $sql .= $condition;
+    $sql_count .= $condition;
 }
 if ($date_fin) {
-    $sql .= " AND prix_unitaires.date_fin <= :date_fin";
+    $condition = " AND prix_unitaires.date_fin <= :date_fin";
+    $sql .= $condition;
+    $sql_count .= $condition;
 }
 if ($prix_min) {
-    $sql .= " AND prix_unitaires.prix >= :prix_min";
+    $condition = " AND prix_unitaires.prix >= :prix_min";
+    $sql .= $condition;
+    $sql_count .= $condition;
 }
 if ($prix_max) {
-    $sql .= " AND prix_unitaires.prix <= :prix_max";
+    $condition = " AND prix_unitaires.prix <= :prix_max";
+    $sql .= $condition;
+    $sql_count .= $condition;
 }
 
-$stmt = $conn->prepare($sql);
+// Ajouter l'ordre et la pagination à la requête principale
+$sql .= " ORDER BY prix_unitaires.date_debut DESC LIMIT :offset, :limit";
 
-if ($usine_id) {
-    $stmt->bindParam(':usine_id', $usine_id);
-}
-if ($date_debut) {
-    $stmt->bindParam(':date_debut', $date_debut);
-}
-if ($date_fin) {
-    $stmt->bindParam(':date_fin', $date_fin);
-}
-if ($prix_min) {
-    $stmt->bindParam(':prix_min', $prix_min);
-}
-if ($prix_max) {
-    $stmt->bindParam(':prix_max', $prix_max);
-}
+// Préparer et exécuter la requête de comptage
+$stmt_count = $conn->prepare($sql_count);
+if ($usine_id) $stmt_count->bindParam(':usine_id', $usine_id);
+if ($date_debut) $stmt_count->bindParam(':date_debut', $date_debut);
+if ($date_fin) $stmt_count->bindParam(':date_fin', $date_fin);
+if ($prix_min) $stmt_count->bindParam(':prix_min', $prix_min);
+if ($prix_max) $stmt_count->bindParam(':prix_max', $prix_max);
+$stmt_count->execute();
+$total_items = $stmt_count->fetch(PDO::FETCH_ASSOC)['total'];
 
-$stmt->execute();
-$prix_unitaires = $stmt->fetchAll();
-
-// Pagination
-$total_items = count($prix_unitaires);
+// Calculer la pagination
 $total_pages = ceil($total_items / $limit);
 $page = max(1, min($page, $total_pages));
 $offset = ($page - 1) * $limit;
-$prix_unitaires_list = array_slice($prix_unitaires, $offset, $limit);
 
-// Récupérer les paramètres de recherche
-$search_usine = $_GET['usine'] ?? null;
-$search_date = $_GET['date_creation'] ?? null;
-$search_chauffeur = $_GET['chauffeur'] ?? null;
-$search_agent = $_GET['agent_id'] ?? null;
+// Préparer et exécuter la requête principale
+$stmt = $conn->prepare($sql);
+if ($usine_id) $stmt->bindParam(':usine_id', $usine_id);
+if ($date_debut) $stmt->bindParam(':date_debut', $date_debut);
+if ($date_fin) $stmt->bindParam(':date_fin', $date_fin);
+if ($prix_min) $stmt->bindParam(':prix_min', $prix_min);
+if ($prix_max) $stmt->bindParam(':prix_max', $prix_max);
+$stmt->bindParam(':offset', $offset, PDO::PARAM_INT);
+$stmt->bindParam(':limit', $limit, PDO::PARAM_INT);
+$stmt->execute();
+$prix_unitaires_list = $stmt->fetchAll();
 
-// Récupérer les données (functions)
-if ($search_usine || $search_date || $search_chauffeur || $search_agent) {
-    $tickets = searchTickets($conn, $search_usine, $search_date, $search_chauffeur, $search_agent);
-} else {
-    $tickets = getTickets($conn);
-}
+$usines = getUsines($conn);
+$chefs_equipes=getChefEquipes($conn);
+$vehicules=getVehicules($conn);
+$agents=getAgents($conn);
 
 // Vérifiez si des tickets existent avant de procéder
 if (!empty($tickets)) {
@@ -110,23 +113,7 @@ if (!empty($tickets)) {
     $total_pages = 1;
 }
 
-$usines = getUsines($conn);
-$chefs_equipes=getChefEquipes($conn);
-$vehicules=getVehicules($conn);
-$agents=getAgents($conn);
-
-
-
-// Vérifiez si des tickets existent avant de procéder
-//if (!empty($tickets)) {
-//    $ticket_pages = array_chunk($tickets, $limit); // Divise les tickets en pages
-//    $tickets_list = $ticket_pages[$page - 1] ?? []; // Tickets pour la page actuelle
-//} else {
-//    $tickets_list = []; // Aucun ticket à afficher
-//}
-
 ?>
-
 
 <!-- Main row -->
 <style>
@@ -470,27 +457,30 @@ label {
 
   <div class="pagination-container bg-secondary d-flex justify-content-center w-100 text-white p-3">
     <?php if($page > 1): ?>
-        <a href="?page=<?= $page - 1 ?><?= isset($_GET['usine']) ? '&usine='.$_GET['usine'] : '' ?><?= isset($_GET['date_creation']) ? '&date_creation='.$_GET['date_creation'] : '' ?><?= isset($_GET['chauffeur']) ? '&chauffeur='.$_GET['chauffeur'] : '' ?><?= isset($_GET['agent_id']) ? '&agent_id='.$_GET['agent_id'] : '' ?>" class="btn btn-primary"><</a>
+        <a href="?page=<?= $page - 1 ?><?= $usine_id ? '&usine_id='.$usine_id : '' ?><?= $date_debut ? '&date_debut='.$date_debut : '' ?><?= $date_fin ? '&date_fin='.$date_fin : '' ?><?= $prix_min ? '&prix_min='.$prix_min : '' ?><?= $prix_max ? '&prix_max='.$prix_max : '' ?><?= isset($_GET['limit']) ? '&limit='.$_GET['limit'] : '' ?>" class="btn btn-primary"><</a>
     <?php endif; ?>
     
     <span class="mx-2"><?= $page . '/' . $total_pages ?></span>
 
     <?php if($page < $total_pages): ?>
-        <a href="?page=<?= $page + 1 ?><?= isset($_GET['usine']) ? '&usine='.$_GET['usine'] : '' ?><?= isset($_GET['date_creation']) ? '&date_creation='.$_GET['date_creation'] : '' ?><?= isset($_GET['chauffeur']) ? '&chauffeur='.$_GET['chauffeur'] : '' ?><?= isset($_GET['agent_id']) ? '&agent_id='.$_GET['agent_id'] : '' ?>" class="btn btn-primary">></a>
+        <a href="?page=<?= $page + 1 ?><?= $usine_id ? '&usine_id='.$usine_id : '' ?><?= $date_debut ? '&date_debut='.$date_debut : '' ?><?= $date_fin ? '&date_fin='.$date_fin : '' ?><?= $prix_min ? '&prix_min='.$prix_min : '' ?><?= $prix_max ? '&prix_max='.$prix_max : '' ?><?= isset($_GET['limit']) ? '&limit='.$_GET['limit'] : '' ?>" class="btn btn-primary">></a>
     <?php endif; ?>
     
     <form action="" method="get" class="items-per-page-form ml-3">
-        <?php if(isset($_GET['usine'])): ?>
-            <input type="hidden" name="usine" value="<?= htmlspecialchars($_GET['usine']) ?>">
+        <?php if($usine_id): ?>
+            <input type="hidden" name="usine_id" value="<?= htmlspecialchars($usine_id) ?>">
         <?php endif; ?>
-        <?php if(isset($_GET['date_creation'])): ?>
-            <input type="hidden" name="date_creation" value="<?= htmlspecialchars($_GET['date_creation']) ?>">
+        <?php if($date_debut): ?>
+            <input type="hidden" name="date_debut" value="<?= htmlspecialchars($date_debut) ?>">
         <?php endif; ?>
-        <?php if(isset($_GET['chauffeur'])): ?>
-            <input type="hidden" name="chauffeur" value="<?= htmlspecialchars($_GET['chauffeur']) ?>">
+        <?php if($date_fin): ?>
+            <input type="hidden" name="date_fin" value="<?= htmlspecialchars($date_fin) ?>">
         <?php endif; ?>
-        <?php if(isset($_GET['agent_id'])): ?>
-            <input type="hidden" name="agent_id" value="<?= htmlspecialchars($_GET['agent_id']) ?>">
+        <?php if($prix_min): ?>
+            <input type="hidden" name="prix_min" value="<?= htmlspecialchars($prix_min) ?>">
+        <?php endif; ?>
+        <?php if($prix_max): ?>
+            <input type="hidden" name="prix_max" value="<?= htmlspecialchars($prix_max) ?>">
         <?php endif; ?>
         <label for="limit">Afficher :</label>
         <select name="limit" id="limit" class="items-per-page-select">
@@ -500,7 +490,7 @@ label {
         </select>
         <button type="submit" class="submit-button">Valider</button>
     </form>
-</div>
+  </div>
 
 
 
