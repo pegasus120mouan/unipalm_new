@@ -284,13 +284,8 @@ label {
                                                                     name="source_paiement"
                                                                     required
                                                                     style="width: 100%">
-                                                                <option value="">Sélectionner une source</option>
-                                                                <option value="transactions">Transactions</option>
-                                                                <option value="financement">Financement</option>
+                                                                <option value="transactions">Sortie de caisse</option>
                                                             </select>
-                                                            <div class="invalid-feedback">
-                                                                Veuillez sélectionner une source de paiement
-                                                            </div>
                                                         </div>
                                                     </div>
                                                     <div class="modal-footer">

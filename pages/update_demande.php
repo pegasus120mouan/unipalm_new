@@ -1,6 +1,6 @@
 <?php
 require_once '../inc/functions/connexion.php';
-session_start();
+//session_start();
 
 if (isset($_GET['id']) && isset($_GET['action'])) {
     $id_demande = $_GET['id'];

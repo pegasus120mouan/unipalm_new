@@ -16,7 +16,7 @@ if (isset($_POST['save_paiement_demande']) && $_POST['save_paiement_demande'] ==
             throw new Exception("La source de paiement est requise");
         }
 
-        $conn->beginTransaction();
+        
 
         // Récupérer les informations de la demande
         $stmt = $conn->prepare("
@@ -71,6 +71,8 @@ if (isset($_POST['save_paiement_demande']) && $_POST['save_paiement_demande'] ==
         // Calculer le nouveau solde
         $nouveau_solde = $solde_actuel - $montant;
 
+        $conn->beginTransaction();
+        
         // Créer la transaction
         $stmt = $conn->prepare("
             INSERT INTO transactions (
@@ -78,27 +80,28 @@ if (isset($_POST['save_paiement_demande']) && $_POST['save_paiement_demande'] ==
                 montant,
                 date_transaction,
                 motifs,
-                id_utilisateur,
-                solde
+                id_utilisateur
+                
             ) VALUES (
                 'paiement',
                 :montant,
                 NOW(),
                 :motifs,
-                :id_utilisateur,
-                :solde
+                :id_utilisateur
+              
             )
         ");
 
+
         // Préparer le motif détaillé
         $motifs = "Paiement de la demande " . $demande['numero_demande'] . " - Par " . $caissier['nom_caissier'];
-
-        $stmt->bindValue(':montant', $montant, PDO::PARAM_STR);
+        
+        $stmt->bindValue(':montant', $montant);
         $stmt->bindValue(':motifs', $motifs, PDO::PARAM_STR);
         $stmt->bindValue(':id_utilisateur', $_SESSION['user_id'], PDO::PARAM_INT);
-        $stmt->bindValue(':solde', $nouveau_solde, PDO::PARAM_STR);
-        $stmt->execute();
-
+        
+        $res = $stmt->execute();
+  
         // Mettre à jour la demande
         $nouveau_montant_paye = $demande['montant_paye'] + $montant;
         $nouveau_montant_reste = $demande['montant'] - $nouveau_montant_paye;
@@ -142,27 +145,30 @@ if (isset($_POST['save_paiement_demande']) && $_POST['save_paiement_demande'] ==
                 :montant,
                 NOW(),
                 :caissier_id,
-                :source_paiement
+                'transactions'
             )
         ");
 
         $stmt->bindValue(':numero_recu', $numero_recu, PDO::PARAM_STR);
         $stmt->bindValue(':numero_demande', $demande['numero_demande'], PDO::PARAM_STR);
         $stmt->bindValue(':demande_id', $_POST['id_demande'], PDO::PARAM_INT);
-        $stmt->bindValue(':montant', $montant, PDO::PARAM_STR);
+        $stmt->bindValue(':montant', $montant);
         $stmt->bindValue(':caissier_id', $_SESSION['user_id'], PDO::PARAM_INT);
-        $stmt->bindValue(':source_paiement', $_POST['source_paiement'], PDO::PARAM_STR);
         $stmt->execute();
 
         $conn->commit();
+
+       
         $_SESSION['success_message'] = "Paiement effectué avec succès";
-        header('Location: recu_demande_pdf.php?id=' . $conn->lastInsertId());
+        header('Location: paiements_demande.php');
         exit();
 
     } catch (Exception $e) {
+        
         if ($conn->inTransaction()) {
             $conn->rollBack();
         }
+        
         error_log("Erreur lors du paiement : " . $e->getMessage());
         $_SESSION['error_message'] = $e->getMessage();
         header('Location: paiements_demande.php');
