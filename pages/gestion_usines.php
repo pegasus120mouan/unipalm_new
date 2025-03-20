@@ -197,32 +197,92 @@ label {
         <i class="fas fa-clock mr-2"></i><?= number_format($montant_total_restant, 0, ',', ' ') ?> FCFA
     </button>
 
+    <button type="button" class="btn btn-danger btn-lg" data-toggle="modal" data-target="#printPaiementsModal">
+        <i class="fas fa-print mr-2"></i>Imprimer la liste des paiements par Usines
+    </button>
 </div>
 
+<!-- Modal d'impression des paiements -->
+<div class="modal fade" id="printPaiementsModal" tabindex="-1" role="dialog" aria-labelledby="printPaiementsModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header bg-warning">
+                <h5 class="modal-title" id="printPaiementsModalLabel">
+                    <i class="fas fa-print mr-2"></i>Impression des paiements par usine
+                </h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <form action="usines_paiement_liste.php" method="POST">
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label for="id_usine">Sélectionner une usine</label>
+                        <select name="id_usine" id="id_usine" class="form-control select2" style="width: 100%" required>
+                            <option value="">Sélectionner une usine</option>
+                            <?php foreach ($usines as $usine): ?>
+                                <option value="<?= $usine['id_usine'] ?>"><?= htmlspecialchars($usine['nom_usine']) ?></option>
+                            <?php endforeach; ?>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="date_debut">Date début</label>
+                        <input type="date" class="form-control" id="date_debut" name="date_debut" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="date_fin">Date fin</label>
+                        <input type="date" class="form-control" id="date_fin" name="date_fin" required>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Fermer</button>
+                    <button type="submit" class="btn btn-warning">
+                        <i class="fas fa-print mr-2"></i>Imprimer
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
 
+<script>
+$(document).ready(function() {
+    // Initialize Select2
+    $('.select2').select2({
+        theme: 'bootstrap4',
+        placeholder: 'Sélectionner une usine',
+        allowClear: true
+    });
 
- <!-- <button type="button" class="btn btn-primary spacing" data-toggle="modal" data-target="#add-commande">
-    Enregistrer une commande
-  </button>
+    // Set default dates
+    var today = new Date();
+    var firstDayOfMonth = new Date(today.getFullYear(), today.getMonth(), 1);
+    
+    $('#date_debut').val(firstDayOfMonth.toISOString().split('T')[0]);
+    $('#date_fin').val(today.toISOString().split('T')[0]);
 
+    // Date validation
+    $('#date_fin').change(function() {
+        var dateDebut = $('#date_debut').val();
+        var dateFin = $(this).val();
+        
+        if(dateDebut && dateFin && dateDebut > dateFin) {
+            alert('La date de fin doit être supérieure à la date de début');
+            $(this).val('');
+        }
+    });
 
-    <button type="button" class="btn btn-outline-secondary spacing" data-toggle="modal" data-target="#recherche-commande1">
-        <i class="fas fa-print custom-icon"></i>
-    </button>
-
-
-  <a class="btn btn-outline-secondary" href="commandes_print.php"><i class="fa fa-print" style="font-size:24px;color:green"></i></a>
-
-
-     Utilisation du formulaire Bootstrap avec ms-auto pour aligner à droite
-<form action="page_recherche.php" method="GET" class="d-flex ml-auto">
-    <input class="form-control me-2" type="search" name="recherche" style="width: 400px;" placeholder="Recherche..." aria-label="Search">
-    <button class="btn btn-outline-primary spacing" style="margin-left: 15px;" type="submit">Rechercher</button>
-</form>
-
--->
-
-
+    $('#date_debut').change(function() {
+        var dateDebut = $(this).val();
+        var dateFin = $('#date_fin').val();
+        
+        if(dateDebut && dateFin && dateDebut > dateFin) {
+            alert('La date de début doit être inférieure à la date de fin');
+            $(this).val('');
+        }
+    });
+});
+</script>
 
 <h2>Liste des usines</h2>
 <div class="table-responsive">
