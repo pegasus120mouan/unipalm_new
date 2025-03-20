@@ -27,26 +27,28 @@ if (isset($_POST['id_usine']) && isset($_POST['date_debut']) && isset($_POST['da
     $date_debut = $_POST['date_debut'] . ' 00:00:00';
     $date_fin = $_POST['date_fin'] . ' 23:59:59';
 
-    // Requête pour obtenir les paiements de l'usine dans la période
     $sql = "SELECT 
-                hp.*,
-                u.nom_usine,
-                CONCAT(ut.nom, ' ', ut.prenoms) as nom_complet_user
-            FROM historique_paiements hp
-            INNER JOIN usines u ON hp.id_usine = u.id_usine
-            LEFT JOIN utilisateurs ut ON hp.created_by = ut.id
-            WHERE hp.id_usine = :id_usine 
-                AND hp.created_at BETWEEN :date_debut AND :date_fin
-            ORDER BY hp.created_at ASC";
+        t.*,
+        u.nom_usine,
+        v.matricule_vehicule,
+        v.type_vehicule,
+        DATE(t.date_ticket) as date_ticket_only,
+        DATE(t.created_at) as date_reception
+    FROM tickets t
+    INNER JOIN usines u ON t.id_usine = u.id_usine
+    INNER JOIN vehicules v ON t.vehicule_id = v.vehicules_id
+    WHERE t.id_usine = :id_usine 
+        AND t.created_at BETWEEN :date_debut AND :date_fin
+    ORDER BY t.created_at ASC";
 
     $requete = $conn->prepare($sql);
     $requete->bindParam(':id_usine', $id_usine);
     $requete->bindParam(':date_debut', $date_debut);
     $requete->bindParam(':date_fin', $date_fin);
     $requete->execute();
-    $paiements = $requete->fetchAll(PDO::FETCH_ASSOC);
+    $tickets = $requete->fetchAll(PDO::FETCH_ASSOC);
 
-    if (!empty($paiements)) {
+    if (!empty($tickets)) {
         class PDF extends FPDF {
             function Header() {
                 $logo_path = dirname(dirname(__FILE__)) . '/dist/img/logo.png';
@@ -93,7 +95,7 @@ if (isset($_POST['id_usine']) && isset($_POST['date_debut']) && isset($_POST['da
         // Titre du document
         $pdf->SetFont('Arial', 'BU', 16);
         $pdf->SetTextColor(0);
-        $pdf->Cell(0, 12, 'HISTORIQUE DES PAIEMENTS', 0, 1, 'C', false);
+        $pdf->Cell(0, 12, 'LISTE DES TICKETS', 0, 1, 'C', false);
         $pdf->Ln(5);
 
         // Informations de l'usine
@@ -101,63 +103,60 @@ if (isset($_POST['id_usine']) && isset($_POST['date_debut']) && isset($_POST['da
         $pdf->SetFont('Arial', 'B', 11);
         $pdf->Cell(50, 8, 'USINE:', 0, 0);
         $pdf->SetFont('Arial', 'B', 11);
-        $pdf->Cell(0, 8, $pdf->CleanString(strtoupper($paiements[0]['nom_usine'])), 0, 1);
+        $pdf->Cell(0, 8, $pdf->CleanString(strtoupper($tickets[0]['nom_usine'])), 0, 1);
 
         // Période
         $pdf->SetFont('Arial', 'B', 11);
         $pdf->Cell(50, 8, utf8_decode('Période du:'), 0, 0);
         $pdf->SetFont('Arial', '', 11);
-        $pdf->Cell(0, 8, date('d/m/Y', strtotime($date_debut)) . ' au ' . date('d/m/Y', strtotime($date_fin)), 0, 1);
+        $pdf->Cell(0, 8, date('d/m/y', strtotime($date_debut)) . ' au ' . date('d/m/y', strtotime($date_fin)), 0, 1);
         $pdf->Ln(5);
 
         // En-têtes du tableau
-        $pdf->SetFont('Arial', 'B', 9);
+        $pdf->SetFont('Arial', 'B', 10);
         $pdf->SetFillColor(230, 230, 230);
         $pdf->SetDrawColor(0);
 
-        $w = array(30, 35, 35, 45, 45);
+        $w = array(35, 35, 40, 40, 40);
         
-        $pdf->Cell($w[0], 8, 'Date', 1, 0, 'C', true);
-        $pdf->Cell($w[1], 8, 'Montant', 1, 0, 'C', true);
-        $pdf->Cell($w[2], 8, 'Mode', 1, 0, 'C', true);
-        $pdf->Cell($w[3], 8, utf8_decode('Référence'), 1, 0, 'C', true);
-        $pdf->Cell($w[4], 8, utf8_decode('Créé par'), 1, 1, 'C', true);
+        $pdf->Cell($w[0], 8, utf8_decode('Date Création'), 1, 0, 'C', true);
+        $pdf->Cell($w[1], 8, 'Date Ticket', 1, 0, 'C', true);
+        $pdf->Cell($w[2], 8, utf8_decode('Véhicule'), 1, 0, 'C', true);
+        $pdf->Cell($w[3], 8, utf8_decode('N° Ticket'), 1, 0, 'C', true);
+        $pdf->Cell($w[4], 8, 'Poids (kg)', 1, 1, 'C', true);
 
         // Données
-        $pdf->SetFont('Arial', '', 9);
-        $total_montant = 0;
-        $nombre_paiements = 0;
+        $pdf->SetFont('Arial', '', 10);
+        $total_poids = 0;
+        $nombre_tickets = 0;
         $fill = true;
 
-        foreach ($paiements as $paiement) {
-            $date = new DateTime($paiement['created_at']);
-            
-            $pdf->Cell($w[0], 7, $date->format('d/m/Y'), 1, 0, 'C', $fill);
-            $pdf->Cell($w[1], 7, number_format($paiement['montant'], 0, ',', ' '), 1, 0, 'R', $fill);
-            $pdf->Cell($w[2], 7, $pdf->CleanString($paiement['mode_paiement']), 1, 0, 'C', $fill);
-            $pdf->Cell($w[3], 7, $pdf->CleanString($paiement['reference'] ?? '-'), 1, 0, 'C', $fill);
-            $pdf->Cell($w[4], 7, $pdf->CleanString($paiement['nom_complet_user']), 1, 1, 'L', $fill);
-            
-            $total_montant += $paiement['montant'];
-            $nombre_paiements++;
+        foreach ($tickets as $ticket) {
+            $pdf->Cell($w[0], 7, date('d/m/y', strtotime($ticket['created_at'])), 1, 0, 'C', $fill);
+            $pdf->Cell($w[1], 7, date('d/m/y', strtotime($ticket['date_ticket'])), 1, 0, 'C', $fill);
+            $pdf->Cell($w[2], 7, $pdf->CleanString($ticket['matricule_vehicule']), 1, 0, 'C', $fill);
+            $pdf->Cell($w[3], 7, $ticket['numero_ticket'], 1, 0, 'C', $fill);
+            $pdf->Cell($w[4], 7, number_format($ticket['poids'], 0, ',', ' '), 1, 1, 'R', $fill);
+            $total_poids += $ticket['poids'];
+            $nombre_tickets++;
             $fill = !$fill;
         }
 
         // Total
         $pdf->SetFont('Arial', 'B', 10);
-        $pdf->Cell(array_sum($w)-35, 8, 'TOTAL (' . $nombre_paiements . ' paiements)', 1, 0, 'R', true);
-        $pdf->Cell(35, 8, number_format($total_montant, 0, ',', ' '), 1, 1, 'R', true);
+        $pdf->Cell(array_sum($w)-40, 8, 'TOTAL (' . $nombre_tickets . ' tickets)', 1, 0, 'R', true);
+        $pdf->Cell(40, 8, number_format($total_poids, 0, ',', ' '), 1, 1, 'R', true);
 
         // Signature
         $pdf->Ln(15);
         $pdf->SetTextColor(0);
         $pdf->SetFont('Arial', 'I', 10);
-        $pdf->Cell(0, 10, utf8_decode('Fait à Divo, le ') . date('d/m/Y'), 0, 1, 'R');
+        $pdf->Cell(0, 10, utf8_decode('Fait à Divo, le ') . date('d/m/y'), 0, 1, 'R');
         $pdf->SetFont('Arial', 'B', 10);
         $pdf->Cell(0, 10, 'UNIPALM COOP-CA', 0, 1, 'R');
 
         // Génération du PDF
-        $file_name = 'Paiements_' . $pdf->CleanString($paiements[0]['nom_usine']) . '_' . date('d-m-Y') . '.pdf';
+        $file_name = 'Tickets_' . $pdf->CleanString($tickets[0]['nom_usine']) . '_' . date('d-m-Y', strtotime($date_debut)) . '.pdf';
         
         // Vider le buffer avant de générer le PDF
         if (ob_get_length()) {
@@ -168,7 +167,7 @@ if (isset($_POST['id_usine']) && isset($_POST['date_debut']) && isset($_POST['da
         $pdf->Output('I', $file_name);
         exit;
     } else {
-        echo "<script>alert('Aucun paiement trouvé pour cette période.'); window.history.back();</script>";
+        echo "<script>alert('Aucun ticket trouvé pour cette période.'); window.history.back();</script>";
         exit;
     }
 } else {

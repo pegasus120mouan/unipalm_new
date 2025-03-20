@@ -54,7 +54,7 @@ class PDF extends FPDF {
         // Titre
         $this->SetFont('Arial', 'B', 16);
         $this->SetXY(0, $y_start + 5);
-        $this->Cell(210, 10, utf8_decode('Récu de Paiement'), 0, 1, 'C');
+        $this->Cell(210, 10, ('Recu de Paiement'), 0, 1, 'C');
 
         // Numéro de reçu à droite
         $this->SetFont('Arial', '', 9);

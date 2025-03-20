@@ -81,7 +81,7 @@ class PDF extends FPDF {
         $this->SetX(55);
         $this->SetFont('Arial', '', 11);
         $this->SetTextColor(68, 68, 68); // Gris foncé
-        $this->Cell(0, 6, $this->cleanText('Société Coopérative Agricole Unie pour le Palmier'), 0, 1, 'C');
+        $this->Cell(0, 6, $this->cleanText('Societe Cooperative Agricole Unie pour le Palmier'), 0, 1, 'C');
         
         // Informations de contact avec icône
         $this->SetX(55);
@@ -92,7 +92,7 @@ class PDF extends FPDF {
         $this->SetFillColor(0, 0, 0); // Noir
         $this->SetTextColor(255, 255, 255); // Texte blanc
         $this->SetFont('Arial', 'B', 14);
-        $this->Cell(0, 10, $this->cleanText('REÇU DE PAIEMENT'), 0, 1, 'C', true);
+        $this->Cell(0, 10, $this->cleanText('RECU DE PAIEMENT'), 0, 1, 'C', true);
         
         // Retour au texte noir pour le reste du document
         $this->SetTextColor(0, 0, 0);
