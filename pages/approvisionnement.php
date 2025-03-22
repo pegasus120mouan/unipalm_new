@@ -192,11 +192,10 @@ label {
                     <div class="form-group">
                         <label for="montant">Montant <span class="text-danger">*</span></label>
                         <div class="input-group">
-                            <input type="number" 
+                            <input type="text" 
                                 class="form-control" 
                                 id="montant" 
                                 name="montant"
-                                min="1" 
                                 placeholder="Entrez le montant"
                                 required>
                             <div class="input-group-append">
@@ -205,20 +204,6 @@ label {
                             <div class="invalid-feedback">
                                 Le montant est requis et doit être supérieur à 0
                             </div>
-                        </div>
-                    </div>
-
-                    <div class="form-group">
-                        <label for="motifs">Motif de l'approvisionnement <span class="text-danger">*</span></label>
-                        <textarea 
-                            class="form-control" 
-                            id="motifs" 
-                            name="motifs" 
-                            rows="3"
-                            placeholder="Entrez le motif de l'approvisionnement"
-                            required></textarea>
-                        <div class="invalid-feedback">
-                            Le motif de l'approvisionnement est requis
                         </div>
                     </div>
                 </div>
@@ -367,21 +352,19 @@ document.addEventListener('DOMContentLoaded', function() {
 </script>
 
 <script>
-// Formatage des nombres avec séparateurs de milliers
 document.getElementById('montant').addEventListener('input', function(e) {
-    // Enlever tous les espaces et caractères non numériques
-    let value = this.value.replace(/\s/g, '').replace(/[^\d]/g, '');
+    // Remove any non-digit characters
+    let value = this.value.replace(/\D/g, '');
     
-    // Formatter le nombre avec des espaces comme séparateurs de milliers
-    if (value) {
-        value = parseInt(value, 10).toLocaleString('fr-FR').replace(/,/g, ' ');
+    // Format with thousand separators
+    if (value !== '') {
+        value = parseInt(value).toLocaleString('fr-FR');
     }
     
-    // Mettre à jour la valeur affichée
     this.value = value;
 });
 
-// Avant la soumission du formulaire, nettoyer le format pour n'envoyer que les chiffres
+// Before form submission, remove the formatting
 document.querySelector('form').addEventListener('submit', function(e) {
     let montantInput = document.getElementById('montant');
     montantInput.value = montantInput.value.replace(/\s/g, '');

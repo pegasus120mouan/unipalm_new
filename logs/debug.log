@@ -3571,3 +3571,18 @@
 [2025-03-15 17:05:14] Début de l'enregistrement du paiement
 [2025-03-15 17:05:14] ERREUR: La source de paiement est requise
 [2025-03-15 17:05:14] Trace: #0 {main}
+[2025-03-22 15:20:07] Début de l'enregistrement de l'approvisionnement
+[2025-03-22 15:20:07] Montant reçu: 100000000
+[2025-03-22 15:20:07] Solde actuel avant approvisionnement: 1142459160
+[2025-03-22 15:20:07] Nouveau solde calculé: 1242459160
+[2025-03-22 15:20:07] Transaction d'approvisionnement créée #134, nouveau solde: 1242459160
+[2025-03-22 15:20:34] Début de l'enregistrement de l'approvisionnement
+[2025-03-22 15:20:34] Montant reçu: 10000000000
+[2025-03-22 15:20:34] Solde actuel avant approvisionnement: 1242459160
+[2025-03-22 15:20:34] Nouveau solde calculé: 11242459160
+[2025-03-22 15:20:34] Transaction d'approvisionnement créée #135, nouveau solde: 11242459160
+[2025-03-22 15:21:22] Début de l'enregistrement de l'approvisionnement
+[2025-03-22 15:21:22] Montant reçu: 1
+[2025-03-22 15:21:22] Solde actuel avant approvisionnement: 11242459160
+[2025-03-22 15:21:22] Nouveau solde calculé: 11242459161
+[2025-03-22 15:21:22] Transaction d'approvisionnement créée #136, nouveau solde: 11242459161
