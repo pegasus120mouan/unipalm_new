@@ -26,9 +26,51 @@ $chefs = getChefEquipesFull($conn);
             <button type="button" class="btn btn-danger" onclick="window.location.href='impression_chefs.php'">
               <i class="fa fa-print"></i> Imprimer la liste des chefs équipes
              </button>
+             <button type="button" class="btn btn-warning" data-toggle="modal" data-target="#print-tickets-modal">
+              <i class="fa fa-print"></i> Imprimer tickets par Agent
+             </button>
         </div>
 
-
+        <!-- Modal pour impression tickets par agent -->
+        <div class="modal fade" id="print-tickets-modal" tabindex="-1" role="dialog" aria-labelledby="printTicketsModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="printTicketsModalLabel">Imprimer les tickets par Agent</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <form id="print-tickets-form" method="post" action="print_agent_tickets.php">
+                            <div class="form-group">
+                                <label for="select-chef">Sélectionner un chef d'équipe</label>
+                                <select class="form-control select2" id="select-chef" name="id_chef" style="width: 100%;" required>
+                                    <option value="">Sélectionner un chef d'équipe</option>
+                                    <?php foreach ($chefs as $chef): ?>
+                                        <option value="<?= $chef['id_chef'] ?>"><?= htmlspecialchars($chef['nom'] . ' ' . $chef['prenoms']) ?></option>
+                                    <?php endforeach; ?>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="date_debut">Date début</label>
+                                <input type="date" class="form-control" id="date_debut" name="date_debut" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="date_fin">Date fin</label>
+                                <input type="date" class="form-control" id="date_fin" name="date_fin" required>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="submit" class="btn btn-warning">
+                                    <i class="fa fa-print"></i> Imprimer
+                                </button>
+                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Fermer</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
 
   <table id="example1" class="table table-bordered table-striped">
     <thead>
@@ -137,8 +179,6 @@ $chefs = getChefEquipesFull($conn);
   $.widget.bridge('uibutton', $.ui.button)
 </script>-->
 <!-- Bootstrap 4 -->
-<script src="../../plugins/sweetalert2/sweetalert2.min.js"></script>
-
 <script src="../../plugins/bootstrap/js/bootstrap.bundle.min.js"></script>
 <!-- ChartJS -->
 <script src="../../plugins/chart.js/Chart.min.js"></script>
