@@ -30,7 +30,7 @@ WHERE id = :id_utilisateur";
       </div>
       <div class="col-sm-6">
         <ol class="breadcrumb float-sm-right">
-          <li class="breadcrumb-item"><a href="#">Livreur</a></li>
+          <li class="breadcrumb-item"><a href="#">Agents</a></li>
           <li class="breadcrumb-item active"><?php echo $vueUtilisateur['nom_complet']; ?></li>
         </ol>
       </div>
@@ -66,7 +66,7 @@ WHERE id = :id_utilisateur";
 
             </h3>
 
-            <p class="text-muted text-center">Livreur</p>
+            <p class="text-muted text-center">Agent</p>
 
             <ul class="list-group list-group-unbordered mb-3">
               <li class="list-group-item">
@@ -80,7 +80,7 @@ WHERE id = :id_utilisateur";
               </li>
             </ul>
 
-            <a href="#" class="btn btn-primary btn-block"><b>Mes Livraisons</b></a>
+            <a href="#" class="btn btn-primary btn-block"><b>Mes tickets</b></a>
           </div>
           <!-- /.card-body -->
         </div>

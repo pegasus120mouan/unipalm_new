@@ -199,7 +199,7 @@ if (isset($_GET['search']) && !empty($_GET['search'])) {
                                                     <?= $utilisateur['login'] ?>
                                                 </button>
                                             <?php else: ?>
-                                                <a class="btn btn-dark btn-block" href="commandes_livreurs.php?id=<?= $utilisateur['id'] ?>">
+                                                <a class="btn btn-dark btn-block">
                                                     <?= $utilisateur['login'] ?>
                                                 </a>
                                             <?php endif; ?>
