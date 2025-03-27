@@ -29,11 +29,14 @@ if (!isset($_POST['id_chef']) || empty($_POST['id_chef']) ||
     exit;
 }
 
-$id_chef = intval($_POST['id_chef']);
-$date_debut = $_POST['date_debut'] . ' 00:00:00';
-$date_fin = $_POST['date_fin'] . ' 23:59:59';
+// Récupération des paramètres
+$params = [
+    'id_chef' => intval($_POST['id_chef']),
+    'date_debut' => $_POST['date_debut'] . ' 00:00:00',
+    'date_fin' => $_POST['date_fin'] . ' 23:59:59'
+];
 
-// Récupérer les tickets des agents du chef d'équipe
+// Construire la requête de base
 $query = "SELECT 
     t.*, 
     CONCAT(a.nom, ' ', a.prenom) AS nom_agent, 
@@ -48,18 +51,33 @@ INNER JOIN vehicules v ON t.vehicule_id = v.vehicules_id
 INNER JOIN usines u ON t.id_usine = u.id_usine
 INNER JOIN chef_equipe c ON a.id_chef = c.id_chef
 WHERE a.id_chef = :id_chef
-AND t.date_ticket BETWEEN :date_debut AND :date_fin
-ORDER BY u.nom_usine ASC, t.date_ticket DESC, a.nom, a.prenom";
+AND t.date_ticket BETWEEN :date_debut AND :date_fin";
 
-$stmt = $conn->prepare($query);
-$stmt->execute([
-    'id_chef' => $id_chef,
-    'date_debut' => $date_debut,
-    'date_fin' => $date_fin
-]);
-$tickets = $stmt->fetchAll(PDO::FETCH_ASSOC);
+// Ajouter le filtre d'agent si nécessaire
+if (isset($_POST['id_agent']) && !empty($_POST['id_agent']) && $_POST['id_agent'] !== '0') {
+    $query .= " AND t.id_agent = :id_agent";
+    $params['id_agent'] = intval($_POST['id_agent']);
+}
 
-if (!empty($tickets)) {
+// Ajouter le filtre d'usine si nécessaire
+if (isset($_POST['id_usine']) && !empty($_POST['id_usine']) && $_POST['id_usine'] !== '0') {
+    $query .= " AND t.id_usine = :id_usine";
+    $params['id_usine'] = intval($_POST['id_usine']);
+}
+
+// Ajouter l'ordre de tri
+$query .= " ORDER BY u.nom_usine ASC, t.date_ticket DESC, a.nom, a.prenom";
+
+try {
+    $stmt = $conn->prepare($query);
+    $stmt->execute($params);
+    $tickets = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+    if (empty($tickets)) {
+        echo "<script>alert('Aucun ticket trouvé pour les critères sélectionnés.'); window.history.back();</script>";
+        exit;
+    }
+
     class PDF extends FPDF {
         function Header() {
             $logo_path = dirname(dirname(__FILE__)) . '/dist/img/logo.png';
@@ -180,8 +198,8 @@ if (!empty($tickets)) {
     // Envoi du PDF
     $pdf->Output('I', $file_name);
     exit;
-} else {
-    echo "<script>alert('Aucun ticket trouvé pour ce chef d\'équipe sur cette période.'); window.history.back();</script>";
+} catch (PDOException $e) {
+    echo "<script>alert('Erreur lors de la récupération des données.'); window.history.back();</script>";
     exit;
 }
 ?>

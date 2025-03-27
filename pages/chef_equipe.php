@@ -1,9 +1,16 @@
 <?php
 require_once '../inc/functions/connexion.php';
 require_once '../inc/functions/requete/requete_chef_equipes.php';
+require_once '../inc/functions/requete/requete_usines.php';
 include('header.php');
 $chefs = getChefEquipesFull($conn); 
+$usines = getUsines($conn);
 ?>
+
+<!-- Add Select2 CSS -->
+<link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+<!-- Add Select2 JS -->
+<script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
 
 <style>
         .block-container {
@@ -49,6 +56,21 @@ $chefs = getChefEquipesFull($conn);
                                     <option value="">Sélectionner un chef d'équipe</option>
                                     <?php foreach ($chefs as $chef): ?>
                                         <option value="<?= $chef['id_chef'] ?>"><?= htmlspecialchars($chef['nom'] . ' ' . $chef['prenoms']) ?></option>
+                                    <?php endforeach; ?>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="select-agent">Sélectionner un agent</label>
+                                <select class="form-control select2" id="select-agent" name="id_agent" style="width: 100%;" required disabled>
+                                    <option value="">Sélectionner d'abord un chef d'équipe</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="select-usine">Sélectionner une usine</label>
+                                <select class="form-control select2" id="select-usine" name="id_usine" style="width: 100%;" required>
+                                    <option value="0">Toutes les usines</option>
+                                    <?php foreach ($usines as $usine): ?>
+                                        <option value="<?= $usine['id_usine'] ?>"><?= htmlspecialchars($usine['nom_usine']) ?></option>
                                     <?php endforeach; ?>
                                 </select>
                             </div>
@@ -268,6 +290,101 @@ if(isset($_SESSION['delete_pop']) && $_SESSION['delete_pop'] ==  true) {
         }
     });
 }
+</script>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    console.log('Script loaded');
+    
+    // Initialize Select2
+    try {
+        $('.select2').select2({
+            width: '100%',
+            language: 'fr',
+            placeholder: 'Sélectionner...'
+        });
+        console.log('Select2 initialized');
+    } catch (error) {
+        console.error('Error initializing Select2:', error);
+    }
+
+    // Handle chef d'équipe selection change
+    $('#select-chef').on('change', function() {
+        const chefId = $(this).val();
+        loadAgents(chefId);
+    });
+
+    function loadAgents(chefId) {
+        console.log('Loading agents for chef:', chefId);
+        const agentSelect = $('#select-agent');
+        
+        // Reset agent select if no chef selected
+        if (!chefId) {
+            agentSelect.html('<option value="">Sélectionner d\'abord un chef d\'équipe</option>').prop('disabled', true);
+            return;
+        }
+
+        // Show loading state
+        agentSelect.prop('disabled', true);
+        agentSelect.html('<option value="">Chargement des agents...</option>');
+
+        const apiUrl = '../inc/functions/api/get_agents_by_chef.php';
+        console.log('Fetching agents from:', apiUrl);
+
+        // Fetch agents
+        $.get(apiUrl, { id_chef: chefId })
+            .done(function(agents) {
+                console.log('Agents received:', agents);
+                let options = '<option value="0">Tous les agents</option>';
+                if (Array.isArray(agents)) {
+                    agents.forEach(function(agent) {
+                        options += `<option value="${agent.id_agent}">${agent.nom_complet_agent}</option>`;
+                    });
+                    console.log('Options generated:', options);
+                } else {
+                    console.error('Received non-array response:', agents);
+                }
+                agentSelect.html(options).prop('disabled', false);
+            })
+            .fail(function(error) {
+                console.error('Error loading agents:', error);
+                agentSelect.html('<option value="">Erreur lors du chargement des agents</option>');
+                agentSelect.prop('disabled', true);
+            });
+    }
+
+    // Reset selects when modal is closed
+    $('#print-tickets-modal').on('hidden.bs.modal', function() {
+        console.log('Modal closed - resetting selects');
+        $('#select-agent').html('<option value="">Sélectionner d\'abord un chef d\'équipe</option>').prop('disabled', true);
+        $('#select-chef').val('').trigger('change');
+        $('#select-usine').val('0').trigger('change'); // Reset usine to "Toutes les usines"
+    });
+
+    // Handle form submission
+    $('#print-tickets-form').on('submit', function() {
+        const chefId = $('#select-chef').val();
+        const agentId = $('#select-agent').val();
+        const usineId = $('#select-usine').val();
+        
+        // Si "Tous les agents" est sélectionné
+        if (agentId === '0') {
+            $('<input>').attr({
+                type: 'hidden',
+                name: 'all_agents',
+                value: '1'
+            }).appendTo(this);
+        }
+
+        // Si "Toutes les usines" est sélectionné
+        if (usineId === '0') {
+            $('<input>').attr({
+                type: 'hidden',
+                name: 'all_usines',
+                value: '1'
+            }).appendTo(this);
+        }
+    });
+});
 </script>
 </body>
 </html>
