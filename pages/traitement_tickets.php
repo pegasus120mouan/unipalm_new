@@ -297,6 +297,24 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['
     exit();
 } 
 
+// Mise à jour du numéro de ticket
+if (isset($_POST['updateNumeroTicket'])) {
+    $id_ticket = $_POST['id_ticket'];
+    $numero_ticket = $_POST['numero_ticket'];
+
+    try {
+        $stmt = $conn->prepare("UPDATE tickets SET numero_ticket = ? WHERE id_ticket = ?");
+        $stmt->execute([$numero_ticket, $id_ticket]);
+
+        $_SESSION['success'] = "Le numéro de ticket a été mis à jour avec succès.";
+    } catch (PDOException $e) {
+        $_SESSION['error'] = "Erreur lors de la mise à jour du numéro de ticket : " . $e->getMessage();
+    }
+
+    header("Location: tickets_modifications.php");
+    exit();
+}
+
 // Traitement des requêtes AJAX
 if ($_SERVER['REQUEST_METHOD'] === 'GET' && isset($_GET['action'])) {
     header('Content-Type: application/json');

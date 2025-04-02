@@ -15,10 +15,11 @@ $search_usine = $_GET['usine'] ?? null;
 $search_date = $_GET['date_creation'] ?? null;
 $search_chauffeur = $_GET['chauffeur'] ?? null;
 $search_agent = $_GET['agent_id'] ?? null;
+$search_numero_ticket = $_GET['numero_ticket'] ?? null;
 
 // Récupérer les données (functions)
-if ($search_usine || $search_date || $search_chauffeur || $search_agent) {
-    $tickets = searchTickets($conn, $search_usine, $search_date, $search_chauffeur, $search_agent);
+if ($search_usine || $search_date || $search_chauffeur || $search_agent || $search_numero_ticket) {
+    $tickets = searchTickets($conn, $search_usine, $search_date, $search_chauffeur, $search_agent, $search_numero_ticket);
 } else {
     $tickets = getTickets($conn);
 }
@@ -456,7 +457,7 @@ label {
             </div>
             <div class="modal-body">
                 <!-- Formulaire de modification du ticket -->
-                <form action="tickets_update.php?id=<?= $ticket['id_ticket'] ?>" method="post">
+                <form action="tickets_update_numeros.php?id=<?= $ticket['id_ticket'] ?>" method="post">
                 <div class="form-group">
                 <label for="exampleInputEmail1">Date ticket</label>
                 <input type="date" class="form-control" id="exampleInputEmail1" placeholder="date ticket" name="date_ticket" value="<?= isset($ticket['date_ticket']) ? $ticket['date_ticket'] : '' ?>"> 
@@ -502,15 +503,106 @@ label {
 
 </div>
 
+<!-- Modals pour chaque ticket -->
+<?php foreach ($tickets_list as $ticket) : ?>
+<div class="modal fade" id="ticketModal<?= $ticket['id_ticket'] ?>" tabindex="-1" role="dialog" aria-labelledby="ticketModalLabel<?= $ticket['id_ticket'] ?>" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header bg-primary text-white">
+        <h5 class="modal-title" id="ticketModalLabel<?= $ticket['id_ticket'] ?>">
+          <i class="fas fa-ticket-alt"></i> Détails du Ticket #<?= $ticket['numero_ticket'] ?>
+        </h5>
+        <button type="button" class="close text-white" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div class="row mb-3">
+          <div class="col-md-6">
+            <strong>Date du ticket:</strong><br>
+            <?= isset($ticket['date_ticket']) ? date('d/m/Y', strtotime($ticket['date_ticket'])) : '-' ?>
+          </div>
+          <div class="col-md-6">
+            <strong>Prix unitaire:</strong><br>
+            <?= isset($ticket['prix_unitaire']) ? number_format($ticket['prix_unitaire'], 2, '.', ' ') : '-' ?>
+          </div>
+        </div>
+
+        <div class="row mb-3">
+          <div class="col-md-6">
+            <strong>Usine:</strong><br>
+            <?= isset($ticket['nom_usine']) ? $ticket['nom_usine'] : '-' ?>
+          </div>
+          <div class="col-md-6">
+            <strong>Montant à payer:</strong><br>
+            <?php if(isset($ticket['montant_paie'])): ?>
+              <span class="text-primary"><?= number_format($ticket['montant_paie'], 2, '.', ' ') ?></span>
+            <?php else: ?>
+              -
+            <?php endif; ?>
+          </div>
+        </div>
+
+        <div class="row mb-3">
+          <div class="col-md-6">
+            <strong>Agent:</strong><br>
+            <?= isset($ticket['nom_complet_agent']) ? $ticket['nom_complet_agent'] : '-' ?>
+          </div>
+          <div class="col-md-6">
+            <strong>Montant payé:</strong><br>
+            <?= isset($ticket['montant_paye']) ? number_format($ticket['montant_paye'], 2, '.', ' ') : '-' ?>
+          </div>
+        </div>
+
+        <div class="row mb-3">
+          <div class="col-md-6">
+            <strong>Véhicule:</strong><br>
+            <?= isset($ticket['matricule_vehicule']) ? $ticket['matricule_vehicule'] : '-' ?>
+          </div>
+          <div class="col-md-6">
+            <strong>Reste à payer:</strong><br>
+            <?= isset($ticket['reste_a_payer']) ? number_format($ticket['reste_a_payer'], 2, '.', ' ') : '-' ?>
+          </div>
+        </div>
+
+        <div class="row mb-3">
+          <div class="col-md-6">
+            <strong>Poids ticket:</strong><br>
+            <?= isset($ticket['poids']) ? $ticket['poids'] . ' kg' : '-' ?>
+          </div>
+        </div>
+
+        <div class="row mb-3">
+          <div class="col-md-6">
+            <strong>Créé par:</strong><br>
+            <?= isset($ticket['utilisateur_nom_complet']) ? $ticket['utilisateur_nom_complet'] : '-' ?>
+          </div>
+        </div>
+
+        <div class="row">
+          <div class="col-md-6">
+            <strong>Date de création:</strong><br>
+            <?= isset($ticket['created_at']) ? date('d/m/Y', strtotime($ticket['created_at'])) : '-' ?>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Fermer</button>
+      </div>
+    </div>
+  </div>
+</div>
+<?php endforeach; ?>
+
   <div class="pagination-container bg-secondary d-flex justify-content-center w-100 text-white p-3">
     <?php if($page > 1): ?>
-        <a href="?page=<?= $page - 1 ?><?= isset($_GET['usine']) ? '&usine='.$_GET['usine'] : '' ?><?= isset($_GET['date_creation']) ? '&date_creation='.$_GET['date_creation'] : '' ?><?= isset($_GET['chauffeur']) ? '&chauffeur='.$_GET['chauffeur'] : '' ?><?= isset($_GET['agent_id']) ? '&agent_id='.$_GET['agent_id'] : '' ?>" class="btn btn-primary"><</a>
+        <a href="?page=<?= $page - 1 ?><?= isset($_GET['usine']) ? '&usine='.$_GET['usine'] : '' ?><?= isset($_GET['date_creation']) ? '&date_creation='.$_GET['date_creation'] : '' ?><?= isset($_GET['chauffeur']) ? '&chauffeur='.$_GET['chauffeur'] : '' ?><?= isset($_GET['agent_id']) ? '&agent_id='.$_GET['agent_id'] : '' ?><?= isset($_GET['numero_ticket']) ? '&numero_ticket='.$_GET['numero_ticket'] : '' ?>" class="btn btn-primary"><</a>
     <?php endif; ?>
     
     <span class="mx-2"><?= $page . '/' . $total_pages ?></span>
 
     <?php if($page < $total_pages): ?>
-        <a href="?page=<?= $page + 1 ?><?= isset($_GET['usine']) ? '&usine='.$_GET['usine'] : '' ?><?= isset($_GET['date_creation']) ? '&date_creation='.$_GET['date_creation'] : '' ?><?= isset($_GET['chauffeur']) ? '&chauffeur='.$_GET['chauffeur'] : '' ?><?= isset($_GET['agent_id']) ? '&agent_id='.$_GET['agent_id'] : '' ?>" class="btn btn-primary">></a>
+        <a href="?page=<?= $page + 1 ?><?= isset($_GET['usine']) ? '&usine='.$_GET['usine'] : '' ?><?= isset($_GET['date_creation']) ? '&date_creation='.$_GET['date_creation'] : '' ?><?= isset($_GET['chauffeur']) ? '&chauffeur='.$_GET['chauffeur'] : '' ?><?= isset($_GET['agent_id']) ? '&agent_id='.$_GET['agent_id'] : '' ?><?= isset($_GET['numero_ticket']) ? '&numero_ticket='.$_GET['numero_ticket'] : '' ?>" class="btn btn-primary">></a>
     <?php endif; ?>
     
     <form action="" method="get" class="items-per-page-form ml-3">
@@ -525,6 +617,9 @@ label {
         <?php endif; ?>
         <?php if(isset($_GET['agent_id'])): ?>
             <input type="hidden" name="agent_id" value="<?= htmlspecialchars($_GET['agent_id']) ?>">
+        <?php endif; ?>
+        <?php if(isset($_GET['numero_ticket'])): ?>
+            <input type="hidden" name="numero_ticket" value="<?= htmlspecialchars($_GET['numero_ticket']) ?>">
         <?php endif; ?>
         <label for="limit">Afficher :</label>
         <select name="limit" id="limit" class="items-per-page-select">
@@ -699,6 +794,9 @@ label {
             </div>
             <div class="modal-body">
                 <div class="d-flex flex-column">
+                     <button type="button" class="btn btn-primary btn-block mb-3" data-toggle="modal" data-target="#searchByTicketModal" data-dismiss="modal">
+                        <i class="fas fa-user-tie mr-2"></i>Recherche par numero de ticket
+                    </button>
                     <button type="button" class="btn btn-primary btn-block mb-3" data-toggle="modal" data-target="#searchByAgentModal" data-dismiss="modal">
                         <i class="fas fa-user-tie mr-2"></i>Recherche par chargé de Mission
                     </button>
@@ -940,6 +1038,34 @@ label {
     </div>
 </div>
 
+<!-- Modal Recherche par Numero de Ticket -->
+<div class="modal fade" id="searchByTicketModal" tabindex="-1" role="dialog" aria-labelledby="searchByTicketModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="searchByTicketModalLabel">
+                    <i class="fas fa-ticket-alt mr-2"></i>Recherche par Numéro de Ticket
+                </h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <form id="searchByTicketForm" action="tickets.php" method="GET">
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label for="numero_ticket">Numéro de Ticket</label>
+                        <input type="text" class="form-control" id="numero_ticket" name="numero_ticket" required placeholder="Entrez le numéro du ticket">
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Annuler</button>
+                    <button type="submit" class="btn btn-primary">Rechercher</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
 <script>
 document.addEventListener('DOMContentLoaded', function() {
     // Initialisation des modals
@@ -1063,6 +1189,13 @@ document.addEventListener('DOMContentLoaded', function() {
             list.style.display = 'none';
         });
     }
+
+    // Gestion du formulaire de recherche par numéro de ticket
+    document.getElementById('searchByTicketForm').addEventListener('submit', function(e) {
+        e.preventDefault();
+        const numeroTicket = this.querySelector('[name="numero_ticket"]').value;
+        window.location.href = 'http://angenor.test/pages/tickets.php?numero_ticket=' + encodeURIComponent(numeroTicket);
+    });
 });
 </script>
 

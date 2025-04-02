@@ -628,30 +628,18 @@ function updateTicket($conn, $id_ticket, $date_ticket, $numero_ticket) {
     }
 }
 
-function searchTickets($conn, $usine = null, $date = null, $chauffeur = null, $agent = null) {
+function searchTickets($conn, $usine = null, $date = null, $chauffeur = null, $agent = null, $numero_ticket = null) {
     $sql = "SELECT 
-        t.id_ticket,
-        t.date_ticket,
-        t.numero_ticket,
-        t.poids,
-        t.prix_unitaire,
-        t.date_validation_boss,
-        t.montant_paie,
-        t.date_paie,
-        t.montant_payer,
-        t.montant_reste,
-        t.created_at,
+        t.*,
         CONCAT(u.nom, ' ', u.prenoms) AS utilisateur_nom_complet,
-        u.contact AS utilisateur_contact,
-        u.role AS utilisateur_role,
         v.matricule_vehicule,
-        CONCAT(a.nom, ' ', a.prenom) AS agent_nom_complet,
+        CONCAT(a.nom, ' ', a.prenom) AS nom_complet_agent,
         us.nom_usine
     FROM tickets t
-    INNER JOIN utilisateurs u ON t.id_utilisateur = u.id
-    INNER JOIN vehicules v ON t.vehicule_id = v.vehicules_id
-    INNER JOIN agents a ON t.id_agent = a.id_agent
-    INNER JOIN usines us ON t.id_usine = us.id_usine
+    LEFT JOIN utilisateurs u ON t.id_utilisateur = u.id
+    LEFT JOIN vehicules v ON t.vehicule_id = v.vehicules_id
+    LEFT JOIN agents a ON t.id_agent = a.id_agent
+    LEFT JOIN usines us ON t.id_usine = us.id_usine
     WHERE 1=1";
 
     $params = array();
@@ -676,7 +664,10 @@ function searchTickets($conn, $usine = null, $date = null, $chauffeur = null, $a
         $params[':agent'] = $agent;
     }
 
-    $sql .= " ORDER BY t.created_at DESC";
+    if ($numero_ticket) {
+        $sql .= " AND t.numero_ticket = :numero_ticket";
+        $params[':numero_ticket'] = $numero_ticket;
+    }
 
     try {
         $stmt = $conn->prepare($sql);

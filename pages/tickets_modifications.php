@@ -49,8 +49,27 @@ try {
         $filters['date_fin'] = $date_fin;
     }
 
-    // Récupération des données avec les filtres
-    $tickets = getTickets($conn, $filters);
+    if (!empty($numero_ticket)) {
+        // Si un numéro de ticket est spécifié, on ne récupère que ce ticket
+        $tickets = searchTickets($conn, null, null, null, null, $numero_ticket);
+        $tickets_list = $tickets; // Pas besoin de pagination pour une recherche spécifique
+        $total_pages = 1;
+    } else {
+        // Sinon on récupère tous les tickets selon les filtres
+        $tickets = getTickets($conn, $filters);
+        
+        if (!empty($tickets)) {
+            $total_tickets = count($tickets);
+            $total_pages = ceil($total_tickets / $limit);
+            $page = max(1, min($page, $total_pages));
+            $offset = ($page - 1) * $limit;
+            $tickets_list = array_slice($tickets, $offset, $limit);
+        } else {
+            $tickets_list = [];
+            $total_pages = 1;
+        }
+    }
+
     $usines = getUsines($conn);
     $chefs_equipes = getChefEquipes($conn);
     $vehicules = getVehicules($conn);
@@ -71,14 +90,6 @@ try {
     $chefs_equipes = [];
     $vehicules = [];
     $agents = [];
-}
-
-// Appliquer le filtre de numéro de ticket si nécessaire
-if (!empty($numero_ticket)) {
-    $tickets = array_filter($tickets, function($ticket) use ($numero_ticket) {
-        return isset($ticket['numero_ticket']) && 
-               stripos($ticket['numero_ticket'], $numero_ticket) !== false;
-    });
 }
 
 // Pagination sécurisée
@@ -257,6 +268,7 @@ label {
                 <th>Poids</th>
                 <th>Prix Unitaire</th>
                 <th>Montant à payer</th>
+                <th>Changer numéro ticket</th>
                 <th>Changer Usine</th>
                 <th>Changer Chef Mission</th>
                 <th>Changer Vehicule</th>
@@ -276,6 +288,36 @@ label {
 
                   <td><?= $ticket['prix_unitaire'] ?></td>
                   <td><?= $ticket['montant_paie'] ?></td>
+                  <td>
+                    <button 
+                        class="btn btn-danger btn-block" 
+                        data-toggle="modal" 
+                        data-target="#editModalNumeroTicket<?= $ticket['id_ticket'] ?>" 
+                        <?= $ticket['date_paie'] !== null ? 'disabled' : '' ?>>
+                        Changer N° Ticket
+                    </button>
+                  </td>
+                  <div class="modal" id="editModalNumeroTicket<?= $ticket['id_ticket'] ?>">
+                    <div class="modal-dialog">
+                      <div class="modal-content">
+                        <div class="modal-header">
+                          <h5 class="modal-title">Modifier le numéro de ticket</h5>
+                          <button type="button" class="close" data-dismiss="modal">&times;</button>
+                        </div>
+                        <div class="modal-body">
+                          <form action="traitement_tickets.php" method="post">
+                            <input type="hidden" name="id_ticket" value="<?= $ticket['id_ticket'] ?>">
+                            <div class="form-group">
+                              <label>Nouveau numéro de ticket</label>
+                              <input type="text" name="numero_ticket" class="form-control" value="<?= $ticket['numero_ticket'] ?>" required>
+                            </div>
+                            <button type="submit" class="btn btn-success mr-2" name="updateNumeroTicket">Mettre à jour</button>
+                            <button type="button" class="btn btn-light" data-dismiss="modal">Annuler</button>
+                          </form>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
                   <td>
                     <button 
                         class="btn btn-dark btn-block" 
@@ -464,9 +506,7 @@ label {
                             <div class="modal-content">
                                 <div class="modal-header">
                                     <h5 class="modal-title" id="confirmDeleteModalLabel">Confirmer la suppression</h5>
-                                    <button type="button" class="close" data-dismiss="modal" aria-label="Fermer">
-                                        <span aria-hidden="true">&times;</span>
-                                    </button>
+                                    <button type="button" class="close" data-dismiss="modal">&times;</button>
                                 </div>
                                 <div class="modal-body">
                                     Êtes-vous sûr de vouloir supprimer ce ticket ?

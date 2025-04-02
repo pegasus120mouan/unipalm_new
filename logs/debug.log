@@ -3586,3 +3586,9 @@
 [2025-03-22 15:21:22] Solde actuel avant approvisionnement: 11242459160
 [2025-03-22 15:21:22] Nouveau solde calculé: 11242459161
 [2025-03-22 15:21:22] Transaction d'approvisionnement créée #136, nouveau solde: 11242459161
+[2025-03-27 14:27:47] Début de l'enregistrement du paiement
+[2025-03-27 14:27:47] Solde actuel avant paiement: 11242459161
+[2025-03-27 14:27:47] Nouveau solde calculé: 11242359161
+[2025-03-27 14:27:47] Ticket #742 mis à jour avec montant_payer=200000, montant_reste=1600000
+[2025-03-27 14:27:47] Transaction de paiement créée #137, nouveau solde: 11242359161
+[2025-03-27 14:27:47] Paiement enregistré avec succès
