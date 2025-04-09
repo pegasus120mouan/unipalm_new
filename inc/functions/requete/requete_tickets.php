@@ -634,7 +634,12 @@ function searchTickets($conn, $usine = null, $date = null, $chauffeur = null, $a
         CONCAT(u.nom, ' ', u.prenoms) AS utilisateur_nom_complet,
         v.matricule_vehicule,
         CONCAT(a.nom, ' ', a.prenom) AS nom_complet_agent,
-        us.nom_usine
+        us.nom_usine,
+        us.id_usine,
+        a.id_agent,
+        v.vehicules_id,
+        t.date_paie,
+        t.vehicule_id
     FROM tickets t
     LEFT JOIN utilisateurs u ON t.id_utilisateur = u.id
     LEFT JOIN vehicules v ON t.vehicule_id = v.vehicules_id

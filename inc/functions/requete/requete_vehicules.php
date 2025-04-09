@@ -2,7 +2,7 @@
 
 function getVehicules($conn) {
     $stmt = $conn->prepare(
-        "SELECT vehicules_id, matricule_vehicule  from vehicules"
+        "SELECT vehicules_id, matricule_vehicule FROM vehicules"
     );
 
     $stmt->execute();
