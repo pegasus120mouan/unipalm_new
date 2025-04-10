@@ -52,11 +52,6 @@ try {
     $stmt = $conn->prepare("UPDATE tickets SET id_agent = ? WHERE id_ticket = ?");
     $stmt->execute([$nouveau_chef, $id_ticket]);
 
-    // Journaliser la modification
-    $stmt = $conn->prepare("INSERT INTO journal_modifications (id_ticket, type_modification, ancienne_valeur, nouvelle_valeur, id_utilisateur, date_modification) 
-                           VALUES (?, 'chef_mission', ?, ?, ?, NOW())");
-    $stmt->execute([$id_ticket, $ancien_chef, $nouveau_chef, $_SESSION['user_id']]);
-
     $_SESSION['success'] = "Le chef de mission a été mis à jour avec succès";
 } catch (PDOException $e) {
     $_SESSION['error'] = "Erreur lors de la mise à jour du chef de mission : " . $e->getMessage();

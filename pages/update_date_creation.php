@@ -47,10 +47,11 @@ try {
     $stmt = $conn->prepare("UPDATE tickets SET created_at = ? WHERE id_ticket = ?");
     $stmt->execute([$nouvelle_date, $id_ticket]);
 
-    // Journaliser la modification
-    $stmt = $conn->prepare("INSERT INTO journal_modifications (id_ticket, type_modification, ancienne_valeur, nouvelle_valeur, id_utilisateur, date_modification) 
-                           VALUES (?, 'date_creation', (SELECT created_at FROM tickets WHERE id_ticket = ?), ?, ?, NOW())");
-    $stmt->execute([$id_ticket, $id_ticket, $nouvelle_date, $_SESSION['user_id']]);
+    if($stmt->execute()) {
+        // Mise à jour réussie
+        $response['status'] = 'success';
+        $response['message'] = 'Date de création mise à jour avec succès';
+    }
 
     $_SESSION['success'] = "La date de création a été mise à jour avec succès";
 } catch (PDOException $e) {
