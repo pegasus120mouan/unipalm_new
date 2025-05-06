@@ -318,7 +318,12 @@ label {
 </div>
 
   <div class="table-responsive">
-    <table id="example1" class="table table-bordered table-striped">
+    <!-- Loader -->
+    <div id="loader" class="text-center p-3">
+        <img src="../dist/img/loading.gif" alt="Chargement..." />
+    </div>
+    <!-- Table qui sera initialement cachée -->
+    <table id="example1" class="table table-bordered table-striped" style="display: none;">
 
  <!-- <table style="max-height: 90vh !important; overflow-y: scroll !important" id="example1" class="table table-bordered table-striped">-->
     <thead>
@@ -1068,6 +1073,15 @@ label {
 
 <script>
 document.addEventListener('DOMContentLoaded', function() {
+    // Afficher le loader
+    document.getElementById('loader').style.display = 'block';
+    
+    // Cacher le loader et afficher la table après un court délai
+    setTimeout(function() {
+        document.getElementById('loader').style.display = 'none';
+        document.getElementById('example1').style.display = 'table';
+    }, 1000); // 1 seconde de délai
+    
     // Initialisation des modals
     $('.modal').modal({
         keyboard: false,

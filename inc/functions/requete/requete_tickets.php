@@ -204,22 +204,31 @@ function getTicketsAttente($conn, $agent_id = null, $usine_id = null, $date_debu
     }
 }
 
-function getTicketsNonAssigne($conn, $agent_id = null, $usine_id = null, $date_debut = null, $date_fin = null, $numero_ticket = null) {
-    $sql = "SELECT t.*, 
-            CONCAT(u.nom, ' ', u.prenoms) AS utilisateur_nom_complet,
-            u.contact AS utilisateur_contact,
-            u.role AS utilisateur_role,
-            0 AS montant_total,
+function getTicketsNonAssigne($conn, $agent_id = null, $usine_id = null, $date_debut = null, $date_fin = null, $numero_ticket = null, $numero_bordereau = null) {
+    $sql = "SELECT 
+            t.*,
+            u.nom_usine,
             v.matricule_vehicule,
-            CONCAT(a.nom, ' ', a.prenom) AS agent_nom_complet,
-            us.nom_usine,
-            us.id_usine
+            v.type_vehicule,
+            CONCAT(COALESCE(a.nom, ''), ' ', COALESCE(a.prenom, '')) AS nom_complet_agent,
+            DATE(t.date_ticket) as date_ticket_only,
+            DATE(t.created_at) as date_reception,
+            CAST(t.poids AS DECIMAL(10,2)) as poids,
+            CAST(t.prix_unitaire AS DECIMAL(10,2)) as prix_unitaire,
+            CAST((t.poids * t.prix_unitaire) AS DECIMAL(15,2)) as montant_total
             FROM tickets t
-            INNER JOIN utilisateurs u ON t.id_utilisateur = u.id
+            INNER JOIN usines u ON t.id_usine = u.id_usine
             INNER JOIN vehicules v ON t.vehicule_id = v.vehicules_id
             INNER JOIN agents a ON t.id_agent = a.id_agent
-            INNER JOIN usines us ON t.id_usine = us.id_usine
-            WHERE t.date_validation_boss IS not NULL AND t.id_agent = :agent_id";
+            WHERE 1=1
+            AND t.date_validation_boss IS NOT NULL
+            AND t.prix_unitaire > 0";
+
+    if ($numero_bordereau) {
+        $sql .= " AND t.numero_bordereau = :numero_bordereau";
+    } else {
+        $sql .= " AND t.numero_bordereau IS NULL";
+    }
 
     if ($agent_id) {
         $sql .= " AND t.id_agent = :agent_id";
@@ -230,22 +239,25 @@ function getTicketsNonAssigne($conn, $agent_id = null, $usine_id = null, $date_d
     }
 
     if ($date_debut) {
-        $sql .= " AND DATE(t.created_at) >= :date_debut";
+        $sql .= " AND t.created_at >= :date_debut";
     }
 
     if ($date_fin) {
-        $sql .= " AND DATE(t.created_at) <= :date_fin";
+        $sql .= " AND t.created_at <= :date_fin";
     }
     
     if ($numero_ticket) {
         $sql .= " AND t.numero_ticket LIKE :numero_ticket";
     }
 
-    $sql .= " ORDER BY t.created_at DESC";
+    $sql .= " ORDER BY u.nom_usine ASC, t.date_ticket ASC, t.created_at ASC";
 
-    
     try {
         $stmt = $conn->prepare($sql);
+        
+        if ($numero_bordereau) {
+            $stmt->bindValue(':numero_bordereau', $numero_bordereau, PDO::PARAM_STR);
+        }
         
         if ($agent_id) {
             $stmt->bindValue(':agent_id', $agent_id, PDO::PARAM_INT);
@@ -266,7 +278,7 @@ function getTicketsNonAssigne($conn, $agent_id = null, $usine_id = null, $date_d
         $stmt->execute();
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     } catch (PDOException $e) {
-        error_log("Erreur dans getTicketsAttente: " . $e->getMessage());
+        error_log("Erreur dans getTicketsNonAssigne: " . $e->getMessage());
         return array();
     }
 }
@@ -890,6 +902,41 @@ function validerTickets($conn, $ticket_ids) {
     } catch (PDOException $e) {
         error_log("Erreur dans validerTickets: " . $e->getMessage());
         return false;
+    }
+}
+
+function getTicketsAssociation($conn, $agent_id, $date_debut, $date_fin) {
+    $sql = "SELECT 
+    t.date_ticket,
+    t.numero_ticket,
+    t.vehicule_id,
+    t.poids,
+    t.id_ticket,
+    DATE(t.created_at) as date_reception,
+    v.matricule_vehicule as vehicule,
+      CAST(t.poids AS DECIMAL(10,2)) as poids,
+            CAST(t.prix_unitaire AS DECIMAL(10,2)) as prix_unitaire,
+            CAST((t.poids * t.prix_unitaire) AS DECIMAL(15,2)) as montant_total
+ FROM tickets t
+ INNER JOIN vehicules v ON t.vehicule_id = v.vehicules_id
+ WHERE t.id_agent = :id_agent
+    AND t.created_at BETWEEN CONCAT(:date_debut, ' 00:00:00') AND CONCAT(:date_fin, ' 23:59:59')
+    AND t.prix_unitaire > 0
+ ORDER BY 
+    t.date_ticket ASC,
+    t.created_at ASC";
+
+    try {
+        $stmt = $conn->prepare($sql);
+        $stmt->bindValue(':id_agent', $agent_id, PDO::PARAM_INT);
+        $stmt->bindValue(':date_debut', $date_debut, PDO::PARAM_STR);
+        $stmt->bindValue(':date_fin', $date_fin, PDO::PARAM_STR);
+        
+        $stmt->execute();
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    } catch (PDOException $e) {
+        error_log("Erreur dans getTicketsAssociation: " . $e->getMessage());
+        return array();
     }
 }
 

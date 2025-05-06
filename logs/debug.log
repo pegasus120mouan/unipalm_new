@@ -3592,3 +3592,10 @@
 [2025-03-27 14:27:47] Ticket #742 mis à jour avec montant_payer=200000, montant_reste=1600000
 [2025-03-27 14:27:47] Transaction de paiement créée #137, nouveau solde: 11242359161
 [2025-03-27 14:27:47] Paiement enregistré avec succès
+[2025-04-28 20:20:20] Mise à jour automatique de 122 ticket(s) avec les prix unitaires correspondants à leurs dates
+[2025-04-28 20:56:18] Mise à jour automatique de 312 ticket(s) avec les prix unitaires correspondants à leurs dates
+[2025-04-28 20:57:59] Mise à jour automatique de 302 ticket(s) avec les prix unitaires correspondants à leurs dates
+[2025-05-06 20:18:10] Début de l'enregistrement du paiement
+[2025-05-06 20:18:10] Solde actuel avant paiement: 0
+[2025-05-06 20:18:10] ERREUR: Solde insuffisant pour effectuer ce paiement. Solde actuel : 0 FCFA
+[2025-05-06 20:18:10] Trace: #0 {main}

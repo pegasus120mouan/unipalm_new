@@ -343,7 +343,7 @@ $(document).ready(function() {
     var agents = <?= json_encode(array_map(function($agent) {
         return [
             'value' => $agent['id_agent'],
-            'label' => $agent['nom'] . ' ' . $agent['prenom']
+            'label' => $agent['nom_complet_agent']
         ];
     }, $agents)) ?>;
 
@@ -495,6 +495,9 @@ label {
         <div class="text-muted">
             Total: <?php echo $total_tickets; ?> ticket(s) en attente
         </div>
+            <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#modalUsineTickets">
+              <i class="fa fa-edit"></i> Validation en masse    
+            </button>
     </div>
 </div>
 </div>
@@ -526,7 +529,12 @@ label {
 
 
 <div class="table-responsive">
-    <table id="example1" class="table table-bordered table-striped">
+    <!-- Loader -->
+    <div id="loader" class="text-center p-3">
+        <img src="../dist/img/loading.gif" alt="Chargement..." />
+    </div>
+    <!-- Table qui sera initialement cachée -->
+    <table id="example1" class="table table-bordered table-striped" style="display: none;">
 
  <!-- <table style="max-height: 90vh !important; overflow-y: scroll !important" id="example1" class="table table-bordered table-striped">-->
     <thead>
@@ -615,15 +623,16 @@ label {
           
   
           <td class="actions">
-            <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#valider_ticket<?= $ticket['id_ticket'] ?>">
+            <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#valider_un_ticket<?= $ticket['id_ticket'] ?>">
               <i class="fa fa-edit"></i> Valider un ticket
             </button>
           </td>
-          <div class="modal" id="valider_ticket<?= $ticket['id_ticket'] ?>">
+          <div class="modal" id="valider_un_ticket<?= $ticket['id_ticket'] ?>">
+
           <div class="modal-dialog">
             <div class="modal-content">
               <div class="modal-body">
-                <form id="form-validation-<?= $ticket['id_ticket'] ?>" onsubmit="return submitValidation(event, <?= $ticket['id_ticket'] ?>);">
+                <form action="valider_un_tickets.php" method="post">
                   <input type="hidden" name="id_ticket" value="<?= $ticket['id_ticket'] ?>">
                   <input type="hidden" name="current_url" value="<?= $_SERVER['REQUEST_URI'] ?>">
                   <div class="form-group">
@@ -656,10 +665,10 @@ function submitValidation(event, ticketId) {
     const prix_unitaire = form.querySelector('[name="prix_unitaire"]').value;
     const id_ticket = form.querySelector('[name="id_ticket"]').value;
 
-    console.log('Données envoyées:', {
-        ticket_id: id_ticket,
-        prix_unitaire: prix_unitaire
-    });
+    if (!prix_unitaire || prix_unitaire <= 0) {
+        alert('Veuillez entrer un prix unitaire valide');
+        return false;
+    }
 
     $.ajax({
         url: 'valider_tickets.php',
@@ -669,14 +678,13 @@ function submitValidation(event, ticketId) {
             prix_unitaire: prix_unitaire
         },
         success: function(response) {
-            console.log('Response:', response);
             try {
                 const data = typeof response === 'string' ? JSON.parse(response) : response;
                 if (data.success) {
                     // Fermer le modal
                     $(`#valider_ticket${ticketId}`).modal('hide');
                     // Recharger la page
-                   // window.location.reload();
+                    window.location.reload();
                 } else {
                     alert(data.message || 'Erreur lors de la validation du ticket');
                 }
@@ -687,9 +695,8 @@ function submitValidation(event, ticketId) {
         },
         error: function(xhr, status, error) {
             console.error('Erreur:', error);
-            console.error('Status:', status);
             console.error('Response:', xhr.responseText);
-            alert('Erreur lors de la validation du ticket: ' + error);
+            alert('Erreur lors de la validation du ticket');
         }
     });
 
@@ -712,7 +719,10 @@ function validerTicketsSelectionnes() {
         $.ajax({
             url: 'valider_tickets.php',
             method: 'POST',
-            data: { ticket_ids: selectedTickets },
+            data: { 
+                ticket_ids: selectedTickets,
+                is_mass_validation: true
+            },
             success: function(response) {
                 try {
                     const data = typeof response === 'string' ? JSON.parse(response) : response;
@@ -728,7 +738,7 @@ function validerTicketsSelectionnes() {
             },
             error: function(xhr, status, error) {
                 console.error('Erreur:', error);
-                console.error('Response:', xhr.responseText);
+                console.error('Response:', xhr.responseText);  // Pour voir la réponse brute
                 alert('Erreur lors de la validation des tickets: ' + error);
             }
         });
@@ -799,7 +809,7 @@ function validerTicketsSelectionnes() {
                             <option value="">Choisir un agent</option>
                             <?php foreach ($agents as $agent): ?>
                                 <option value="<?= $agent['id_agent'] ?>" <?= ($agent_id == $agent['id_agent'] ? 'selected' : '') ?>>
-                                    <?= htmlspecialchars($agent['nom'] . ' ' . $agent['prenom']) ?>
+                                    <?= htmlspecialchars($agent['nom_agent'] . ' ' . $agent['prenom_agent']) ?>
                                 </option>
                             <?php endforeach; ?>
                         </select>
@@ -872,7 +882,7 @@ function validerTicketsSelectionnes() {
                             <option value="">Choisir un chargé de Mission</option>
                             <?php foreach ($agents as $agent): ?>
                                 <option value="<?= $agent['id_agent'] ?>">
-                                    <?= $agent['nom_complet_agent'] ?>
+                                    <?= $agent['nom_agent'] . ' ' . $agent['prenom_agent'] ?>
                                 </option>
                             <?php endforeach; ?>
                         </select>
@@ -1101,9 +1111,17 @@ document.getElementById('searchByVehiculeForm').addEventListener('submit', funct
   .info-group p {
     margin-bottom: 0;
   }
-  .modal-header .close {
-    padding: 1rem;
-    margin: -1rem -1rem -1rem auto;
+  .modal-header.bg-primary {
+    background-color: #007bff !important;
+  }
+
+  .modal-header .close.text-white {
+    color: #fff;
+    opacity: 1;
+  }
+
+  .modal-header .close.text-white:hover {
+    opacity: 0.75;
   }
   </style>
 <?php endforeach; ?>
@@ -1133,84 +1151,9 @@ function submitValidation(event, ticketId) {
     $.ajax({
         url: 'valider_tickets.php',
         method: 'POST',
-        data: {
-            id_ticket: formData.get('id_ticket'),
-            prix_unitaire: formData.get('prix_unitaire')
-        },
-        dataType: 'json',
-        success: function(response) {
-            console.log('Response:', response);  // Pour le debug
-            if (response && response.success) {
-                // Fermer le modal
-                $(`#valider_ticket${ticketId}`).modal('hide');
-                
-                // Recharger la page avec les mêmes paramètres
-                window.location.reload();
-            } else {
-                alert(response && response.message ? response.message : 'Erreur lors de la validation du ticket');
-            }
-        },
-        error: function(xhr, status, error) {
-            console.error('Erreur:', error);
-            console.error('Status:', status);
-            console.error('Response:', xhr.responseText);  // Pour voir la réponse brute
-            alert('Erreur lors de la validation du ticket: ' + error);
-        }
-    });
-
-    return false;
-}
-
-// Pour la validation multiple
-function validerTicketsSelectionnes() {
-    const selectedTickets = [];
-    $('.ticket-checkbox:checked').each(function() {
-        selectedTickets.push($(this).val());
-    });
-
-    if (selectedTickets.length === 0) {
-        alert('Veuillez sélectionner au moins un ticket à valider');
-        return;
-    }
-
-    if (confirm('Voulez-vous vraiment valider les tickets sélectionnés ?')) {
-        $.ajax({
-            url: 'valider_tickets.php',
-            method: 'POST',
-            data: { ticket_ids: selectedTickets },
-            success: function(response) {
-                if (response.success) {
-                    // Fermer le modal
-                    $(`#valider_ticket${ticketId}`).modal('hide');
-                    
-                    // Recharger la page avec les mêmes paramètres
-                    window.location.reload();
-                } else {
-                    alert(response.message || 'Erreur lors de la validation des tickets');
-                }
-            },
-            error: function(xhr, status, error) {
-                console.error('Erreur:', error);
-                alert('Erreur lors de la validation des tickets');
-            }
-        });
-    }
-}
-</script>
-<script>
-function validateAndSubmit(event, ticketId) {
-    event.preventDefault();
-    const form = document.getElementById('validation-form-' + ticketId);
-    const prixUnitaire = form.querySelector('[name="prix_unitaire"]').value;
-    const id_ticket = form.querySelector('[name="id_ticket"]').value;
-
-    $.ajax({
-        url: 'valider_tickets.php',
-        method: 'POST',
-        data: { 
-            ticket_id: id_ticket,
-            prix_unitaire: prixUnitaire
-        },
+        data: formData,
+        processData: false,
+        contentType: false,
         success: function(response) {
             if (response.success) {
                 // Construire l'URL de redirection avec les paramètres actuels
@@ -1222,16 +1165,78 @@ function validateAndSubmit(event, ticketId) {
         },
         error: function(xhr, status, error) {
             console.error('Erreur:', error);
+            console.error('Response:', xhr.responseText);
             alert('Erreur lors de la validation du ticket');
         }
     });
 
     return false;
 }
-</script>
-<script>
+
 // Pour la validation multiple
 function validerTicketsSelectionnes() {
+    const selectedTickets = [];
+    $('.ticket-checkbox:checked').each(function() {
+        selectedTickets.push($(this).val());
+    });
+
+    console.log('=== Validation des tickets ===');
+    console.log('Tickets sélectionnés:', selectedTickets);
+    console.log('Nombre total:', selectedTickets.length);
+
+    if (selectedTickets.length === 0) {
+        alert('Veuillez sélectionner au moins un ticket');
+        return;
+    }
+
+    if (confirm('Voulez-vous vraiment valider les ' + selectedTickets.length + ' ticket(s) sélectionné(s) ?')) {
+        console.log('=== Envoi de la requête ===');
+        console.log('URL:', 'valider_tickets.php');
+        console.log('Données:', { ticket_ids: selectedTickets });
+
+        $.ajax({
+            url: 'valider_tickets.php',
+            method: 'POST',
+            data: {
+                ticket_ids: selectedTickets
+            },
+            success: function(response) {
+                console.log('=== Réponse reçue ===');
+                console.log('Réponse brute:', response);
+                
+                try {
+                    const data = JSON.parse(response);
+                    console.log('Données parsées:', data);
+                    
+                    if (data.success) {
+                        alert('Les tickets ont été validés avec succès');
+                        $('#modalResultatsRecherche').modal('hide');
+                        location.reload();
+                    } else {
+                        alert(data.message || 'Erreur lors de la validation');
+                    }
+                } catch (e) {
+                    console.error('=== Erreur de parsing ===');
+                    console.error('Type:', e.name);
+                    console.error('Message:', e.message);
+                    console.error('Stack:', e.stack);
+                    alert('Erreur lors du traitement de la réponse');
+                }
+            },
+            error: function(xhr, status, error) {
+                console.error('=== Erreur AJAX ===');
+                console.error('Status:', status);
+                console.error('Erreur:', error);
+                console.error('Réponse:', xhr.responseText);
+                alert('Erreur lors de la validation des tickets');
+            }
+        });
+    }
+}
+</script>
+<script>
+function validerTicketsSelectionnes() {
+    // Pour la validation en masse uniquement
     const selectedTickets = [];
     $('.ticket-checkbox:checked').each(function() {
         selectedTickets.push($(this).val());
@@ -1242,41 +1247,74 @@ function validerTicketsSelectionnes() {
         return;
     }
 
-    if (confirm('Voulez-vous vraiment valider les tickets sélectionnés ?')) {
-        // Récupérer les paramètres actuels de l'URL
-        const params = new URLSearchParams(window.location.search);
-        const data = {
+    $.ajax({
+        url: 'valider_tickets.php',
+        method: 'POST',
+        data: { 
             ticket_ids: selectedTickets,
-            agent_id: params.get('agent_id'),
-            usine_id: params.get('usine_id'),
-            date_debut: params.get('date_debut'),
-            date_fin: params.get('date_fin')
-        };
-
-        $.ajax({
-            url: 'valider_tickets.php',
-            method: 'POST',
-            data: data,
-            success: function(response) {
-                if (response.success) {
-                    // Construire l'URL de redirection avec les paramètres actuels
-                    const redirectParams = new URLSearchParams();
-                    if (data.agent_id) redirectParams.set('agent_id', data.agent_id);
-                    if (data.usine_id) redirectParams.set('usine_id', data.usine_id);
-                    if (data.date_debut) redirectParams.set('date_debut', data.date_debut);
-                    if (data.date_fin) redirectParams.set('date_fin', data.date_fin);
-                    
-                    window.location.href = 'tickets_attente.php?' + redirectParams.toString();
+            is_mass_validation: true
+        },
+        success: function(response) {
+            try {
+                const data = typeof response === 'string' ? JSON.parse(response) : response;
+                if (data.success) {
+                    window.location.reload();
                 } else {
-                    alert(response.message || 'Erreur lors de la validation des tickets');
+                    alert(data.message || 'Erreur lors de la validation des tickets');
                 }
-            },
-            error: function(xhr, status, error) {
-                console.error('Erreur:', error);
-                alert('Erreur lors de la validation des tickets');
+            } catch (e) {
+                console.error('Erreur:', e);
+                alert('Erreur lors du traitement de la réponse');
             }
-        });
+        },
+        error: function(xhr, status, error) {
+            console.error('Erreur:', error);
+            console.error('Response:', xhr.responseText);  // Pour voir la réponse brute
+            alert('Erreur lors de la validation des tickets: ' + error);
+        }
+    });
+}
+
+function submitValidation(event, ticketId) {
+    event.preventDefault();
+    const form = document.getElementById('form-validation-' + ticketId);
+    const prix_unitaire = form.querySelector('[name="prix_unitaire"]').value;
+
+    if (!prix_unitaire || prix_unitaire <= 0) {
+        alert('Veuillez entrer un prix unitaire valide');
+        return false;
     }
+
+    // Validation d'un seul ticket
+    $.ajax({
+        url: 'valider_tickets.php',
+        method: 'POST',
+        data: {
+            ticket_id: ticketId,
+            prix_unitaire: prix_unitaire,
+            is_mass_validation: false
+        },
+        success: function(response) {
+            try {
+                const data = typeof response === 'string' ? JSON.parse(response) : response;
+                if (data.success) {
+                    $(`#valider_ticket${ticketId}`).modal('hide');
+                    window.location.reload();
+                } else {
+                    alert(data.message || 'Erreur lors de la validation du ticket');
+                }
+            } catch (e) {
+                console.error('Erreur:', e);
+                alert('Erreur lors du traitement de la réponse');
+            }
+        },
+        error: function(xhr, error) {
+            console.error('Erreur:', error);
+            alert('Erreur lors de la validation du ticket');
+        }
+    });
+
+    return false;
 }
 </script>
 <script>
@@ -1391,173 +1429,449 @@ function showSearchModal(modalId) {
 }
 </script>
 
-<!-- Modal Usine Tickets -->
-<div class="modal fade" id="modalUsineTickets" tabindex="-1" role="dialog">
-    <div class="modal-dialog modal-lg">
+<!-- Modal Validation en Masse -->
+<div class="modal fade" id="modalUsineTickets" tabindex="-1" role="dialog" aria-labelledby="modalUsineTicketsLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg" role="document">
         <div class="modal-content">
-            <div class="modal-header">
-                <h4 class="modal-title">Tickets en attente - <span id="modalUsineTitle"></span></h4>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <div class="modal-header bg-primary text-white">
+                <h5 class="modal-title" id="modalUsineTicketsLabel">Validation en Masse des Tickets</h5>
+                <button type="button" class="close text-white" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form id="formValidationMasse">
+                  <!--  <form action="valider_tickets_masse.php" method="POST">-->
+                    <div class="row">
+                        <!-- Sélection des agents -->
+                        <div class="col-md-6 mb-3">
+                            <label for="agents" class="font-weight-bold">Agents</label>
+                            <select class="form-control select2-agents" id="agents" name="agents">
+                                <?php
+                                $agents = getAgents($conn);
+                                foreach($agents as $agent) {
+                                    echo '<option value="'.$agent['id_agent'].'">'.$agent['nom_agent'].' '.$agent['prenom_agent'].'</option>';
+                                }
+                                ?>
+                            </select>
+                        </div>
+                        <!-- Sélection des usines -->
+                        <div class="col-md-6 mb-3">
+                            <label for="usines" class="font-weight-bold">Usines</label>
+                            <select class="form-control select2-usines" id="usines" name="usines">
+                                <?php
+                                $usines = getUsines($conn);
+                                foreach($usines as $usine) {
+                                    echo '<option value="'.$usine['id_usine'].'">'.$usine['nom_usine'].'</option>';
+                                }
+                                ?>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <!-- Date début -->
+                        <div class="col-md-6 mb-3">
+                            <label for="date_debut" class="font-weight-bold">Date début</label>
+                            <input type="date" class="form-control" id="fdate_debut" name="date_debut" required>
+                        </div>
+                        <!-- Date fin -->
+                        <div class="col-md-6 mb-3">
+                            <label for="date_fin" class="font-weight-bold">Date fin</label>
+                            <input type="date" class="form-control" id="fdate_fin" name="date_fin" required>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Fermer</button>
+                <button type="button" class="btn btn-primary" onclick="validerEnMasse()">Rechercher les tickets</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Script pour l'initialisation des select2 et la validation en masse -->
+<script>
+$(document).ready(function() {
+    // Initialisation des select2 pour les agents
+    $('.select2-agents').select2({
+        placeholder: 'Sélectionner des agents',
+        language: 'fr',
+        width: '100%',
+        dropdownParent: $('#modalUsineTickets'),
+        allowClear: true
+    });
+
+    // Initialisation des select2 pour les usines
+    $('.select2-usines').select2({
+        placeholder: 'Sélectionner des usines',
+        language: 'fr',
+        width: '100%',
+        dropdownParent: $('#modalUsineTickets'),
+        allowClear: true
+    });
+
+    // Reset form on modal close
+    $('#modalUsineTickets').on('hidden.bs.modal', function () {
+        $('#formValidationMasse')[0].reset();
+        $('.select2-agents, .select2-usines').val(null).trigger('change');
+    });
+});
+
+function validerEnMasse() {
+    const agent_id = $('#agents').val();
+    const usine_id = $('#usines').val();
+    const date_debut = $('#fdate_debut').val();
+    const date_fin = $('#fdate_fin').val();
+
+    // const date_debut = document.getElementById('fdate_debut').value;
+    // const date_fin = document.getElementById('fdate_fin').value;
+
+    // Afficher les valeurs sélectionnées
+    console.log('=== Valeurs sélectionnées ===');
+    console.log('Agent ID:', agent_id);
+    console.log('Agent Nom:', $('#agents option:selected').text());
+    console.log('Usine ID:', usine_id);
+    console.log('Usine Nom:', $('#usines option:selected').text());
+    console.log('Date début:', date_debut);
+    console.log('Date fin:', date_fin);
+    console.log('========================');
+
+    // Validation des champs
+    if (!agent_id || !usine_id || !date_debut || !date_fin) {
+        alert('Veuillez remplir tous les champs');
+        return;
+    }
+
+    // Rechercher les tickets
+    $.ajax({
+        url: 'rechercher_tickets.php',
+        method: 'POST',
+        data: {
+            agent_id: agent_id,
+            usine_id: usine_id,
+            date_debut: date_debut,
+            date_fin: date_fin
+        },
+        success: function(response) {
+            try {
+                console.log('=== Réponse du serveur ===');
+                
+                console.log('Données reçues:', response);
+                const data = response;
+                console.log('=== Réponse du serveur ===');
+                console.log('Données reçues:', data);
+                console.log('Nombre de tickets:', data.tickets ? data.tickets.length : 0);
+                console.log('========================');
+
+                if (data.success) {
+                    // Remplir le tableau avec les résultats
+                    let html = '';
+                    data.tickets.forEach(ticket => {
+                        html += `
+                            <tr>
+                                <td class="text-center">
+                                    <input type="checkbox" class="ticket-checkbox" value="${ticket.id_ticket}">
+                                </td>
+                                <td>${ticket.numero_ticket}</td>
+                                <td>${ticket.date_ticket}</td>
+                                <td>${ticket.nom_agent} ${ticket.prenom_agent}</td>
+                                <td>${ticket.nom_usine}</td>
+                                <td>${ticket.prix_unitaire}</td>
+                                <td>${ticket.montant_paie}</td>
+                               
+                            </tr>
+                        `;
+                    });
+                    $('#resultsTableBody').html(html);
+                    
+                    // Fermer le modal de recherche et ouvrir celui des résultats
+                    $('#modalUsineTickets').modal('hide');
+                    $('#modalResultatsRecherche').modal('show');
+                } else {
+                    alert('Aucun ticket trouvé pour ces critères');
+                }
+            } catch (e) {
+                console.error('=== Erreur ===');
+                console.error('Type:', e.name);
+                console.error('Message:', e.message);
+                console.error('Stack:', e.stack);
+                console.error('========================');
+                alert('Erreur lors du traitement des résultats');
+            }
+        },
+        error: function(xhr, status, error) {
+            console.error('=== Erreur AJAX ===');
+            console.error('Status:', status);
+            console.error('Erreur:', error);
+            console.error('Réponse:', xhr.responseText);
+            console.error('========================');
+            alert('Erreur lors de la recherche des tickets');
+        }
+    });
+}
+</script>
+
+<!-- Modal Résultats de Recherche -->
+<div class="modal fade" id="modalResultatsRecherche" tabindex="-1" role="dialog" aria-labelledby="modalResultatsRechercheLabel" aria-hidden="true">
+    <div class="modal-dialog modal-xl" role="document">
+        <div class="modal-content">
+            <div class="modal-header bg-primary text-white">
+                <h5 class="modal-title" id="modalResultatsRechercheLabel">Résultats de la Recherche</h5>
+                <button type="button" class="close text-white" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
             </div>
             <div class="modal-body">
                 <div class="table-responsive">
-                    <table class="table table-bordered">
+                    <table class="table table-bordered table-striped">
                         <thead>
                             <tr>
-                                <th style="width: 40px;"><input type="checkbox" id="checkAll"></th>
+                                <th width="50px">
+                                    <input type="checkbox" id="checkAll" class="check-all">
+                                </th>
                                 <th>N° Ticket</th>
                                 <th>Date</th>
                                 <th>Agent</th>
-                                <th>Véhicule</th>
-                                <th>Poids</th>
+                                <th>Usine</th>
                                 <th>Prix unitaire</th>
-                                <th>Actions</th>
+                                <th>Montant</th>
                             </tr>
                         </thead>
-                        <tbody id="modalUsineBody"></tbody>
+                        <tbody id="resultsTableBody">
+                            <!-- Les résultats seront insérés ici -->
+                        </tbody>
                     </table>
                 </div>
             </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-primary" onclick="validerTicketsSelectionnes()">
-                    <i class="fas fa-check"></i> Valider la sélection
-                </button>
-                <button type="button" class="btn btn-secondary" data-dismiss="modal">Fermer</button>
+            <div class="modal-footer justify-content-between">
+                <div>
+                    <span class="text-muted" id="selectedCount">0 ticket(s) sélectionné(s)</span>
+                </div>
+                <div>
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Fermer</button>
+                    <button type="button" class="btn btn-success" onclick="validerTicketsSelectionnes()">
+                        <i class="fa fa-check"></i> Valider la sélection
+                    </button>
+                </div>
             </div>
         </div>
     </div>
 </div>
 
 <script>
-$(document).ready(function() {
-    // Gérer le "cocher tout"
-    $('#checkAll').change(function() {
-        $('.ticket-checkbox').prop('checked', $(this).prop('checked'));
-    });
-
-    window.showUsineTickets = function(usineId, usineName) {
-        // Mettre à jour le titre
-        $('#modalUsineTitle').text(usineName);
-        
-        // Vider le tableau
-        $('#modalUsineBody').empty();
-        
-        // Charger les tickets
-        $.ajax({
-            url: 'get_tickets_by_usine.php',
-            data: { id_usine: usineId },
-            method: 'GET',
-            dataType: 'json',
-            success: function(response) {
-                if (response.success && response.data) {
-                    var tbody = $('#modalUsineBody');
-                    response.data.forEach(function(ticket) {
-                        var row = `
-                            <tr>
-                                <td><input type="checkbox" class="ticket-checkbox" value="${ticket.id_ticket}"></td>
-                                <td>${ticket.numero_ticket || ''}</td>
-                                <td>${ticket.date_ticket ? new Date(ticket.date_ticket).toLocaleDateString() : ''}</td>
-                                <td>${ticket.agent_nom_complet || ''}</td>
-                                <td>${ticket.matricule_vehicule || '-'}</td>
-                                <td>${ticket.poids || ''}</td>
-                                <td>${ticket.prix_unitaire || '-'}</td>
-                                <td>
-                                    <button type="button" class="btn btn-success" onclick="validerUnTicket(${ticket.id_ticket}, this)">
-                                        Valider
-                                    </button>
-                                </td>
-                            </tr>
-                        `;
-                        tbody.append(row);
-                    });
-                    
-                    // Afficher le modal
-                    $('#modalUsineTickets').modal('show');
-                } else {
-                    alert('Aucun ticket trouvé pour cette usine');
-                }
-            },
-            error: function(xhr, status, error) {
-                console.error('Erreur:', error);
-                alert('Erreur lors du chargement des tickets');
-            }
-        });
-    };
-
-    window.validerUnTicket = function(ticketId, buttonElement) {
-        if (confirm('Voulez-vous vraiment valider ce ticket ?')) {
-            $.ajax({
-                url: 'valider_tickets.php',
-                method: 'POST',
-                data: { id_ticket: ticketId },
-                dataType: 'json',
-                success: function(response) {
-                    if (response.success) {
-                        // Désactiver le bouton et changer son apparence
-                        $(buttonElement).prop('disabled', true)
-                                      .removeClass('btn-success')
-                                      .addClass('btn-secondary')
-                                      .text('Validé');
-                        
-                        // Décocher la case si elle était cochée
-                        $(`input[value="${ticketId}"]`).prop('checked', false);
-                    } else {
-                        alert(response.message || 'Erreur lors de la validation du ticket');
-                    }
-                },
-                error: function(xhr, status, error) {
-                    console.error('Erreur:', error);
-                    alert('Erreur lors de la validation du ticket');
-                }
-            });
-        }
-    };
-
-    window.validerTicketsSelectionnes = function() {
-        var selectedTickets = [];
-        $('.ticket-checkbox:checked').each(function() {
-            selectedTickets.push($(this).val());
-        });
-
-        if (selectedTickets.length === 0) {
-            alert('Veuillez sélectionner au moins un ticket');
-            return;
-        }
-
-        if (confirm('Voulez-vous vraiment valider les tickets sélectionnés ?')) {
-            $.ajax({
-                url: 'valider_tickets.php',
-                method: 'POST',
-                data: { ticket_ids: selectedTickets },
-                dataType: 'json',
-                success: function(response) {
-                    if (response.success) {
-                        // Désactiver les boutons et changer leur apparence
-                        selectedTickets.forEach(function(ticketId) {
-                            var button = $(`input[value="${ticketId}"]`).closest('tr').find('button');
-                            button.prop('disabled', true)
-                                  .removeClass('btn-success')
-                                  .addClass('btn-secondary')
-                                  .text('Validé');
-                        });
-                        
-                        // Décocher toutes les cases
-                        $('.ticket-checkbox').prop('checked', false);
-                        $('#checkAll').prop('checked', false);
-                        
-                        alert('Les tickets ont été validés avec succès');
-                    } else {
-                        alert(response.message || 'Erreur lors de la validation des tickets');
-                    }
-                },
-                error: function(xhr, status, error) {
-                    console.error('Erreur:', error);
-                    alert('Erreur lors de la validation des tickets');
-                }
-            });
-        }
-    };
+document.addEventListener('DOMContentLoaded', function() {
+    // Afficher le loader
+    document.getElementById('loader').style.display = 'block';
+    
+    // Cacher le loader et afficher la table après un court délai
+    setTimeout(function() {
+        document.getElementById('loader').style.display = 'none';
+        document.getElementById('example1').style.display = 'table';
+    }, 1000); // 1 seconde de délai
+    
+    // Initialisation des autres fonctionnalités
 });
 </script>
+
+<style>
+/* Styles pour Select2 */
+.select2-container--default .select2-selection--single {
+    height: 38px;
+    border: 1px solid #ced4da;
+    border-radius: 4px;
+}
+
+.select2-container--default .select2-selection--single .select2-selection__rendered {
+    line-height: 38px;
+    color: #495057;
+}
+
+.select2-container--default .select2-selection--single .select2-selection__arrow {
+    height: 36px;
+}
+
+.select2-dropdown {
+    border: 1px solid #ced4da;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+/* Styles pour les modals */
+.modal-xl {
+    max-width: 90%;
+}
+
+.modal-header.bg-primary {
+    background-color: #007bff !important;
+}
+
+.modal-header .close.text-white {
+    color: #fff;
+    opacity: 1;
+}
+
+.modal-header .close.text-white:hover {
+    opacity: 0.75;
+}
+
+/* Styles pour les tableaux */
+.table-responsive {
+    max-height: 60vh;
+    overflow-y: auto;
+}
+
+/* Styles pour les boutons */
+.btn-success {
+    background-color: #28a745;
+    border-color: #28a745;
+}
+
+.btn-success:hover {
+    background-color: #218838;
+    border-color: #1e7e34;
+}
+
+/* Styles pour les checkboxes */
+.check-all {
+    margin: 0;
+    padding: 0;
+}
+</style>
+
+<style>
+/* Styles existants */
+.search-fieldset {
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    background-color: rgb(189, 195, 199);
+    margin-bottom: 20px;
+    position: relative;
+    padding: 25px 15px 15px;
+}
+
+.search-legend {
+    font-size: 1.2rem;
+    font-weight: 600;
+    color: #495057;
+    width: auto;
+    padding: 0 10px;
+    margin-bottom: 0;
+    background-color: #f8f9fa;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    position: absolute;
+    top: -15px;
+    left: 15px;
+}
+
+/* Styles pour le formulaire et les entrées */
+.form-label {
+    font-weight: 600;
+    color: #495057;
+    margin-bottom: 0.5rem;
+}
+
+.input-group {
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+.input-group-text {
+    background-color: #e9ecef;
+    border-color: #ced4da;
+}
+
+.input-group-prepend .input-group-text {
+    border-top-left-radius: 8px;
+    border-bottom-left-radius: 8px;
+    border-right: none;
+    background-color: #f8f9fa;
+}
+
+.input-group .form-control {
+    border-top-right-radius: 8px !important;
+    border-bottom-right-radius: 8px !important;
+    border-left: none;
+}
+
+/* Styles pour le loader */
+#loader {
+    display: none;
+    position: relative;
+    min-height: 200px;
+    width: 100%;
+    background: rgba(255, 255, 255, 0.8);
+}
+
+#loader img {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+
+/* Styles pour le bouton de recherche */
+.btn-primary {
+    position: relative;
+    transition: all 0.3s ease;
+}
+
+.btn-primary:active {
+    transform: scale(0.95);
+}
+
+.btn-primary:disabled {
+    opacity: 0.7;
+    cursor: not-allowed;
+}
+
+.btn-lg {
+    padding: 0.5rem 2rem;
+}
+
+/* Styles pour le conteneur de bloc */
+.block-container {
+    background-color: #d7dbdd;
+    padding: 20px;
+    border-radius: 5px;
+    width: 100%;
+    margin-bottom: 20px;
+}
+
+/* Styles pour la table */
+.table-responsive {
+    margin-top: 20px;
+}
+
+.table {
+    background-color: white;
+}
+
+/* Styles pour les filtres actifs */
+.active-filters {
+    margin-top: 10px;
+}
+
+.badge {
+    font-size: 0.9rem;
+    padding: 8px 12px;
+    margin-right: 8px;
+    margin-bottom: 8px;
+    border-radius: 20px;
+}
+
+.badge i {
+    margin-left: 5px;
+    cursor: pointer;
+}
+
+/* Styles pour les modals */
+.modal-content {
+    border-radius: 8px;
+}
+
+.modal-header {
+    border-top-left-radius: 8px;
+    border-top-right-radius: 8px;
+}
+</style>

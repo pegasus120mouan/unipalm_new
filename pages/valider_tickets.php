@@ -1,69 +1,77 @@
 <?php
-//session_start();
 require_once '../inc/functions/connexion.php';
+require_once '../inc/functions/requete/requete_tickets.php';
 
 header('Content-Type: application/json');
 
-try {
-    if (!isset($_POST['id_ticket'])) {
+if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+    echo json_encode(['success' => false, 'message' => 'Méthode non autorisée']);
+    exit;
+}
+
+$is_mass_validation = isset($_POST['is_mass_validation']) ? $_POST['is_mass_validation'] : false;
+$ticket_ids = [];
+$prix_unitaire = 1000; // Valeur par défaut pour la validation en masse
+
+if ($is_mass_validation) {
+    // Validation en masse
+    if (!isset($_POST['ticket_ids']) || empty($_POST['ticket_ids'])) {
         echo json_encode(['success' => false, 'message' => 'Aucun ticket sélectionné']);
         exit;
     }
-
-    $date_validation = date('Y-m-d H:i:s', time());
-
-   
-    $prix_unitaire = isset($_POST['prix_unitaire']) ? floatval($_POST['prix_unitaire']) : null;
-
-    if (isset($_POST['id_ticket'])) {
-        // Cas d'un seul ticket
-        $ticket_ids = [$_POST['id_ticket']];
-    } else {
-        // Cas de plusieurs tickets
-        $ticket_ids = $_POST['id_tickets'];
+    $ticket_ids = is_array($_POST['ticket_ids']) ? $_POST['ticket_ids'] : [$_POST['ticket_ids']];
+} else {
+    // Validation individuelle
+    if (!isset($_POST['ticket_id']) || !isset($_POST['prix_unitaire'])) {
+        echo json_encode(['success' => false, 'message' => 'Données manquantes pour la validation']);
+        exit;
     }
+    $ticket_ids = [$_POST['ticket_id']];
+    $prix_unitaire = $_POST['prix_unitaire'];
+}
 
-    $successCount = 0;
-    $failedCount = 0;
+try {
+    $conn->beginTransaction();
+
+    $sql = "UPDATE tickets 
+            SET date_validation_boss = NOW(),
+                prix_unitaire = :prix_unitaire,
+                updated_at = NOW()
+            WHERE id_ticket = :ticket_id 
+            AND date_validation_boss IS NULL";
+
+    $stmt = $conn->prepare($sql);
+    $validated = 0;
 
     foreach ($ticket_ids as $ticket_id) {
-        if (!is_numeric($ticket_id)) {
-            $failedCount++;
-            continue;
-        }
-
-        if ($prix_unitaire !== null) {
-            $stmt = $conn->prepare("
-                UPDATE tickets 
-                SET prix_unitaire = ?, 
-                    date_validation_boss = ?, 
-                    montant_paie = ? * poids 
-                WHERE id_ticket = ? AND (date_validation_boss IS NULL )
-            ");
-            $result = $stmt->execute([$prix_unitaire, $date_validation, $prix_unitaire, $ticket_id]);
-        } else {
-            $stmt = $conn->prepare("
-                UPDATE tickets 
-                SET date_validation_boss = ?
-                WHERE id_ticket = ? AND (date_validation_boss IS NULL )
-            ");
-            $result = $stmt->execute([$date_validation, $ticket_id ]);
-        }
+        $result = $stmt->execute([
+            ':prix_unitaire' => $prix_unitaire,
+            ':ticket_id' => $ticket_id
+        ]);
 
         if ($result && $stmt->rowCount() > 0) {
-            $successCount++;
-        } else {
-            $failedCount++;
+            $validated++;
         }
     }
 
-    if ($successCount > 0) {
-        $_SESSION['popup'] = true; // Pour afficher la popup après validation
-        echo json_encode(['success' => true, 'message' => "$successCount ticket(s) validé(s) avec succès"]);
+    if ($validated > 0) {
+        $conn->commit();
+        echo json_encode([
+            'success' => true,
+            'message' => $validated . ' ticket(s) validé(s) avec succès'
+        ]);
     } else {
-        echo json_encode(['success' => false, 'message' => "Aucun ticket n'a été validé"]);
+        $conn->rollBack();
+        echo json_encode([
+            'success' => false,
+            'message' => 'Aucun ticket n\'a pu être validé'
+        ]);
     }
-} catch (Exception $e) {
-    error_log('Erreur valider_tickets.php: ' . $e->getMessage());
-    echo json_encode(['success' => false, 'message' => 'Erreur: ' . $e->getMessage()]);
+
+} catch (PDOException $e) {
+    $conn->rollBack();
+    echo json_encode([
+        'success' => false,
+        'message' => 'Erreur lors de la validation des tickets: ' . $e->getMessage()
+    ]);
 }

@@ -351,11 +351,11 @@ label {
 
 -->
 
-
-
-
 <div class="table-responsive">
-    <table id="example1" class="table table-bordered table-striped">
+<div id="loader" class="text-center p-3">
+        <img src="../dist/img/loading.gif" alt="Chargement..." />
+    </div>
+    <table id="example1" class="table table-bordered table-striped" style="display: none;">
 
  <!-- <table style="max-height: 90vh !important; overflow-y: scroll !important" id="example1" class="table table-bordered table-striped">-->
     <thead>
@@ -374,6 +374,7 @@ label {
             <th>Validation</th>
             <th>Actions</th>
             <th>Statut Validation</th>
+            <th>Associer les tickets</th>
       </tr>
     </thead>
     <tbody>
@@ -386,9 +387,9 @@ label {
             </a>
           </td>
           <td>
-            <button type="button" class="btn btn-link" data-toggle="modal" data-target="#ticketsModal<?= $bordereau['id_bordereau'] ?>">
+            <span class="badge badge-primary">
               <?= $bordereau['nombre_tickets'] ?>
-            </button>
+            </span>
           </td>
           <td><?= $bordereau['date_debut'] ? date('d/m/Y', strtotime($bordereau['date_debut'])) : '-' ?></td>
           <td><?= $bordereau['date_fin'] ? date('d/m/Y', strtotime($bordereau['date_fin'])) : '-' ?></td>
@@ -437,7 +438,10 @@ label {
               </button>
             <?php endif; ?>
           </td>
-        </tr>
+          <td>
+            <button type="button" class="btn btn-sm btn-warning" data-toggle="modal" data-target="#ticketsAssociationBordereau<?= $bordereau['id_bordereau'] ?>">
+              <i class="fas fa-menu"></i> Associer les tickets au bordereau
+            </button>
       <?php endforeach; ?>
     </tbody>
   </table>
@@ -901,88 +905,140 @@ label {
     </div>
 </div>
 
-<?php foreach ($bordereaux as $bordereau): ?>
-<!-- Modal pour la sélection des tickets -->
-<div class="modal fade" id="ticketsModal<?= $bordereau['id_bordereau'] ?>" tabindex="-1" role="dialog">
-  <div class="modal-dialog modal-lg">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title">Tickets du bordereau <?= $bordereau['numero_bordereau'] ?></h5>
-        <button type="button" class="close" data-dismiss="modal">&times;</button>
-      </div>
-      <div class="modal-body">
-        <?php 
-        $tickets = getTicketsNonAssigne($conn, $bordereau['id_agent']);
-        if (!empty($tickets)) : 
-        ?>
-        <form id="ticketsForm<?= $bordereau['id_bordereau'] ?>" action="associer_tickets.php" method="post">
-          <input type="hidden" name="bordereau" value="<?= $bordereau['numero_bordereau'] ?>">
-          <div class="table-responsive">
-            <table class="table table-bordered table-striped">
-              <thead>
-                <tr>
-                  <th style="width: 40px">
-                    <input type="checkbox" class="select-all">
-                  </th>
-                  <th>Date</th>
-                  <th>N° Ticket</th>
-                  <th>Usine</th>
-                  <th>Véhicule</th>
-                  <th>Poids (T)</th>
-                  <th>Prix Unit.</th>
-                  <th>Montant</th>
-                  <th>Statut</th>
-                </tr>
-              </thead>
-              <tbody>
-              <?php $total = 0; ?>
-                <?php foreach ($tickets as $ticket) : ?>
-                  <tr>
-                    <td>
-                    <?php $total += $ticket['poids'] * $ticket['prix_unitaire']; ?>
-                      <input type="checkbox" name="tickets[]" value="<?= $ticket['id_ticket'] ?>" 
-                        <?= (!empty($ticket['numero_bordereau'])) ? 'checked disabled' : '' ?>>
-                    </td>
-                    <td><?= date('d/m/Y', strtotime($ticket['date_ticket'])) ?></td>
-                    <td><?= $ticket['numero_ticket'] ?></td>
-                    <td><?= $ticket['nom_usine'] ?></td>
-                    <td><?= $ticket['matricule_vehicule'] ?></td>
-                    <td class="text-right"><?= number_format($ticket['poids'], 2, ',', ' ') ?></td>
-                    <td class="text-right"><?= number_format($ticket['prix_unitaire'], 0, ',', ' ') ?></td>
-                    <td class="text-right"><?= number_format($ticket['poids'] * $ticket['prix_unitaire'], 0, ',', ' ') ?></td>
-                    <td>
-                      <?php if (!empty($ticket['numero_bordereau'])) : ?>
-                        <span class="badge badge-success">Associé</span>
-                      <?php else : ?>
-                        <span class="badge badge-info">Disponible</span>
-                      <?php endif; ?>
-                    </td>
-                  </tr>
-                <?php endforeach; ?>
-              </tbody>
-              <tfoot>
-                <tr>
-                  <th colspan="5" class="text-right">Total</th>
-                  <th class="text-right"><?= number_format(array_sum(array_column($tickets, 'poids')), 2, ',', ' ') ?></th>
-                  <th></th>
-                  <th class="text-right"><?= number_format($total, 0, ',', ' ') ?></th>
-                  <th></th>
-                </tr>
-              </tfoot>
-            </table>
-          </div>
-          <div class="modal-footer">
-            <button type="button" class="btn btn-secondary" data-dismiss="modal">Fermer</button>
-            <button type="submit" class="btn btn-primary">Associer les tickets</button>
-          </div>
-        </form>
-        <?php else : ?>
-          <p class="text-center">Aucun ticket disponible pour cette période.</p>
-        <?php endif; ?>
-      </div>
+<?php foreach ($bordereaux as $bordereau) : ?>
+    <!-- Modal pour l'association des tickets -->
+    <div class="modal fade" id="ticketsAssociationBordereau<?= $bordereau['id_bordereau'] ?>" tabindex="-1" role="dialog">
+        <div class="modal-dialog modal-xl">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Association des tickets au bordereau <?= $bordereau['numero_bordereau'] ?></h5>
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                </div>
+                <div class="modal-body">
+                    <div class="row mb-4">
+                        <div class="col-md-12">
+                            <div class="card mb-4">
+                                <div class="card-body">
+                                    <h6 class="card-subtitle mb-2 text-muted">Informations du bordereau</h6>
+                                    <table class="table table-sm">
+                                        <tr>
+                                            <th>ID Agent :</th>
+                                            <td><?= $bordereau['id_agent'] ?></td>
+                                            <th>N° Bordereau :</th>
+                                            <td><?= $bordereau['numero_bordereau'] ?></td>
+                                            <th>Date début :</th>
+                                            <td><?= date('d/m/Y', strtotime($bordereau['date_debut'])) ?></td>
+                                            <th>Date fin :</th>
+                                            <td><?= date('d/m/Y', strtotime($bordereau['date_fin'])) ?></td>
+                                        </tr>
+                                    </table>
+                                </div>
+                            </div>
+                            
+                            <?php 
+                            $tickets = getTicketsAssociation(
+                                $conn, 
+                                $bordereau['id_agent'],
+                                $bordereau['date_debut'],
+                                $bordereau['date_fin']
+                            );
+                            if (!empty($tickets)) : 
+                                $has_available_tickets = false;
+                                foreach ($tickets as $ticket) {
+                                    if (empty($ticket['numero_bordereau'])) {
+                                        $has_available_tickets = true;
+                                        break;
+                                    }
+                                }
+                            ?>
+                            <form id="associationForm<?= $bordereau['id_bordereau'] ?>" action="associer_tickets.php" method="post">
+                                <input type="hidden" name="id_agent" value="<?= $bordereau['id_agent'] ?>">
+                                <input type="hidden" name="numero_bordereau" value="<?= $bordereau['numero_bordereau'] ?>">
+                                <input type="hidden" name="date_debut" value="<?= $bordereau['date_debut'] ?>">
+                                <input type="hidden" name="date_fin" value="<?= $bordereau['date_fin'] ?>">
+                                
+                                <div class="table-responsive">
+                                    <table class="table table-bordered table-striped">
+                                        <thead>
+                                            <tr>
+                                                <th style="width: 40px">
+                                                    <?php if ($has_available_tickets): ?>
+                                                    <div class="custom-control custom-checkbox">
+                                                        <input type="checkbox" class="custom-control-input select-all" id="selectAll<?= $bordereau['id_bordereau'] ?>">
+                                                        <label class="custom-control-label" for="selectAll<?= $bordereau['id_bordereau'] ?>"></label>
+                                                    </div>
+                                                    <?php endif; ?>
+                                                </th>
+                                                <th>Date Réception</th>
+                                                <th>Date Ticket</th>
+                                                <th>Véhicule</th>
+                                                <th>N° Ticket</th>
+                                                <th>Poids (kg)</th>
+                                                <th>Prix unitaire</th>
+                                                <th>Montant total</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <?php 
+                                            $total_poids = 0;
+                                            $total_montant_total = 0;
+                                            foreach ($tickets as $ticket) : 
+                                                $total_poids += $ticket['poids'];
+                                                $total_montant_total += $ticket['montant_total'];
+                                                $is_associated = !empty($ticket['numero_bordereau']);
+                                            ?>
+                                            <tr <?= $is_associated ? 'class="text-muted bg-light"' : '' ?>>
+                                                <td>
+                                                    <?php if (!$is_associated): ?>
+                                                    <div class="custom-control custom-checkbox">
+                                                        <input type="checkbox" class="custom-control-input ticket-checkbox" 
+                                                               id="ticket<?= $ticket['id_ticket'] ?>" 
+                                                               name="tickets[]" 
+                                                               value="<?= $ticket['id_ticket'] ?>">
+                                                        <label class="custom-control-label" for="ticket<?= $ticket['id_ticket'] ?>"></label>
+                                                    </div>
+                                                    <?php else: ?>
+                                                    <i class="fas fa-link text-muted" title="Déjà associé au bordereau <?= htmlspecialchars($ticket['numero_bordereau']) ?>"></i>
+                                                    <?php endif; ?>
+                                                </td>
+                                                <td><?= date('d/m/y', strtotime($ticket['date_reception'])) ?></td>
+                                                <td><?= date('d/m/y', strtotime($ticket['date_ticket'])) ?></td>
+                                                <td><?= $ticket['vehicule'] ?></td>
+                                                <td><?= $ticket['numero_ticket'] ?></td>
+                                                <td class="text-right"><?= number_format($ticket['poids'], 0, ',', ' ') ?></td>
+                                                <td class="text-right"><?= number_format($ticket['prix_unitaire'], 2, ',', ' ') ?></td>
+                                                <td class="text-right"><?= number_format($ticket['montant_total'], 2, ',', ' ') ?></td>
+                                            </tr>
+                                            <?php endforeach; ?>
+                                            <tr class="font-weight-bold">
+                                                <td colspan="5" class="text-right">TOTAL GÉNÉRAL (<?= count($tickets) ?> tickets)</td>
+                                                <td class="text-right"><?= number_format($total_poids, 0, ',', ' ') ?></td>
+                                                <td colspan="2" class="text-right"><?= number_format($total_montant_total, 2, ',', ' ') ?></td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                                
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Fermer</button>
+                                    <?php if ($has_available_tickets): ?>
+                                    <button type="submit" class="btn btn-primary" id="submitAssociation<?= $bordereau['id_bordereau'] ?>">
+                                        <i class="fas fa-link"></i> Associer les tickets sélectionnés
+                                    </button>
+                                    <?php endif; ?>
+                                </div>
+                            </form>
+                            <?php else : ?>
+                                <div class="alert alert-info">
+                                    Aucun ticket disponible pour cette période et cet agent.
+                                </div>
+                            <?php endif; ?>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
-  </div>
-</div>
 <?php endforeach; ?>
 
 
@@ -1047,55 +1103,50 @@ function validateBordereau(bordereauId) {
 }
 
 $(document).ready(function() {
-    // Initialisation des modals Bootstrap
-    $('.modal').modal({
-        show: false
-    });
-
-    // Gestion de la sélection de tous les tickets
-    $('.select-all').on('change', function() {
-        var $modal = $(this).closest('.modal');
-        var isChecked = $(this).prop('checked');
-        $modal.find('input[name="tickets[]"]:not(:disabled)').prop('checked', isChecked);
-    });
-
-    // Gestion de la soumission du formulaire des tickets
-    $('form[id^="ticketsForm"]').on('submit', function(e) {
-        e.preventDefault();
-        var $form = $(this);
-        var $submitBtn = $form.find('button[type="submit"]');
-        var $modal = $form.closest('.modal');
+    // Le reste de votre code JavaScript existant...
+});
+</script>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Afficher le loader au démarrage
+    document.getElementById('loader').style.display = 'block';
+    document.getElementById('example1').style.display = 'none';
+    
+    // Cacher le loader et afficher la table après un court délai
+    setTimeout(function() {
+        document.getElementById('loader').style.display = 'none';
+        document.getElementById('example1').style.display = 'table';
         
-        var selectedTickets = $form.find('input[name="tickets[]"]:checked:not(:disabled)');
-        if (selectedTickets.length === 0) {
-            alert('Veuillez sélectionner au moins un ticket.');
-            return;
+        // Initialiser DataTables après avoir affiché la table
+        if($.fn.DataTable.isDataTable('#example1')) {
+            $('#example1').DataTable().destroy();
         }
-        
-        $submitBtn.prop('disabled', true);
-        
-        $.ajax({
-            url: $form.attr('action'),
-            type: 'POST',
-            data: $form.serialize(),
-            dataType: 'json',
-            success: function(response) {
-                if (response.success) {
-                    $modal.modal('hide');
-                    location.reload();
-                } else {
-                    alert('Erreur : ' + (response.error || 'Une erreur est survenue'));
-                    $submitBtn.prop('disabled', false);
-                }
-            },
-            error: function() {
-                alert('Erreur de communication avec le serveur');
-                $submitBtn.prop('disabled', false);
+        $('#example1').DataTable({
+            "responsive": true,
+            "lengthChange": false,
+            "autoWidth": false,
+            "language": {
+                "url": "//cdn.datatables.net/plug-ins/1.10.21/i18n/French.json"
             }
         });
+    }, 1000);
+    
+    // Gestion des soumissions de formulaire
+    $('form').on('submit', function() {
+        document.getElementById('loader').style.display = 'block';
     });
 
-    // Le reste de votre code JavaScript existant...
+    // Gestion des requêtes AJAX
+    $(document).ajaxStart(function() {
+        document.getElementById('loader').style.display = 'block';
+    }).ajaxStop(function() {
+        document.getElementById('loader').style.display = 'none';
+    });
+    
+    // Gestion des modals
+    $('.modal').on('show.bs.modal', function() {
+        document.getElementById('loader').style.display = 'none';
+    });
 });
 </script>
 </body>

@@ -2,6 +2,7 @@
 session_start();
 
 require_once '../inc/functions/connexion.php';
+require_once '../inc/functions/update_tickets_prix_unitaire.php';
 require_once '../inc/functions/requete/requete_tickets.php';
 require_once '../inc/functions/requete/requete_prix_unitaires.php';
 require_once '../inc/functions/log_functions.php';
@@ -9,6 +10,14 @@ require_once '../inc/functions/requete/requete_usines.php';
 require_once '../inc/functions/requete/requete_chef_equipes.php';
 require_once '../inc/functions/requete/requete_vehicules.php';
 require_once '../inc/functions/requete/requete_agents.php';
+
+$conn = getConnexion();
+
+// Mettre à jour les tickets sans prix unitaire
+$updateResult = updateTicketsFromPrixUnitaire();
+if ($updateResult['updated_count'] > 0) {
+    $_SESSION['success_message'] = $updateResult['message'];
+}
 
 //session_start();
 
@@ -223,12 +232,15 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             error_log("SQL Query: " . $sql . " [vehicule_id: " . $nouveau_vehicule . ", ticket_id: " . $id_ticket . "]");
             
             $stmt = $conn->prepare($sql);
-            $result = $stmt->execute([$nouveau_vehicule, $id_ticket]);
+            $stmt->bindParam(':vehicule_id', $nouveau_vehicule, PDO::PARAM_INT);
+            $stmt->bindParam(':id_ticket', $id_ticket, PDO::PARAM_INT);
+
+            $result = $stmt->execute();
             error_log("Résultat de l'exécution: " . ($result ? "true" : "false"));
             
             if ($result) {
                 $_SESSION['success'] = "Véhicule mis à jour avec succès.";
-                error_log("Succès de la mise à jour du véhicule");
+                error_log("Succès de la mise à jour");
             } else {
                 $_SESSION['error'] = "Erreur lors de la mise à jour du véhicule.";
                 error_log("Erreur lors de la mise à jour - errorInfo: " . print_r($stmt->errorInfo(), true));

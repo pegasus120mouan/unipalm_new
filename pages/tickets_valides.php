@@ -152,6 +152,189 @@ label {
     }
     </style>
 
+<style>
+/* Styles existants */
+.search-fieldset {
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    background-color: rgb(189, 195, 199);
+    margin-bottom: 20px;
+    position: relative;
+    padding: 25px 15px 15px;
+}
+
+.search-legend {
+    font-size: 1.2rem;
+    font-weight: 600;
+    color: #495057;
+    width: auto;
+    padding: 0 10px;
+    margin-bottom: 0;
+    background-color: #f8f9fa;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    position: absolute;
+    top: -15px;
+    left: 15px;
+}
+
+/* Styles pour le formulaire et les entrées */
+.form-label {
+    font-weight: 600;
+    color: #495057;
+    margin-bottom: 0.5rem;
+}
+
+.input-group {
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+.input-group-text {
+    background-color: #e9ecef;
+    border-color: #ced4da;
+}
+
+.input-group-prepend .input-group-text {
+    border-top-left-radius: 8px;
+    border-bottom-left-radius: 8px;
+    border-right: none;
+    background-color: #f8f9fa;
+}
+
+.input-group .form-control {
+    border-top-right-radius: 8px !important;
+    border-bottom-right-radius: 8px !important;
+    border-left: none;
+}
+
+/* Styles pour le loader */
+#loader {
+    display: none;
+    position: relative;
+    min-height: 200px;
+    width: 100%;
+    background: rgba(255, 255, 255, 0.8);
+}
+
+#loader img {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+
+/* Styles pour le bouton de recherche */
+.btn-primary {
+    position: relative;
+    transition: all 0.3s ease;
+}
+
+.btn-primary:active {
+    transform: scale(0.95);
+}
+
+.btn-primary:disabled {
+    opacity: 0.7;
+    cursor: not-allowed;
+}
+
+.btn-lg {
+    padding: 0.5rem 2rem;
+}
+
+/* Styles pour le conteneur de bloc */
+.block-container {
+    background-color: #d7dbdd;
+    padding: 20px;
+    border-radius: 5px;
+    width: 100%;
+    margin-bottom: 20px;
+}
+
+/* Styles pour la table */
+.table-responsive {
+    margin-top: 20px;
+}
+
+.table {
+    background-color: white;
+}
+
+/* Styles pour les filtres actifs */
+.active-filters {
+    margin-top: 10px;
+}
+
+.badge {
+    font-size: 0.9rem;
+    padding: 8px 12px;
+    margin-right: 8px;
+    margin-bottom: 8px;
+    border-radius: 20px;
+}
+
+.badge i {
+    margin-left: 5px;
+    cursor: pointer;
+}
+
+/* Styles pour les modals */
+.modal-content {
+    border-radius: 8px;
+}
+
+.modal-header {
+    border-top-left-radius: 8px;
+    border-top-right-radius: 8px;
+}
+</style>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Gestion du formulaire de recherche
+    document.getElementById('filterForm').addEventListener('submit', function(e) {
+        // Masquer la table et afficher le loader
+        document.getElementById('example1').style.display = 'none';
+        document.getElementById('loader').style.display = 'block';
+    });
+
+    // Afficher le loader au démarrage
+    document.getElementById('loader').style.display = 'block';
+    document.getElementById('example1').style.display = 'none';
+    
+    // Cacher le loader et afficher la table après un court délai
+    setTimeout(function() {
+        document.getElementById('loader').style.display = 'none';
+        document.getElementById('example1').style.display = 'table';
+        
+        // Initialiser DataTables après avoir affiché la table
+        if($.fn.DataTable.isDataTable('#example1')) {
+            $('#example1').DataTable().destroy();
+        }
+        $('#example1').DataTable({
+            "responsive": true,
+            "lengthChange": false,
+            "autoWidth": false,
+            "language": {
+                "url": "//cdn.datatables.net/plug-ins/1.10.21/i18n/French.json"
+            }
+        });
+    }, 1000);
+
+    // Gestion des requêtes AJAX
+    $(document).ajaxStart(function() {
+        document.getElementById('loader').style.display = 'block';
+    }).ajaxStop(function() {
+        document.getElementById('loader').style.display = 'none';
+    });
+    
+    // Gestion des modals
+    $('.modal').on('show.bs.modal', function() {
+        document.getElementById('loader').style.display = 'none';
+    });
+});
+</script>
 
 <div class="row">
 
@@ -168,195 +351,160 @@ label {
 <!-- Barre de recherche en haut -->
 <div class="search-container mb-4">
     <div class="row justify-content-center">
-        <div class="col-md-10">
-            <form id="filterForm" method="GET">
-                <div class="row">
-                    <!-- Recherche par agent -->
-                    <div class="col-md-3 mb-3">
-                        <select class="form-control" name="agent_id" id="agent_select">
-                            <option value="">Sélectionner un agent</option>
-                            <?php foreach($agents as $agent): ?>
-                                <option value="<?= $agent['id_agent'] ?>" <?= ($agent_id == $agent['id_agent']) ? 'selected' : '' ?>>
-                                    <?= htmlspecialchars($agent['nom_complet_agent']) ?>
-                                </option>
-                            <?php endforeach; ?>
-                        </select>
-                    </div>
-                    
-                    <!-- Recherche par usine -->
-                    <div class="col-md-3 mb-3">
-                        <select class="form-control" name="usine_id" id="usine_select">
-                            <option value="">Sélectionner une usine</option>
-                            <?php foreach($usines as $usine): ?>
-                                <option value="<?= $usine['id_usine'] ?>" <?= ($usine_id == $usine['id_usine']) ? 'selected' : '' ?>>
-                                    <?= htmlspecialchars($usine['nom_usine']) ?>
-                                </option>
-                            <?php endforeach; ?>
-                        </select>
-                    </div>
+        <div class="col-md-12">
+            <fieldset class="search-fieldset">
+                <legend class="search-legend">Effectuer une recherche</legend>
+                <form id="filterForm" method="GET" class="p-4">
+                    <div class="row">
+                        <!-- Recherche par agent -->
+                        <div class="col-md-3 mb-3">
+                            <label for="agent_select" class="form-label">Agent</label>
+                            <div class="input-group">
+                                <div class="input-group-prepend">
+                                    <span class="input-group-text"><i class="fa fa-user"></i></span>
+                                </div>
+                                <select class="form-control" name="agent_id" id="agent_select">
+                                    <option value="">Sélectionner un agent</option>
+                                    <?php foreach($agents as $agent): ?>
+                                        <option value="<?= $agent['id_agent'] ?>" <?= ($agent_id == $agent['id_agent']) ? 'selected' : '' ?>>
+                                            <?= htmlspecialchars($agent['nom_complet_agent']) ?>
+                                        </option>
+                                    <?php endforeach; ?>
+                                </select>
+                            </div>
+                        </div>
+                        
+                        <!-- Recherche par usine -->
+                        <div class="col-md-3 mb-3">
+                            <label for="usine_select" class="form-label">Usine</label>
+                            <div class="input-group">
+                                <div class="input-group-prepend">
+                                    <span class="input-group-text"><i class="fa fa-industry"></i></span>
+                                </div>
+                                <select class="form-control" name="usine_id" id="usine_select">
+                                    <option value="">Sélectionner une usine</option>
+                                    <?php foreach($usines as $usine): ?>
+                                        <option value="<?= $usine['id_usine'] ?>" <?= ($usine_id == $usine['id_usine']) ? 'selected' : '' ?>>
+                                            <?= htmlspecialchars($usine['nom_usine']) ?>
+                                        </option>
+                                    <?php endforeach; ?>
+                                </select>
+                            </div>
+                        </div>
 
-                    <!-- Date de début -->
-                    <div class="col-md-3 mb-3">
-                        <input type="date" 
-                               class="form-control" 
-                               name="date_debut" 
-                               id="date_debut"
-                               placeholder="Date de début" 
-                               value="<?= htmlspecialchars($date_debut) ?>">
-                    </div>
+                        <!-- Date de début -->
+                        <div class="col-md-3 mb-3">
+                            <label for="date_debut" class="form-label">Date de début</label>
+                            <div class="input-group">
+                                <div class="input-group-prepend">
+                                    <span class="input-group-text"><i class="fa fa-calendar"></i></span>
+                                </div>
+                                <input type="date" 
+                                       class="form-control" 
+                                       name="date_debut" 
+                                       id="date_debut"
+                                       value="<?= htmlspecialchars($date_debut) ?>">
+                            </div>
+                        </div>
 
-                    <!-- Date de fin -->
-                    <div class="col-md-3 mb-3">
-                        <input type="date" 
-                               class="form-control" 
-                               name="date_fin" 
-                               id="date_fin"
-                               placeholder="Date de fin" 
-                               value="<?= htmlspecialchars($date_fin) ?>">
-                    </div>
+                        <!-- Date de fin -->
+                        <div class="col-md-3 mb-3">
+                            <label for="date_fin" class="form-label">Date de fin</label>
+                            <div class="input-group">
+                                <div class="input-group-prepend">
+                                    <span class="input-group-text"><i class="fa fa-calendar"></i></span>
+                                </div>
+                                <input type="date" 
+                                       class="form-control" 
+                                       name="date_fin" 
+                                       id="date_fin"
+                                       value="<?= htmlspecialchars($date_fin) ?>">
+                            </div>
+                        </div>
 
-                    <!-- Boutons -->
-                    <div class="col-12 text-center">
-                        <button type="submit" class="btn btn-primary">
-                            <i class="fa fa-search"></i> Rechercher
-                        </button>
-                        <a href="tickets_valides.php" class="btn btn-outline-danger">
-                            <i class="fa fa-times"></i> Réinitialiser les filtres
-                        </a>
+                        <!-- Boutons -->
+                        <div class="col-md-6 mb-3 d-flex align-items-end">
+                            <button type="submit" class="btn btn-primary btn-lg px-4">
+                                <i class="fa fa-search"></i> Rechercher
+                            </button>
+                            <a href="?<?= http_build_query(array_merge($_GET, ['page' => 1])) ?>" class="btn btn-secondary btn-lg px-4 ml-2">
+                                <i class="fa fa-refresh"></i> Réinitialiser
+                            </a>
+                        </div>
                     </div>
-                </div>
-            </form>
-            
-            <!-- Filtres actifs -->
-            <?php if($agent_id || $usine_id || $date_debut || $date_fin): ?>
-            <div class="active-filters mt-3">
-                <div class="d-flex align-items-center flex-wrap">
-                    <strong class="text-muted mr-2">Filtres actifs :</strong>
-                    <?php if($agent_id): ?>
-                        <?php 
-                        $agent_name = '';
-                        foreach($agents as $agent) {
-                            if($agent['id_agent'] == $agent_id) {
-                                $agent_name = $agent['nom_complet_agent'];
-                                break;
-                            }
-                        }
-                        ?>
-                        <span class="badge badge-info mr-2 p-2">
-                            <i class="fa fa-user"></i> 
-                            Agent: <?= htmlspecialchars($agent_name) ?>
-                            <a href="?<?= http_build_query(array_merge($_GET, ['agent_id' => null])) ?>" class="text-white ml-2">
-                                <i class="fa fa-times"></i>
-                            </a>
-                        </span>
-                    <?php endif; ?>
-                    <?php if($usine_id): ?>
-                        <?php 
-                        $usine_name = '';
-                        foreach($usines as $usine) {
-                            if($usine['id_usine'] == $usine_id) {
-                                $usine_name = $usine['nom_usine'];
-                                break;
-                            }
-                        }
-                        ?>
-                        <span class="badge badge-info mr-2 p-2">
-                            <i class="fa fa-building"></i>
-                            Usine: <?= htmlspecialchars($usine_name) ?>
-                            <a href="?<?= http_build_query(array_merge($_GET, ['usine_id' => null])) ?>" class="text-white ml-2">
-                                <i class="fa fa-times"></i>
-                            </a>
-                        </span>
-                    <?php endif; ?>
-                    <?php if($date_debut): ?>
-                        <span class="badge badge-info mr-2 p-2">
-                            <i class="fa fa-calendar"></i>
-                            Depuis: <?= htmlspecialchars($date_debut) ?>
-                            <a href="?<?= http_build_query(array_merge($_GET, ['date_debut' => null])) ?>" class="text-white ml-2">
-                                <i class="fa fa-times"></i>
-                            </a>
-                        </span>
-                    <?php endif; ?>
-                    <?php if($date_fin): ?>
-                        <span class="badge badge-info mr-2 p-2">
-                            <i class="fa fa-calendar"></i>
-                            Jusqu'au: <?= htmlspecialchars($date_fin) ?>
-                            <a href="?<?= http_build_query(array_merge($_GET, ['date_fin' => null])) ?>" class="text-white ml-2">
-                                <i class="fa fa-times"></i>
-                            </a>
-                        </span>
-                    <?php endif; ?>
-                </div>
-            </div>
-            <?php endif; ?>
+                </form>
+            </fieldset>
         </div>
     </div>
 </div>
 
 <div class="table-responsive">
-    <table id="example1" class="table table-bordered table-striped">
-
- <!-- <table style="max-height: 90vh !important; overflow-y: scroll !important" id="example1" class="table table-bordered table-striped">-->
-    <thead>
-      <tr>
-        
-        <th>Date ticket</th>
-        <th>Numero Ticket</th>
-        <th>usine</th>
-        <th>Chargé de Mission</th>
-        <th>Vehicule</th>
-        <th>Poids</th>
-        <th>Ticket crée par</th>
-        <th>Prix Unitaire</th>
-        <th>Date validation</th>
-        <th>Montant</th>
-        <th>Date Paie</th>
-      </tr>
-    </thead>
-    <tbody>
-      <?php if (!empty($tickets_list)) : ?>
-        <?php foreach ($tickets_list as $ticket) : ?>
+    <!-- Loader -->
+    <div id="loader" class="text-center p-3">
+        <img src="../dist/img/loading.gif" alt="Chargement..." />
+    </div>
+    <!-- Table qui sera initialement cachée -->
+    <table id="example1" class="table table-bordered table-striped" style="display: none;">
+        <thead>
           <tr>
             
-            <td><?= $ticket['date_ticket'] ?></td>
-            <td><?= $ticket['numero_ticket'] ?></td>
-            <td><?= $ticket['nom_usine'] ?></td>
-            <td><?= $ticket['agent_nom_complet'] ?></td>
-            <td><?= $ticket['matricule_vehicule'] ?></td>
-            <td><?= $ticket['poids'] ?></td>
+            <th>Date ticket</th>
+            <th>Numero Ticket</th>
+            <th>usine</th>
+            <th>Chargé de Mission</th>
+            <th>Vehicule</th>
+            <th>Poids</th>
+            <th>Ticket crée par</th>
+            <th>Prix Unitaire</th>
+            <th>Date validation</th>
+            <th>Montant</th>
+            <th>Date Paie</th>
+          </tr>
+        </thead>
+        <tbody>
+          <?php if (!empty($tickets_list)) : ?>
+            <?php foreach ($tickets_list as $ticket) : ?>
+              <tr>
+                
+                <td><?= $ticket['date_ticket'] ?></td>
+                <td><?= $ticket['numero_ticket'] ?></td>
+                <td><?= $ticket['nom_usine'] ?></td>
+                <td><?= $ticket['agent_nom_complet'] ?></td>
+                <td><?= $ticket['matricule_vehicule'] ?></td>
+                <td><?= $ticket['poids'] ?></td>
 
-            <td><?= $ticket['utilisateur_nom_complet'] ?></td></td>
+                <td><?= $ticket['utilisateur_nom_complet'] ?></td></td>
 
-           <td>
-              <?php if ($ticket['prix_unitaire'] === null || $ticket['prix_unitaire'] == 0.00): ?>
-                  <!-- Affichage d'un bouton rouge désactivé avec message -->
-                  <button class="btn btn-danger btn-block" disabled>
-                      En Attente de validation
-                  </button>
-              <?php else: ?>
-                  <!-- Affichage du prix unitaire dans un bouton noir -->
-                  <button class="btn btn-dark btn-block" disabled>
-                      <?= $ticket['prix_unitaire'] ?>
-                  </button>
-              <?php endif; ?>
-          </td>
-
-
+               <td>
+                  <?php if ($ticket['prix_unitaire'] === null || $ticket['prix_unitaire'] == 0.00): ?>
+                      <!-- Affichage d'un bouton rouge désactivé avec message -->
+                      <button class="btn btn-danger btn-block" disabled>
+                          En Attente de validation
+                      </button>
+                  <?php else: ?>
+                      <!-- Affichage du prix unitaire dans un bouton noir -->
+                      <button class="btn btn-dark btn-block" disabled>
+                          <?= $ticket['prix_unitaire'] ?>
+                      </button>
+                  <?php endif; ?>
+              </td>
 
 
-         <td>
-              <?php if ($ticket['date_validation_boss'] === null): ?>
+
+
+             <td>
+                  <?php if ($ticket['date_validation_boss'] === null): ?>
           <button class="btn btn-warning btn-block" disabled>
               En cours
           </button>
       <?php else: ?>
           <?= $ticket['date_validation_boss'] ?>
           <?php endif; ?>
-         </td>
+             </td>
 
 
-        <td>
-                    <?php if ($ticket['montant_paie'] === null): ?>
+            <td>
+                        <?php if ($ticket['montant_paie'] === null): ?>
             <button class="btn btn-primary btn-block" disabled>
                 En attente de PU
             </button>
@@ -573,42 +721,3 @@ label {
 <!-- /.control-sidebar -->
 </div>
 <!-- ./wrapper -->
-
-<script>
-function appliquerFiltres() {
-    const agent_id = document.getElementById('agent_select').value;
-    const usine_id = document.getElementById('usine_select').value;
-    const date_debut = document.getElementById('date_debut').value;
-    const date_fin = document.getElementById('date_fin').value;
-    
-    let params = new URLSearchParams(window.location.search);
-    
-    if (agent_id) params.set('agent_id', agent_id);
-    else params.delete('agent_id');
-    
-    if (usine_id) params.set('usine_id', usine_id);
-    else params.delete('usine_id');
-    
-    if (date_debut) params.set('date_debut', date_debut);
-    else params.delete('date_debut');
-    
-    if (date_fin) params.set('date_fin', date_fin);
-    else params.delete('date_fin');
-    
-    window.location.href = window.location.pathname + '?' + params.toString();
-}
-
-// Ajouter les écouteurs d'événements
-document.addEventListener('DOMContentLoaded', function() {
-    const selects = ['agent_select', 'usine_select'];
-    const dates = ['date_debut', 'date_fin'];
-    
-    selects.forEach(id => {
-        document.getElementById(id)?.addEventListener('change', appliquerFiltres);
-    });
-    
-    dates.forEach(id => {
-        document.getElementById(id)?.addEventListener('change', appliquerFiltres);
-    });
-});
-</script>

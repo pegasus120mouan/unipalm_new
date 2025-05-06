@@ -16,24 +16,27 @@ function getBordereaux($conn, $page = 1, $limit = 15, $filters = []) {
         
         // Base query
         $query = "SELECT 
-            b.id_bordereau,
-            b.numero_bordereau,
-            b.date_debut,
-            b.date_fin,
-            b.poids_total,
-            b.montant_total,
-            b.montant_payer,
-            b.montant_reste,
-            b.statut_bordereau,
-            b.date_validation_boss,
-            b.created_at AS date_creation_bordereau,
-            a.id_agent,
-            CONCAT(COALESCE(a.nom, ''), ' ', COALESCE(a.prenom, '')) AS nom_complet_agent,
-            a.contact,
-            (SELECT COUNT(*) FROM tickets t 
-             WHERE t.id_agent = b.id_agent and t.date_validation_boss is not null and t.prix_unitaire > 0) as nombre_tickets
-        FROM bordereau b
-        INNER JOIN agents a ON b.id_agent = a.id_agent";
+    b.id_bordereau,
+    b.numero_bordereau,
+    b.date_debut,
+    b.date_fin,
+    b.poids_total,
+    b.montant_total,
+    b.montant_payer,
+    b.montant_reste,
+    b.statut_bordereau,
+    b.date_validation_boss,
+    b.created_at AS date_creation_bordereau,
+    a.id_agent,
+    CONCAT(COALESCE(a.nom, ''), ' ', COALESCE(a.prenom, '')) AS nom_complet_agent,
+    a.contact,
+    (SELECT COUNT(*) FROM tickets t 
+     WHERE t.id_agent = b.id_agent 
+     AND t.date_validation_boss is not null 
+     AND t.prix_unitaire > 0 
+     AND DATE(t.created_at) BETWEEN DATE(b.date_debut) AND DATE(b.date_fin)) as nombre_tickets
+FROM bordereau b
+INNER JOIN agents a ON b.id_agent = a.id_agent";
 
         // Add WHERE clause if filters exist
         $params = [];

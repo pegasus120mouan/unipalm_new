@@ -71,74 +71,105 @@ $tickets_list = array_slice($tickets, $offset, $limit);
 <!-- Barre de recherche en haut -->
 <div class="search-container mb-4">
     <div class="row justify-content-center">
-        <div class="col-md-10">
-            <form id="filterForm" method="GET">
-                <div class="row">
-                    <!-- Numéro de ticket -->
-                    <div class="col-md-3 mb-3">
-                        <input type="text" 
-                               class="form-control" 
-                               name="numero_ticket" 
-                               id="numero_ticket"
-                               placeholder="Numéro de ticket" 
-                               value="<?= htmlspecialchars($numero_ticket) ?>">
-                    </div>
+        <div class="col-md-12">
+            <fieldset class="search-fieldset">
+                <legend class="search-legend">Effectuer une recherche</legend>
+                <form id="filterForm" method="GET" class="p-4">
+                    <div class="row">
+                        <!-- Numéro de ticket -->
+                        <div class="col-md-3 mb-3">
+                            <label for="numero_ticket" class="form-label">Numéro de ticket</label>
+                            <div class="input-group">
+                                <div class="input-group-prepend">
+                                    <span class="input-group-text"><i class="fa fa-list"></i></span>
+                                </div>
+                                <input type="text" 
+                                       class="form-control" 
+                                       name="numero_ticket" 
+                                       id="numero_ticket"
+                                       placeholder="Entrez le numéro" 
+                                       value="<?= htmlspecialchars($numero_ticket) ?>">
+                            </div>
+                        </div>
 
-                    <!-- Recherche par agent -->
-                    <div class="col-md-3 mb-3">
-                        <select class="form-control" name="agent_id" id="agent_select">
-                            <option value="">Sélectionner un agent</option>
-                            <?php foreach($agents as $agent): ?>
-                                <option value="<?= $agent['id_agent'] ?>" <?= ($agent_id == $agent['id_agent']) ? 'selected' : '' ?>>
-                                    <?= htmlspecialchars($agent['nom_complet_agent']) ?>
-                                </option>
-                            <?php endforeach; ?>
-                        </select>
-                    </div>
-                    
-                    <!-- Recherche par usine -->
-                    <div class="col-md-3 mb-3">
-                        <select class="form-control" name="usine_id" id="usine_select">
-                            <option value="">Sélectionner une usine</option>
-                            <?php foreach($usines as $usine): ?>
-                                <option value="<?= $usine['id_usine'] ?>" <?= ($usine_id == $usine['id_usine']) ? 'selected' : '' ?>>
-                                    <?= htmlspecialchars($usine['nom_usine']) ?>
-                                </option>
-                            <?php endforeach; ?>
-                        </select>
-                    </div>
+                        <!-- Recherche par agent -->
+                        <div class="col-md-3 mb-3">
+                            <label for="agent_select" class="form-label">Agent</label>
+                            <div class="input-group">
+                                <div class="input-group-prepend">
+                                    <span class="input-group-text"><i class="fa fa-user"></i></span>
+                                </div>
+                                <select class="form-control" name="agent_id" id="agent_select">
+                                    <option value="">Sélectionner un agent</option>
+                                    <?php foreach($agents as $agent): ?>
+                                        <option value="<?= $agent['id_agent'] ?>" <?= ($agent_id == $agent['id_agent']) ? 'selected' : '' ?>>
+                                            <?= htmlspecialchars($agent['nom_complet_agent']) ?>
+                                        </option>
+                                    <?php endforeach; ?>
+                                </select>
+                            </div>
+                        </div>
+                        
+                        <!-- Recherche par usine -->
+                        <div class="col-md-3 mb-3">
+                            <label for="usine_select" class="form-label">Usine</label>
+                            <div class="input-group">
+                                <div class="input-group-prepend">
+                                    <span class="input-group-text"><i class="fa fa-building"></i></span>
+                                </div>
+                                <select class="form-control" name="usine_id" id="usine_select">
+                                    <option value="">Sélectionner une usine</option>
+                                    <?php foreach($usines as $usine): ?>
+                                        <option value="<?= $usine['id_usine'] ?>" <?= ($usine_id == $usine['id_usine']) ? 'selected' : '' ?>>
+                                            <?= htmlspecialchars($usine['nom_usine']) ?>
+                                        </option>
+                                    <?php endforeach; ?>
+                                </select>
+                            </div>
+                        </div>
 
-                    <!-- Date de début -->
-                    <div class="col-md-3 mb-3">
-                        <input type="date" 
-                               class="form-control" 
-                               name="date_debut" 
-                               id="date_debut"
-                               placeholder="Date de début" 
-                               value="<?= htmlspecialchars($date_debut) ?>">
-                    </div>
+                        <!-- Date de début -->
+                        <div class="col-md-3 mb-3">
+                            <label for="date_debut" class="form-label">Date de début</label>
+                            <div class="input-group">
+                                <div class="input-group-prepend">
+                                    <span class="input-group-text"><i class="fa fa-calendar"></i></span>
+                                </div>
+                                <input type="date" 
+                                       class="form-control" 
+                                       name="date_debut" 
+                                       id="date_debut"
+                                       value="<?= htmlspecialchars($date_debut) ?>">
+                            </div>
+                        </div>
 
-                    <!-- Date de fin -->
-                    <div class="col-md-3 mb-3">
-                        <input type="date" 
-                               class="form-control" 
-                               name="date_fin" 
-                               id="date_fin"
-                               placeholder="Date de fin" 
-                               value="<?= htmlspecialchars($date_fin) ?>">
-                    </div>
+                        <!-- Date de fin -->
+                        <div class="col-md-3 mb-3">
+                            <label for="date_fin" class="form-label">Date de fin</label>
+                            <div class="input-group">
+                                <div class="input-group-prepend">
+                                    <span class="input-group-text"><i class="fa fa-calendar"></i></span>
+                                </div>
+                                <input type="date" 
+                                       class="form-control" 
+                                       name="date_fin" 
+                                       id="date_fin"
+                                       value="<?= htmlspecialchars($date_fin) ?>">
+                            </div>
+                        </div>
 
-                    <!-- Boutons -->
-                    <div class="col-12 text-center">
-                        <button type="submit" class="btn btn-primary">
-                            <i class="fa fa-search"></i> Rechercher
-                        </button>
-                        <a href="tickets_jour.php" class="btn btn-outline-danger">
-                            <i class="fa fa-times"></i> Réinitialiser les filtres
-                        </a>
+                        <!-- Boutons -->
+                        <div class="col-12 text-center mt-3">
+                            <button type="submit" class="btn btn-primary btn-lg px-4">
+                                <i class="fa fa-search"></i> Rechercher
+                            </button>
+                            <a href="tickets_jour.php" class="btn btn-outline-danger btn-lg px-4 ml-2">
+                                <i class="fa fa-times"></i> Réinitialiser
+                            </a>
+                        </div>
                     </div>
-                </div>
-            </form>
+                </form>
+            </fieldset>
             
             <!-- Filtres actifs -->
             <?php if($agent_id || $usine_id || $date_debut || $date_fin || $numero_ticket): ?>
@@ -310,7 +341,12 @@ label {
 </div>
 
 <div class="table-responsive">
-    <table id="example1" class="table table-bordered table-striped">
+    <!-- Loader -->
+    <div id="loader" class="text-center p-3">
+        <img src="../dist/img/loading.gif" alt="Chargement..." />
+    </div>
+    <!-- Table qui sera initialement cachée -->
+    <table id="example1" class="table table-bordered table-striped" style="display: none;">
 
  <!-- <table style="max-height: 90vh !important; overflow-y: scroll !important" id="example1" class="table table-bordered table-striped">-->
     <thead>
@@ -614,4 +650,205 @@ label {
 <!-- /.control-sidebar -->
 </div>
 <!-- ./wrapper -->
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Gestion du formulaire de recherche
+    document.getElementById('filterForm').addEventListener('submit', function(e) {
+        // Masquer la table et afficher le loader
+        document.getElementById('example1').style.display = 'none';
+        document.getElementById('loader').style.display = 'block';
+    });
+
+    // Afficher le loader au démarrage
+    document.getElementById('loader').style.display = 'block';
+    document.getElementById('example1').style.display = 'none';
+    
+    // Cacher le loader et afficher la table après un court délai
+    setTimeout(function() {
+        document.getElementById('loader').style.display = 'none';
+        document.getElementById('example1').style.display = 'table';
+        
+        // Initialiser DataTables après avoir affiché la table
+        if($.fn.DataTable.isDataTable('#example1')) {
+            $('#example1').DataTable().destroy();
+        }
+        $('#example1').DataTable({
+            "responsive": true,
+            "lengthChange": false,
+            "autoWidth": false,
+            "language": {
+                "url": "//cdn.datatables.net/plug-ins/1.10.21/i18n/French.json"
+            }
+        });
+    }, 1000);
+});
+</script>
+
+<style>
+/* Styles existants */
+.search-fieldset {
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    background-color: rgb(189, 195, 199);
+    margin-bottom: 20px;
+    position: relative;
+    padding: 25px 15px 15px;
+}
+
+.search-legend {
+    font-size: 1.2rem;
+    font-weight: 600;
+    color: #495057;
+    width: auto;
+    padding: 0 10px;
+    margin-bottom: 0;
+    background-color: #f8f9fa;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    position: absolute;
+    top: -15px;
+    left: 15px;
+}
+
+/* Styles pour le formulaire et les entrées */
+.form-label {
+    font-weight: 600;
+    color: #495057;
+    margin-bottom: 0.5rem;
+}
+
+.input-group {
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+.input-group-text {
+    background-color: #e9ecef;
+    border-color: #ced4da;
+}
+
+.input-group-prepend .input-group-text {
+    border-top-left-radius: 8px;
+    border-bottom-left-radius: 8px;
+    border-right: none;
+    background-color: #f8f9fa;
+}
+
+.input-group .form-control {
+    border-top-right-radius: 8px !important;
+    border-bottom-right-radius: 8px !important;
+    border-left: none;
+}
+
+/* Styles pour le loader */
+#loader {
+    display: none;
+    position: relative;
+    min-height: 200px;
+    width: 100%;
+    background: rgba(255, 255, 255, 0.8);
+}
+
+#loader img {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+
+/* Styles pour le bouton de recherche */
+.btn-primary {
+    position: relative;
+    transition: all 0.3s ease;
+}
+
+.btn-primary:active {
+    transform: scale(0.95);
+}
+
+.btn-primary:disabled {
+    opacity: 0.7;
+    cursor: not-allowed;
+}
+
+.btn-lg {
+    padding: 0.5rem 2rem;
+}
+
+.pagination-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-top: 20px;
+}
+
+.pagination-link {
+    padding: 8px;
+    text-decoration: none;
+    color: white;
+    background-color: #007bff; 
+    border: 1px solid #007bff;
+    border-radius: 4px; 
+    margin-right: 4px;
+}
+
+.items-per-page-form {
+    margin-left: 20px;
+}
+
+label {
+    margin-right: 5px;
+}
+
+.items-per-page-select {
+    padding: 6px;
+    border-radius: 4px; 
+}
+
+.submit-button {
+    padding: 6px 10px;
+    background-color: #007bff;
+    color: #fff;
+    border: none;
+    border-radius: 4px; 
+    cursor: pointer;
+}
+ .custom-icon {
+            color: green;
+            font-size: 24px;
+            margin-right: 8px;
+ }
+ .spacing {
+    margin-right: 10px; 
+    margin-bottom: 20px;
+}
+
+@media only screen and (max-width: 767px) {
+            
+            th {
+                display: none; 
+            }
+            tbody tr {
+                display: block;
+                margin-bottom: 20px;
+                border: 1px solid #ccc;
+                padding: 10px;
+            }
+            tbody tr td::before {
+
+                font-weight: bold;
+                margin-right: 5px;
+            }
+        }
+        .margin-right-15 {
+        margin-right: 15px;
+       }
+        .block-container {
+      background-color:  #d7dbdd ;
+      padding: 20px;
+      border-radius: 5px;
+      width: 100%;
+      margin-bottom: 20px;
+    }
+</style>
 <?php

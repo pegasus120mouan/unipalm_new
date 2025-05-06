@@ -9,7 +9,7 @@ ini_set('display_errors', 1);
 define('DB_HOST','localhost');
 define('DB_USER','root');
 define('DB_PASS','');
-define('DB_NAME','unipalmci_gestion_new');
+define('DB_NAME','unipalm_gestion_new_pro');
 
 // Fonction pour établir la connexion à la base de données
 function getConnexion() {

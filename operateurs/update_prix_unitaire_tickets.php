@@ -1,6 +1,6 @@
 <?php
 require_once '../inc/functions/connexion.php';
-
+require_once '../inc/functions/update_tickets_prix_unitaire.php';
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['action'] === 'update_prix_unitaire') {
     try {
@@ -24,7 +24,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['
             SELECT t.*, 
                    COALESCE(t.montant_payer, 0) as montant_deja_paye,
                    COALESCE(t.montant_paie, 0) as montant_paie_actuel,
-                   COALESCE(t.prix_unitaire, 0) as ancien_prix_unitaire
+                   COALESCE(t.prix_unitaire, 0) as ancien_prix_unitaire,
+                   t.usine_id,
+                   t.periode_id
             FROM tickets t 
             WHERE t.id_ticket = ?
         ");
@@ -71,10 +73,19 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['
                 ", Nouveau montant restant: " . $montant_reste);
 
         $conn->commit();
+
+        // Mettre à jour automatiquement les autres tickets de la même usine et période sans prix unitaire
+        $updateResult = updateTicketsPrixUnitaire($ticket['usine_id'], $ticket['periode_id'], $prix_unitaire);
+        
         $_SESSION['success_message'] = "Prix unitaire mis à jour avec succès : " . 
                                      number_format($ticket['ancien_prix_unitaire'], 0, ',', ' ') . " → " . 
                                      number_format($prix_unitaire, 0, ',', ' ') . " FCFA. " .
                                      "Nouveau montant à payer : " . number_format($montant_paie, 0, ',', ' ') . " FCFA";
+        
+        if ($updateResult['updated_count'] > 0) {
+            $_SESSION['success_message'] .= "\n" . $updateResult['message'];
+        }
+
     } catch (Exception $e) {
         $conn->rollBack();
         writeLog("Erreur lors de la mise à jour du prix unitaire: " . $e->getMessage());

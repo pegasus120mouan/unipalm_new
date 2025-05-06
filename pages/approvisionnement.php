@@ -113,7 +113,10 @@ label {
             </div>
             <div class="card-body">
                 <div style="max-height: 400px; overflow-y: auto;">
-                    <table id="example1" class="table table-bordered table-striped">
+                <div id="loader" class="text-center p-3">
+        <img src="../dist/img/loading.gif" alt="Chargement..." />
+    </div>
+           <table id="example1" class="table table-bordered table-striped" style="display: none;">
                         <thead>
                             <tr>
                                 <th>Date</th>
@@ -617,6 +620,49 @@ $(document).ready(function() {
         toastr.error('<?= $_SESSION['error_message'] ?>');
         <?php unset($_SESSION['error_message']); ?>
     <?php endif; ?>
+});
+</script>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Afficher le loader au démarrage
+    document.getElementById('loader').style.display = 'block';
+    document.getElementById('example1').style.display = 'none';
+    
+    // Cacher le loader et afficher la table après un court délai
+    setTimeout(function() {
+        document.getElementById('loader').style.display = 'none';
+        document.getElementById('example1').style.display = 'table';
+        
+        // Initialiser DataTables après avoir affiché la table
+        if($.fn.DataTable.isDataTable('#example1')) {
+            $('#example1').DataTable().destroy();
+        }
+        $('#example1').DataTable({
+            "responsive": true,
+            "lengthChange": false,
+            "autoWidth": false,
+            "language": {
+                "url": "//cdn.datatables.net/plug-ins/1.10.21/i18n/French.json"
+            }
+        });
+    }, 1000);
+    
+    // Gestion des soumissions de formulaire
+    $('form').on('submit', function() {
+        document.getElementById('loader').style.display = 'block';
+    });
+
+    // Gestion des requêtes AJAX
+    $(document).ajaxStart(function() {
+        document.getElementById('loader').style.display = 'block';
+    }).ajaxStop(function() {
+        document.getElementById('loader').style.display = 'none';
+    });
+    
+    // Gestion des modals
+    $('.modal').on('show.bs.modal', function() {
+        document.getElementById('loader').style.display = 'none';
+    });
 });
 </script>
 

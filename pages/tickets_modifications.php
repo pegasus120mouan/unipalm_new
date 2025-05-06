@@ -112,8 +112,14 @@ if ($limit !== 15) $filter_params['limit'] = $limit;
 
 ?>
 
-<!-- Main row -->
-<style>
+<!-- Loader -->
+<div id="loader" class="text-center p-3">
+    <img src="../dist/img/loading.gif" alt="Chargement..." />
+</div>
+<!-- Contenu principal initialement caché -->
+<div id="mainContent" style="display: none;">
+  <!-- Main row -->
+  <style>
   .pagination-container {
     display: flex;
     align-items: center;
@@ -993,3 +999,15 @@ $(document).ready(function() {
         min-width: 200px;
       }
     </style>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Afficher le loader
+    document.getElementById('loader').style.display = 'block';
+    
+    // Cacher le loader et afficher le contenu après un court délai
+    setTimeout(function() {
+        document.getElementById('loader').style.display = 'none';
+        document.getElementById('mainContent').style.display = 'block';
+    }, 1000);
+});
+</script>
