@@ -22,6 +22,12 @@ function getTickets($conn, $filters = []) {
         $params[':vehicule'] = $filters['vehicule'];
     }
 
+    // Filtre par numéro de ticket
+    if (!empty($filters['numero_ticket'])) {
+        $where_conditions[] = "t.numero_ticket = :numero_ticket";
+        $params[':numero_ticket'] = $filters['numero_ticket'];
+    }
+
     // Filtre par date
     if (!empty($filters['date_debut']) && !empty($filters['date_fin'])) {
         $where_conditions[] = "DATE(t.date_ticket) BETWEEN :date_debut AND :date_fin";

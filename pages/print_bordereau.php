@@ -178,7 +178,7 @@ if (isset($_POST['id_agent']) && isset($_POST['date_debut']) && isset($_POST['da
             $pdf->Cell($w[4], 8, 'Poids (kg)', 1, 1, 'C', true);
 
             // Données
-            $pdf->SetFont('Arial', '', 10);
+            $pdf->SetFont('Arial', '', 8);
             $fill = true;
 
             foreach ($data['tickets'] as $ticket) {

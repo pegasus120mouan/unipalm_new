@@ -15,6 +15,11 @@ $vehicules = getVehicules($conn);
 // Initialisation des filtres
 $filters = [];
 
+// Récupération du numéro de ticket depuis l'URL
+if (isset($_GET['numero_ticket']) && !empty($_GET['numero_ticket'])) {
+    $filters['numero_ticket'] = $_GET['numero_ticket'];
+}
+
 // Récupération des filtres depuis l'URL
 if (isset($_GET['agent']) && !empty($_GET['agent'])) {
     $filters['agent'] = $_GET['agent'];
@@ -62,6 +67,10 @@ $tickets_list = getTickets($conn, $filters);
             <div class="card-body">
                 <form id="searchForm" action="" method="GET" class="form-horizontal">
                     <div class="row">
+                        <div class="col-md-3">
+                            <label for="numero_ticket">Numéro de ticket</label>
+                            <input type="text" class="form-control" name="numero_ticket" id="numero_ticket" value="<?= isset($_GET['numero_ticket']) ? htmlspecialchars($_GET['numero_ticket']) : '' ?>" placeholder="Entrez un numéro de ticket">
+                        </div>
                         <div class="col-md-3">
                             <label for="agent">Agent</label>
                             <select class="form-control" name="agent" id="agent">
@@ -146,7 +155,13 @@ $tickets_list = getTickets($conn, $filters);
                     </div>
                 </div>
                 <div class="card-body table-responsive">
-                    <table id="example1" class="table table-bordered table-striped">
+                    <!-- Loader -->
+                    <div id="loader" class="text-center" style="margin: 20px 0;">
+                        <img src="../dist/img/loading.gif" alt="Chargement..." />
+                    </div>
+
+                    <!-- Table des résultats -->
+                    <table id="example1" style="display: none;" class="table table-bordered table-striped">
                         <thead>
                             <tr>
                                 <th>DATE RECEPTION</th>
@@ -293,6 +308,18 @@ $tickets_list = getTickets($conn, $filters);
 <script src="assets/js/recherche.js"></script>
 
 <script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Afficher le loader et masquer le tableau
+        const loader = document.getElementById('loader');
+        const table = document.getElementById('example1');
+        
+        // Après 5 secondes, masquer le loader et afficher le tableau
+        setTimeout(function() {
+            loader.style.display = 'none';
+            table.style.display = 'table';
+        }, 5000);
+    });
+
     document.getElementById('printButton').addEventListener('click', function() {
         // Récupérer tous les paramètres du formulaire
         var formData = new URLSearchParams(new FormData(document.getElementById('searchForm'))).toString();
